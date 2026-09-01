@@ -1,0 +1,72 @@
+{
+  "source": "team.html (nav label: BIRDING GUIDES)",
+  "note": "The live page describes the guiding team collectively — it lists no individual guide profiles. The people below are named elsewhere on the site (about-us lightbox, blog bylines) or in guest testimonials.",
+  "pageTitle": "Birding Guide Teams in wildkumaon Sattal",
+  "profile": {
+    "location": "wildkumaon Sattal, Kumaon region, Uttarakhand, India",
+    "specialization": "Avian guiding, bird photography, nature interpretation, customized birdwatching tours"
+  },
+  "offerings": {
+    "title": "What we Offer",
+    "count": 5,
+    "items": [
+      {
+        "label": "Guided Bird Walks",
+        "text": "Morning and evening walks through forests, lakeshores, and eco-trails."
+      },
+      {
+        "label": "Bird Photography Tours",
+        "text": "optimized for capturing shy species."
+      },
+      {
+        "label": "Species Spotting Expertise",
+        "text": "Help in identifying and locating elusive birds"
+      },
+      {
+        "label": "Custom Itineraries",
+        "text": "Single-day outings to week-long birding retreats."
+      },
+      {
+        "label": "Group & Solo Tours",
+        "text": "Available for individual birders, families, photography clubs, and researchers."
+      }
+    ]
+  },
+  "whyChooseUs": {
+    "title": "Why Choose us",
+    "text": "Birding guide teams in Sattal are typically made up of local naturalists, expert ornithologists, and seasoned wildlife photographers who have extensive knowledge of the avifauna of the Himalayan foothills. Many have years of experience and are passionate about conservation and education."
+  },
+  "team": [
+    {
+      "name": "Hitendra Bisht",
+      "role": "Owner and Founder, WILD KUMAON",
+      "image": "assets/images/Owner-and-Founder-WILD-KUMAON-Hitendra-Bisht-1024x576.png",
+      "source": "about-us.html (lightbox image title)"
+    },
+    {
+      "name": "Neer",
+      "role": "Host / owner, naturalist and bird guide",
+      "alsoAuthorOf": "all three blog posts"
+    },
+    {
+      "name": "Ankit Das Loiwal",
+      "role": "Naturalist and tour leader (Chopta tours)"
+    },
+    {
+      "name": "Mikma Tamang",
+      "role": "Birding guide (Pangoot, Manila, Chanfi, Chopta)"
+    },
+    {
+      "name": "Dinesh Negi",
+      "role": "Associated bird guide, Chopta Valley"
+    },
+    {
+      "name": "Madan",
+      "role": "Kitchen — Kumaoni cooking"
+    },
+    {
+      "name": "Gopal",
+      "role": "Hospitality / guest care"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "pages": 26,
+  "assets": 0,
+  "failed": [
+    "https://wildkumaon.com/ — HTTP 403",
+    "https://wildkumaon.com/about-us — HTTP 403",
+    "https://wildkumaon.com/bird-art — HTTP 403",
+    "https://wildkumaon.com/bird-watching-in-sattal — HTTP 403",
+    "https://wildkumaon.com/birders-paradise — HTTP 403",
+    "https://wildkumaon.com/birds-found-at-wild-kumaon — HTTP 403",
+    "https://wildkumaon.com/birds-of-sattal-and-around — HTTP 403",
+    "https://wildkumaon.com/blog — HTTP 403",
+    "https://wildkumaon.com/conservation — HTTP 403",
+    "https://wildkumaon.com/contact-us — HTTP 403",
+    "https://wildkumaon.com/eco-friendly-enterprises-in-sattal — HTTP 403",
+    "https://wildkumaon.com/enquiry — HTTP 403",
+    "https://wildkumaon.com/experiences — HTTP 403",
+    "https://wildkumaon.com/facilities — HTTP 403",
+    "https://wildkumaon.com/faqs — HTTP 403",
+    "https://wildkumaon.com/gallery — HTTP 403",
+    "https://wildkumaon.com/guest-book — HTTP 403",
+    "https://wildkumaon.com/location — HTTP 403",
+    "https://wildkumaon.com/property-photographs — HTTP 403",
+    "https://wildkumaon.com/restaurant — HTTP 403",
+    "https://wildkumaon.com/sattal-5n-6d-birding-tour — HTTP 403",
+    "https://wildkumaon.com/sattal — HTTP 403",
+    "https://wildkumaon.com/spring-trip-report — HTTP 403",
+    "https://wildkumaon.com/team — HTTP 403",
+    "https://wildkumaon.com/vision — HTTP 403",
+    "https://wildkumaon.com/work-from-hills — HTTP 403"
+  ]
+}

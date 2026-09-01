@@ -1,0 +1,23 @@
+# Dependencies and build output
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+
+# Secrets
+.env
+.env.*.local
+
+# Derived copy of assets/images, rebuilt by `npm run mirror:media`.
+#
+# The same 337 images were sitting in three places on disk. assets/images is the
+# tracked copy — it is what wildkumaun/src/scripts/import-media.ts reads when it
+# creates Payload Media documents, so it is the one that outlives the mirror.
+# wildkumaun/public/media is what Next serves today; it is a copy, so tracking it
+# too would put the same 141M in git twice.
+wildkumaun/public/media/
+
+# Local tooling noise
+_tools/fetch.log
+.DS_Store
+Thumbs.db

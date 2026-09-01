@@ -1,0 +1,69 @@
+{
+  "note": "Three distinct amenity lists exist on the live site, each on its own page, plus the premises list. Counts are as-found. Original spellings ('Car Rentel', 'Fine Dinning', 'Kichen and Dinning') are preserved verbatim.",
+  "groups": [
+    {
+      "id": "amenities",
+      "title": "AMENITIES",
+      "subtitle": "Providing Hospitality the correct way",
+      "source": "index.html",
+      "count": 13,
+      "items": [
+        { "label": "Kettle" },
+        { "label": "Laundry" },
+        { "label": "Wi-Fi" },
+        { "label": "Heater" },
+        { "label": "Hot Water" },
+        { "label": "Car Rentel", "sic": "Car Rental" },
+        { "label": "RO Water" },
+        { "label": "Wi-fi High Speed" },
+        { "label": "Linens" },
+        { "label": "Fine Dinning", "sic": "Fine Dining" },
+        { "label": "Toiletries" },
+        { "label": "Parking Area" },
+        { "label": "Freshwater lakes nearby" }
+      ]
+    },
+    {
+      "id": "wfh-facilities",
+      "title": "Facilities",
+      "source": "work-from-hills.html",
+      "count": 7,
+      "items": [
+        { "label": "Kettle" },
+        { "label": "Laundry" },
+        { "label": "Body Wash" },
+        { "label": "Wi-Fi" },
+        { "label": "Heater" },
+        { "label": "Hot Water" },
+        { "label": "Car Rentel", "sic": "Car Rental" }
+      ]
+    },
+    {
+      "id": "wfh-activities",
+      "title": "Activities",
+      "source": "work-from-hills.html",
+      "count": 6,
+      "items": [
+        { "label": "Nature Walk" },
+        { "label": "Yoga" },
+        { "label": "Hiking" },
+        { "label": "Village Walk" },
+        { "label": "Bird Watching" },
+        { "label": "Reading - Writing Books" }
+      ]
+    },
+    {
+      "id": "premises-facilities",
+      "title": "FACILITIES AT PREMISES",
+      "source": "facilities.html",
+      "count": 5,
+      "items": [
+        { "label": "Wi-fi High Speed" },
+        { "label": "RO Water" },
+        { "label": "Free Parking" },
+        { "label": "Kichen and Dinning", "sic": "Kitchen and Dining" },
+        { "label": "Kitchen Garden inside the premises" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,162 @@
+/**
+ * Wild Kumaon — Tailwind v4 theme.
+ *
+ * The live site runs Tailwind v4, so this is the form that matches it.
+ * Same values as design/tailwind.config.js; provenance in design/design-tokens.md.
+ *
+ *   @import "tailwindcss";
+ *   @import "./theme.css";
+ */
+
+@theme {
+  /* ---- brand (gold) ---- */
+  --color-brand: #dcb415;         /* button fill at rest */
+  --color-brand-bright: #ffd014;  /* button fill on hover, highlight text */
+  --color-brand-amber: #f2b01e;
+  --color-brand-bronze: #b59753;  /* button border on hover */
+
+  --color-brand-50: #fefae8;
+  --color-brand-100: #fdf3c4;
+  --color-brand-200: #fbe78b;
+  --color-brand-300: #f8d84f;
+  --color-brand-400: #ffd014;
+  --color-brand-500: #dcb415;
+  --color-brand-600: #f2b01e;
+  --color-brand-700: #b59753;
+  --color-brand-800: #8a7226;
+  --color-brand-900: #5c4b18;
+
+  /* ---- ink ---- */
+  --color-ink: #070707;
+  --color-ink-soft: #272727;
+  --color-ink-deep: #030c10;
+
+  /* ---- body copy ---- */
+  --color-body: #3a3a3a;
+  --color-body-muted: #7a7a7a;
+  --color-body-light: #999999;
+
+  /* ---- surfaces ---- */
+  --color-paper: #ffffff;
+  --color-paper-off: #fcfcfc;
+  --color-surface: #f4f4f4;
+  --color-surface-warm: #faf5f1;
+  --color-surface-dark: #11202a;
+  --color-surface-black: #070707;
+
+  /* ---- lines & overlays ---- */
+  --color-rule: #eaeaea;
+  --color-rule-strong: #dddddd;
+  --color-on-dark: #fff9f9;
+  --color-on-dark-dim: rgb(255 249 249 / 0.15);
+  --color-scrim: rgb(26 8 8 / 0.44);
+  --color-scrim-soft: rgb(8 7 7 / 0.39);
+
+  /* ---- accents ---- */
+  --color-link: #0274be;
+  --color-link-bright: #1085e4;
+  --color-lime: #d2df64;
+  --color-danger: #d9534f;
+
+  /* ---- type ---- */
+  --font-sans: var(--font-open-sans), "Open Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-roboto: var(--font-roboto-google), Roboto, ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-didot), "GFS Didot", Georgia, serif;
+  --font-script: var(--font-sevillana), Sevillana, cursive;
+  --font-slab: "Roboto Slab", Georgia, serif;
+
+  --text-small: 0.9375rem;      /* 15px */
+  --text-small--line-height: 1.7;
+  --text-base: 1rem;            /* 16px */
+  --text-base--line-height: 1.7;
+  --text-body-lg: 1.125rem;     /* 18px */
+  --text-body-lg--line-height: 1.7;
+  --text-lead: 1.25rem;         /* 20px */
+  --text-lead--line-height: 1.6;
+  --text-h6: 1.3125rem;         /* 21px */
+  --text-h6--line-height: 1.35;
+  --text-h5: 1.5rem;            /* 24px */
+  --text-h5--line-height: 1.3;
+  --text-h4: 1.625rem;          /* 26px */
+  --text-h4--line-height: 1.25;
+  --text-h3-alt: 1.875rem;      /* 30px */
+  --text-h3-alt--line-height: 1.25;
+  --text-h3: 2.0625rem;         /* 33px */
+  --text-h3--line-height: 1.2;
+  --text-h2: 2.1875rem;         /* 35px */
+  --text-h2--line-height: 1.2;
+  --text-h2-alt: 2.25rem;       /* 36px */
+  --text-h2-alt--line-height: 1.2;
+  --text-h1: 2.375rem;          /* 38px */
+  --text-h1--line-height: 1.15;
+  --text-display: 2.625rem;     /* 42px */
+  --text-display--line-height: 1.1;
+
+  --font-weight-body: 400;
+  --font-weight-button: 500;
+  --font-weight-heading: 600;
+
+  --leading-body: 1.7;
+  --leading-heading: 1.2;
+
+  /* ---- layout ---- */
+  --container-narrow: 1024px;
+  --container-brand: 1140px;    /* Elementor boxed container — the real content width */
+  --container-wide: 1200px;
+
+  /* Elementor breakpoints: mobile ≤767, tablet 768–1024, desktop ≥1025. */
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64.0625rem;  /* 1025px */
+  --breakpoint-xl: 75rem;       /* 1200px */
+
+  --radius-brand: 10px;
+  --shadow-card: 0 2px 12px rgb(7 7 7 / 0.08);
+}
+
+@layer base {
+  body {
+    background: var(--color-paper);
+    color: var(--color-body);
+    font-family: var(--font-sans);
+    line-height: var(--leading-body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    color: var(--color-ink);
+    font-weight: var(--font-weight-heading);
+    line-height: var(--leading-heading);
+    text-wrap: balance;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* The site's one real CTA style. */
+  .btn-brand {
+    display: inline-block;
+    font-family: var(--font-roboto);
+    font-size: 0.9em;
+    font-weight: var(--font-weight-button);
+    line-height: 1;
+    color: #060101;
+    fill: #060101;
+    background-color: var(--color-brand);
+    border: 1px solid transparent;
+    border-radius: var(--radius-brand);
+    padding: 12px 24px;
+    text-align: center;
+    transition: all 0.3s;
+  }
+
+  .btn-brand:hover,
+  .btn-brand:focus {
+    background-color: var(--color-brand-bright);
+    border-color: var(--color-brand-bronze);
+  }
+}

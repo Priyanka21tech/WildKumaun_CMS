@@ -1,0 +1,977 @@
+{
+  "count": 3,
+  "source": "blog.html + individual post pages",
+  "note": "The live site renders no visible publish dates, so date is null. Category and author are taken from the entry meta (\"General / By Neer\").",
+  "categories": [
+    "General"
+  ],
+  "posts": [
+    {
+      "id": "eco-friendly-enterprises-in-sattal",
+      "postId": 3820,
+      "title": "Eco-friendly Enterprises in Sattal",
+      "slug": "/eco-friendly-enterprises-in-sattal",
+      "author": "Neer",
+      "category": "General",
+      "date": null,
+      "excerpt": "BIRDING, KUMAONI CUISINE & A SMALL CHOCOLATE FACTORY IN THE MOUNTAINS One of the most popular hill stations in Uttarakhand is Nainital. And this famous getaway is also called the LAKE DISTRICT OF INDIA. That’s because over and above Nainital aur Bhimtal, the region is dotted with a bunch of lakes – some known and some …",
+      "heroImage": null,
+      "images": [],
+      "links": [
+        "http://heal.farm/",
+        "https://cochoa.in/",
+        "https://forms.gle/aFQaUf9DvP3vWfuWA"
+      ],
+      "body": [
+        {
+          "type": "paragraph",
+          "text": "BIRDING, KUMAONI CUISINE & A SMALL CHOCOLATE FACTORY IN THE MOUNTAINS"
+        },
+        {
+          "type": "paragraph",
+          "text": "One of the most popular hill stations in Uttarakhand is Nainital. And this famous getaway is also called the LAKE DISTRICT OF INDIA. That’s because over and above Nainital aur Bhimtal, the region is dotted with a bunch of lakes – some known and some unknown ones. And one such gem is Sattal, which is actually a cluster of seven freshwater lakes. These pristine mountain lakes nestled within dense forest is definitely one of the most stunning places of Uttarakhand. In this episode, we’ll go for a morning bird walk, have a Kumaoni lunch and end the day at a very special chocolate factory in the Himalayas."
+        },
+        {
+          "type": "paragraph",
+          "text": "You have seen *Abhishek* UNTRAVEL the world, one story at a time. Now you too can accompany him on these journeys which are as much about the places as about the stories and conversations. Come let’s TRAVEL FOR MORE."
+        },
+        {
+          "type": "paragraph",
+          "text": "https://forms.gle/aFQaUf9DvP3vWfuWA"
+        }
+      ]
+    },
+    {
+      "id": "spring-trip-report",
+      "postId": 3769,
+      "title": "Sattal-Pangot Birding Tour Report, Spring 2022",
+      "slug": "/spring-trip-report",
+      "author": "Neer",
+      "category": "General",
+      "date": null,
+      "excerpt": "Junglehike’s birding trip to Sattal – Wild Kumaon, Pangot and Nainital. Date: 16th-19th March 2022 Trip report Sattal, Pangot and Nainital showcased the rustic beauty of the lower Himalayas. Despite the temperature being on the warmer side the birds made their presence felt. The natural studios at regular intervals in Sattal, the pine forests of …",
+      "heroImage": "assets/images/IMG-20220321-WA0019-1024x1024.jpg",
+      "images": [
+        "assets/images/IMG-20220321-WA0019-1024x1024.jpg",
+        "assets/images/IMG-20220321-WA0020-1024x1024.jpg",
+        "assets/images/IMG-20220321-WA0021-1024x1024.jpg",
+        "assets/images/IMG-20220321-WA0022-1024x1024.jpg",
+        "assets/images/IMG-20220321-WA0023-1024x1024.jpg",
+        "assets/images/IMG-20220321-WA0013-1024x1024.jpg",
+        "assets/images/IMG-20220321-WA0014-1024x1024.jpg",
+        "assets/images/IMG-20220321-WA0015-1024x1024.jpg",
+        "assets/images/IMG-20220321-WA0016-1024x1024.jpg",
+        "assets/images/IMG-20220321-WA0017-1024x1024.jpg",
+        "assets/images/IMG-20220321-WA0018-1024x1024.jpg"
+      ],
+      "links": [
+        "https://ebird.org/india/tripreport/43764?view=checklists"
+      ],
+      "body": [
+        {
+          "type": "paragraph",
+          "text": "Junglehike’s birding trip to Sattal – Wild Kumaon, Pangot and Nainital."
+        },
+        {
+          "type": "paragraph",
+          "text": "Date: 16 th -19 th March 2022"
+        },
+        {
+          "type": "heading4",
+          "text": "Trip report"
+        },
+        {
+          "type": "paragraph",
+          "text": "Sattal, Pangot and Nainital showcased the rustic beauty of the lower Himalayas. Despite the temperature being on the warmer side the birds made their presence felt. The natural studios at regular intervals in Sattal, the pine forests of Pangot and dry rocky areas of Nainital had us celebrating a different ‘Holi’ of the feathered kind. Some birds were very vocal, some were skulking and some were openly displaying their breeding moves and grooves!"
+        },
+        {
+          "type": "heading4",
+          "text": "Bird species seen 125"
+        },
+        {
+          "type": "heading2",
+          "text": "Few Highlight Birds"
+        },
+        {
+          "type": "paragraph",
+          "text": "Cheer Pheasant, Koklass Pheasant, Collared Falconet, Speckled Wood Pigeon, Brown Bullfinch, Hill Partridge, Golden Bush Robin, Large-tailed Nightjar, Banded Bay Cuckoo, Bar-tailed Treecreeper, Grey Treepie, Rufous Sibia, Red-billed Leothrix, Blue-winged Minla, Himalayan Bluetail, Whiskered Yuhina, Russet Sparrow, Grey Wagtail, Rock Bunting."
+        },
+        {
+          "type": "listItem",
+          "text": "Pigeons & Doves – Speckled Wood, Oriental Turtle, Eurasian Collared, Spotted"
+        },
+        {
+          "type": "listItem",
+          "text": "Raptors – Himalayan Vulture, Crested Serpent, Steppe, Booted Eagle, Himalayan Buzzard"
+        },
+        {
+          "type": "listItem",
+          "text": "Owl – Brown Wood Owl, Collared Owlet, Asian Barred Owlet"
+        },
+        {
+          "type": "listItem",
+          "text": "Barbet – Great, Blue-throated"
+        },
+        {
+          "type": "listItem",
+          "text": "Woodpecker – Himalayan, Rufous-bellied, Brown-fronted, Grey-headed, Lesser and Greater Yellow-nape, Greater Flame-back"
+        },
+        {
+          "type": "listItem",
+          "text": "Parakeet – Slaty-headed, Plum-headed"
+        },
+        {
+          "type": "listItem",
+          "text": "Minivet – Scarlet, Long-tailed"
+        },
+        {
+          "type": "listItem",
+          "text": "Babbler – Himalayan Shrike, Black-chinned, Rusty-cheeked Scimitar, Jungle"
+        },
+        {
+          "type": "listItem",
+          "text": "Shrike – Bar-winged Flycatcher, Long-tailed"
+        },
+        {
+          "type": "listItem",
+          "text": "Drongo – Ashy, Bronzed"
+        },
+        {
+          "type": "listItem",
+          "text": "Jay – Eurasian, Black-headed"
+        },
+        {
+          "type": "listItem",
+          "text": "Magpie – Red-billed Blue, Common Green"
+        },
+        {
+          "type": "listItem",
+          "text": "Tit – Coal, Green-backed, Himalayan Black-lored, Black-throated, Cinereous, Yellow-browed"
+        },
+        {
+          "type": "listItem",
+          "text": "Prinia – Hill, Grey-breasted"
+        },
+        {
+          "type": "listItem",
+          "text": "Bulbul – Black, Himalayan, Red-vented, Red-whiskered"
+        },
+        {
+          "type": "listItem",
+          "text": "Swallow – Barn, Red-rumped"
+        },
+        {
+          "type": "listItem",
+          "text": "Warblers – Aberrant Bush, Buff-barred, Lemon-rumped, Whistlers, Greenish, Western-crowned, Humes, Grey-hooded, Black-faced"
+        },
+        {
+          "type": "listItem",
+          "text": "Laughingthrushes – Striated, Streaked, White-crested, Rufous-chinned, White-throated, Chestnut-crowned"
+        },
+        {
+          "type": "listItem",
+          "text": "Nuthatch – Chestnut-bellied, White-tailed, Velvet-fronted"
+        },
+        {
+          "type": "listItem",
+          "text": "Thrush – Grey-winged Blackbird, Blue Whistling"
+        },
+        {
+          "type": "listItem",
+          "text": "Flycatcher-Ultramarine, Slaty Blue, Rufous-gorgeted, Grey-headed Canary, Verditer, Rufous-bellied Niltava"
+        },
+        {
+          "type": "listItem",
+          "text": "Redstart – Blue-fronted, White-capped"
+        },
+        {
+          "type": "listItem",
+          "text": "Sunbird – Green-tailed, Black-throated, Purple"
+        },
+        {
+          "type": "listItem",
+          "text": "Accentor – Altai, Rufous-breasted"
+        },
+        {
+          "type": "listItem",
+          "text": "Pipit – Upland, Olive-backed"
+        },
+        {
+          "type": "listItem",
+          "text": "Finch – Pink-browed Rosefinch, Brown Bullfinch"
+        },
+        {
+          "type": "heading2",
+          "text": "Mammals"
+        },
+        {
+          "type": "listItem",
+          "text": "Yellow-throated Marten"
+        },
+        {
+          "type": "listItem",
+          "text": "Himalayan Goral"
+        },
+        {
+          "type": "listItem",
+          "text": "Barking Deer"
+        }
+      ]
+    },
+    {
+      "id": "bird-watching-in-sattal",
+      "postId": 2934,
+      "title": "Bird watching in Sattal",
+      "slug": "/bird-watching-in-sattal",
+      "author": "Neer",
+      "category": "General",
+      "date": null,
+      "excerpt": "Sattal is one of the places that is close to big cities and shows a different form of nature – the world of birds. The forest of Sattal is filled with oak trees, situated at the height of 1400 Metres due to which many birds come to breed from down South India throughout the summer, among …",
+      "heroImage": "assets/images/sattal-birds-blog-banner-1024x576.jpg",
+      "images": [
+        "assets/images/sattal-birds-blog-banner-1024x576.jpg",
+        "assets/images/birds-10-1024x683.jpg",
+        "assets/images/birds-11-1024x683.jpg",
+        "assets/images/birds-12-1024x683.jpg",
+        "assets/images/birds-13-1024x683.jpg",
+        "assets/images/birds-14-1024x683.jpg",
+        "assets/images/birds-5-1024x683.jpg",
+        "assets/images/birds-6-1024x683.jpg",
+        "assets/images/birds-7-1024x683.jpg",
+        "assets/images/birds-8-1024x683.jpg",
+        "assets/images/birds-4-1024x683.jpg"
+      ],
+      "links": [],
+      "body": [
+        {
+          "type": "paragraph",
+          "text": "Sattal is one of the places that is close to big cities and shows a different form of nature – the world of birds. The forest of Sattal is filled with oak trees , situated at the height of 1400 Metres due to which many birds come to breed from down South India throughout the summer, among these a lot of ‘Fly Catcher’ species, one of which is – Paradise Fly Catcher , Many birds come here in winter from cold areas such as finches, raptors and warblers."
+        },
+        {
+          "type": "heading2",
+          "text": "Bird Watching Places of Sattal"
+        },
+        {
+          "type": "heading4",
+          "text": "Studio Trail"
+        },
+        {
+          "type": "paragraph",
+          "text": "This is the most famous area of Sattal among birders, many birds come here to bathe in the water, photographers from all over the world capture pictures of many birds here."
+        },
+        {
+          "type": "heading4",
+          "text": "Bend Area"
+        },
+        {
+          "type": "paragraph",
+          "text": "This road trail exhibits a lot of bird activity in the morning, as well as a view of ‘Garuda Tal’ and ‘Sattal’ and ‘Hanuman Tal’, this trail is very good for resident birds, beautiful birds like Scarlet Minivet are seen here almost dail"
+        },
+        {
+          "type": "heading4",
+          "text": "Panna Lake / Garur Tal"
+        },
+        {
+          "type": "paragraph",
+          "text": "Rare species like Scaly Thrush in the winters make this place their home, then in the summer species of owls like – Brown Wood Owl."
+        },
+        {
+          "type": "heading4",
+          "text": "Wild Kumaon Campus"
+        },
+        {
+          "type": "paragraph",
+          "text": "Birds are also fed at some places in Sattal and there is also a birdbath, one such bird hide is also inside the WILD KUMAON campus."
+        },
+        {
+          "type": "heading4",
+          "text": "Chanfi"
+        },
+        {
+          "type": "paragraph",
+          "text": "chanfi is an amazing birding area for small Birds, warblers, and water-dependent Birds. Different topography in comparison to the Sattal region this area is home to different species which you don’t find in Sattal. Tawny Fish Owl, Little Forktail and Brown Dipper are some highlights from the area. a must-visit area if you are coming to Sattal."
+        },
+        {
+          "type": "paragraph",
+          "text": "In a year, about 250 species are found in Sattal – Some of the rarest summer species are Long-tailed Broadbill, Brown Wood Owl, Gray Croned Parinees, Mountain Scopes Owl, Mountain Hawk Eagle. Some beautiful winter species are – Small Niltava, Rufous Bellied NIltava, Rufous-gorgeted Flycatcher, Golden Bush Robin, Common Green Magpie, Pink Browd Rosfinch. Some exotic birds also live in the target of bird watchers in winter…. one of which is the Siberian rubythroat – this bird reaches Sattal from the upper cold regions of Europe and China. It looks very beautiful blooming in the middle and there is a desire in the mind to come out for a moment and see it. There are other areas along with Satatal which are famous for birds and which are visited with the Satatal Bird Watching Tour – Pangot, Chanfi, Ramgarh, Shyamkhet – These are the areas where there is very good boarding and many such species are found which are not found in Sattal. Chanfi is famous for – Brown Dipper, the only species which breeds in winters here."
+        },
+        {
+          "type": "paragraph",
+          "text": "The right time to visit Sattal and other vicinity area is : Summer – April to June In winter – November to March"
+        },
+        {
+          "type": "paragraph",
+          "text": "Places to stay at Sattal – Wild Kumaon – located in Sattal. This eco-resort is dedicated exclusively to bird watchers, situated at a great location providing you quick access to birding spots, there is also a bird head, close to all the birding areas of Sattal."
+        },
+        {
+          "type": "heading2",
+          "text": "SATTAL BIRDS CHECKLIST"
+        },
+        {
+          "type": "listItem",
+          "text": "Red-wattled Lapwing"
+        },
+        {
+          "type": "listItem",
+          "text": "Eurasian Woodcock"
+        },
+        {
+          "type": "listItem",
+          "text": "Common Sandpiper"
+        },
+        {
+          "type": "listItem",
+          "text": "Green Sandpiper"
+        },
+        {
+          "type": "listItem",
+          "text": "Little Cormorant"
+        },
+        {
+          "type": "listItem",
+          "text": "Great Cormorant"
+        },
+        {
+          "type": "listItem",
+          "text": "Indian Cormorant"
+        },
+        {
+          "type": "listItem",
+          "text": "Cattle Egret"
+        },
+        {
+          "type": "listItem",
+          "text": "Indian Pond Heron"
+        },
+        {
+          "type": "listItem",
+          "text": "Striated Heron"
+        },
+        {
+          "type": "listItem",
+          "text": "Black-winged kite"
+        },
+        {
+          "type": "listItem",
+          "text": "Bearded vulture"
+        },
+        {
+          "type": "listItem",
+          "text": "Egyptian vulture"
+        },
+        {
+          "type": "listItem",
+          "text": "Crested Honey-buzzard"
+        },
+        {
+          "type": "listItem",
+          "text": "Red-headed Vulture"
+        },
+        {
+          "type": "listItem",
+          "text": "Himalayan Griffon"
+        },
+        {
+          "type": "listItem",
+          "text": "Griffon vulture"
+        },
+        {
+          "type": "listItem",
+          "text": "Himalayan/Eurasian Griffon"
+        },
+        {
+          "type": "listItem",
+          "text": "Crested-serpent Eagle"
+        },
+        {
+          "type": "listItem",
+          "text": "Changeable Hawk-Eagle"
+        },
+        {
+          "type": "listItem",
+          "text": "Mountain Hawk-Eagle"
+        },
+        {
+          "type": "listItem",
+          "text": "Rufous-bellied Eagle"
+        },
+        {
+          "type": "listItem",
+          "text": "Collared Falconet"
+        },
+        {
+          "type": "listItem",
+          "text": "Common Kestrel"
+        },
+        {
+          "type": "listItem",
+          "text": "Eurasian Hobby"
+        },
+        {
+          "type": "listItem",
+          "text": "Peregrine Falcon"
+        },
+        {
+          "type": "listItem",
+          "text": "Slaty-headed parakeet"
+        },
+        {
+          "type": "listItem",
+          "text": "Plum-headed parakeet"
+        },
+        {
+          "type": "listItem",
+          "text": "Long-tailed Broadbill"
+        },
+        {
+          "type": "listItem",
+          "text": "Small minivet"
+        },
+        {
+          "type": "listItem",
+          "text": "Long-tailed Minivet"
+        },
+        {
+          "type": "listItem",
+          "text": "Scarlet Minivet"
+        },
+        {
+          "type": "listItem",
+          "text": "Large Cuckooshrike"
+        },
+        {
+          "type": "listItem",
+          "text": "Black-winged Cuckooshrike"
+        },
+        {
+          "type": "listItem",
+          "text": "Himalayan Shrike-Babbler"
+        },
+        {
+          "type": "listItem",
+          "text": "Green Shrike-Babbler"
+        },
+        {
+          "type": "listItem",
+          "text": "White-bellied Erpornis"
+        },
+        {
+          "type": "listItem",
+          "text": "Indian Golden Oriole"
+        },
+        {
+          "type": "listItem",
+          "text": "Black-hooded Oriole"
+        },
+        {
+          "type": "listItem",
+          "text": "Maroon Oriole"
+        },
+        {
+          "type": "listItem",
+          "text": "Scaly-breasted Cupwing"
+        },
+        {
+          "type": "listItem",
+          "text": "Nepal wren-babbler"
+        },
+        {
+          "type": "listItem",
+          "text": "Pygmy Cupwing"
+        },
+        {
+          "type": "listItem",
+          "text": "Grey-throated Martin"
+        },
+        {
+          "type": "listItem",
+          "text": "Dusky crag Martin"
+        },
+        {
+          "type": "listItem",
+          "text": "Barn swallow"
+        },
+        {
+          "type": "listItem",
+          "text": "Wire-tailed Swallow"
+        },
+        {
+          "type": "listItem",
+          "text": "Red-rumped Swallow"
+        },
+        {
+          "type": "listItem",
+          "text": "Streak-throated Swllow"
+        },
+        {
+          "type": "listItem",
+          "text": "Common House Martin"
+        },
+        {
+          "type": "listItem",
+          "text": "Nepal House Martin"
+        },
+        {
+          "type": "listItem",
+          "text": "Black-crested Bulbul"
+        },
+        {
+          "type": "listItem",
+          "text": "Red-vented Bulbul"
+        },
+        {
+          "type": "listItem",
+          "text": "Himalayan Bulbul"
+        },
+        {
+          "type": "listItem",
+          "text": "Black Bulbul"
+        },
+        {
+          "type": "listItem",
+          "text": "Ashy Bulbul"
+        },
+        {
+          "type": "listItem",
+          "text": "Mountain Bulbul"
+        },
+        {
+          "type": "listItem",
+          "text": "Ashy-throated Warbler"
+        },
+        {
+          "type": "listItem",
+          "text": "Buff-barred Warbler"
+        },
+        {
+          "type": "listItem",
+          "text": "Hume’s Warbler"
+        },
+        {
+          "type": "listItem",
+          "text": "Bar-tailed Treecreeper"
+        },
+        {
+          "type": "listItem",
+          "text": "Rusty-flanked Treecreeper"
+        },
+        {
+          "type": "listItem",
+          "text": "Eurasian Wren"
+        },
+        {
+          "type": "listItem",
+          "text": "Brown Dipper"
+        },
+        {
+          "type": "listItem",
+          "text": "Common Starling"
+        },
+        {
+          "type": "listItem",
+          "text": "Chestnut-tailed starling"
+        },
+        {
+          "type": "listItem",
+          "text": "Common Myna"
+        },
+        {
+          "type": "listItem",
+          "text": "Jungle Myana"
+        },
+        {
+          "type": "listItem",
+          "text": "Spot-winged Starling"
+        },
+        {
+          "type": "listItem",
+          "text": "Long-tailed Thrush"
+        },
+        {
+          "type": "listItem",
+          "text": "Alpine Thrush"
+        },
+        {
+          "type": "listItem",
+          "text": "Dark-sided Thrush"
+        },
+        {
+          "type": "listItem",
+          "text": "Long-billed Thrush"
+        },
+        {
+          "type": "listItem",
+          "text": "Scaly Thrush"
+        },
+        {
+          "type": "listItem",
+          "text": "Pied Thrush"
+        },
+        {
+          "type": "listItem",
+          "text": "Orange-headed Thrush"
+        },
+        {
+          "type": "listItem",
+          "text": "Mistle Thrush"
+        },
+        {
+          "type": "listItem",
+          "text": "Grey-winged Blackbird"
+        },
+        {
+          "type": "listItem",
+          "text": "Tickell’s Thrush"
+        },
+        {
+          "type": "listItem",
+          "text": "Tibetan Blackbird"
+        },
+        {
+          "type": "listItem",
+          "text": "White-collared Blackbird"
+        },
+        {
+          "type": "listItem",
+          "text": "Chestnut Thrush"
+        },
+        {
+          "type": "listItem",
+          "text": "Black-throated Thrush"
+        },
+        {
+          "type": "listItem",
+          "text": "Alpine Accentor"
+        },
+        {
+          "type": "listItem",
+          "text": "Altai Accentor"
+        },
+        {
+          "type": "listItem",
+          "text": "Rufous-breasted Accentor"
+        },
+        {
+          "type": "listItem",
+          "text": "Black-throated Accentor"
+        },
+        {
+          "type": "listItem",
+          "text": "House Sparrow"
+        },
+        {
+          "type": "listItem",
+          "text": "Russet Sparrow"
+        },
+        {
+          "type": "listItem",
+          "text": "Yellow-throated Sparrow"
+        },
+        {
+          "type": "listItem",
+          "text": "Grey Wagtail"
+        },
+        {
+          "type": "listItem",
+          "text": "Western Yellow Wagtail"
+        },
+        {
+          "type": "listItem",
+          "text": "Citrine. Wagtail"
+        },
+        {
+          "type": "listItem",
+          "text": "White-browed Wagtail"
+        },
+        {
+          "type": "listItem",
+          "text": "Pied Wagtail/White Wagtail"
+        },
+        {
+          "type": "listItem",
+          "text": "Upland Pipit"
+        },
+        {
+          "type": "listItem",
+          "text": "Rosy Pipit"
+        },
+        {
+          "type": "listItem",
+          "text": "Tree Pipit"
+        },
+        {
+          "type": "listItem",
+          "text": "Olive-backed Pipit"
+        },
+        {
+          "type": "listItem",
+          "text": "Plain Mountain-Finch"
+        },
+        {
+          "type": "listItem",
+          "text": "Yellow-breasted Greenfinch"
+        },
+        {
+          "type": "listItem",
+          "text": "European Goldfinch"
+        },
+        {
+          "type": "listItem",
+          "text": "Black-and-yellow Grosbeak"
+        },
+        {
+          "type": "listItem",
+          "text": "Spot-winged Grosbeak"
+        },
+        {
+          "type": "listItem",
+          "text": "Common Rosefinch"
+        },
+        {
+          "type": "listItem",
+          "text": "Scarlet Finch"
+        },
+        {
+          "type": "listItem",
+          "text": "Himalayan Beautiful Rosefinch"
+        },
+        {
+          "type": "listItem",
+          "text": "Pink-browed Rosefinch"
+        },
+        {
+          "type": "listItem",
+          "text": "Brown Bullfinch"
+        },
+        {
+          "type": "listItem",
+          "text": "Dark Breasted Rosefinch"
+        },
+        {
+          "type": "listItem",
+          "text": "Ruddy Shelduck"
+        },
+        {
+          "type": "listItem",
+          "text": "Garganey"
+        },
+        {
+          "type": "listItem",
+          "text": "Northem Shoveler"
+        },
+        {
+          "type": "listItem",
+          "text": "Indian Spot-billed Duck"
+        },
+        {
+          "type": "listItem",
+          "text": "Red-crested Pochard"
+        },
+        {
+          "type": "listItem",
+          "text": "Hill Partridge"
+        },
+        {
+          "type": "listItem",
+          "text": "Rufous-throated Partridge"
+        },
+        {
+          "type": "listItem",
+          "text": "Indian Peafowl"
+        },
+        {
+          "type": "listItem",
+          "text": "Black Francolin"
+        },
+        {
+          "type": "listItem",
+          "text": "Grey Francolin"
+        },
+        {
+          "type": "listItem",
+          "text": "Red Junglefowi"
+        },
+        {
+          "type": "listItem",
+          "text": "Himalayan Monal"
+        },
+        {
+          "type": "listItem",
+          "text": "Cheer Pheasant"
+        },
+        {
+          "type": "listItem",
+          "text": "Kalij Pheasant"
+        },
+        {
+          "type": "listItem",
+          "text": "Koklass Pheasant"
+        },
+        {
+          "type": "listItem",
+          "text": "Rock dove"
+        },
+        {
+          "type": "listItem",
+          "text": "Hill Pigeon"
+        },
+        {
+          "type": "listItem",
+          "text": "Speckled wood-Pigeon"
+        },
+        {
+          "type": "listItem",
+          "text": "Ashy Wood-Pigeon"
+        },
+        {
+          "type": "listItem",
+          "text": "Rufous Turtle Dove"
+        },
+        {
+          "type": "listItem",
+          "text": "Collared Dove"
+        },
+        {
+          "type": "listItem",
+          "text": "Red Collared Dove"
+        },
+        {
+          "type": "listItem",
+          "text": "Spotted Dove"
+        },
+        {
+          "type": "listItem",
+          "text": "Black Eagle"
+        },
+        {
+          "type": "listItem",
+          "text": "Booted Eagle"
+        },
+        {
+          "type": "listItem",
+          "text": "Steppe Eagle"
+        },
+        {
+          "type": "listItem",
+          "text": "Bonelli’s Eagle"
+        },
+        {
+          "type": "listItem",
+          "text": "Crested Goshawk"
+        },
+        {
+          "type": "listItem",
+          "text": "Shikra"
+        },
+        {
+          "type": "listItem",
+          "text": "Eurasian Sparrowhawk"
+        },
+        {
+          "type": "listItem",
+          "text": "Black Kite"
+        },
+        {
+          "type": "listItem",
+          "text": "Himalayan Buzzard"
+        },
+        {
+          "type": "listItem",
+          "text": "Upland Buzzard"
+        },
+        {
+          "type": "listItem",
+          "text": "Barn owl"
+        },
+        {
+          "type": "listItem",
+          "text": "Mountain Scops Owl"
+        },
+        {
+          "type": "listItem",
+          "text": "Collared Scops Owl"
+        },
+        {
+          "type": "listItem",
+          "text": "Brown Fish-Owl"
+        },
+        {
+          "type": "listItem",
+          "text": "Tawny Fish-Owl"
+        },
+        {
+          "type": "listItem",
+          "text": "Collared Owlet"
+        },
+        {
+          "type": "listItem",
+          "text": "Asian Barred Owlet"
+        },
+        {
+          "type": "listItem",
+          "text": "Jungle Owlet"
+        },
+        {
+          "type": "listItem",
+          "text": "Asian Barred/Jungle Owlet"
+        },
+        {
+          "type": "listItem",
+          "text": "Spotted Owlet"
+        },
+        {
+          "type": "listItem",
+          "text": "Brown Wood-Owl"
+        },
+        {
+          "type": "listItem",
+          "text": "Himalayan Owl"
+        },
+        {
+          "type": "listItem",
+          "text": "Brown Boobook"
+        },
+        {
+          "type": "listItem",
+          "text": "Eurasian Hoopoe"
+        },
+        {
+          "type": "listItem",
+          "text": "Ashy Woodswallow"
+        },
+        {
+          "type": "listItem",
+          "text": "Bar-Winged Flycatcher-shrike"
+        },
+        {
+          "type": "listItem",
+          "text": "Common Iora"
+        },
+        {
+          "type": "listItem",
+          "text": "White-throated Fantail"
+        },
+        {
+          "type": "listItem",
+          "text": "Black Drongo"
+        },
+        {
+          "type": "listItem",
+          "text": "Ashy Drongo"
+        },
+        {
+          "type": "listItem",
+          "text": "Crow-billed Drongo"
+        },
+        {
+          "type": "listItem",
+          "text": "Bronzed Drongo"
+        },
+        {
+          "type": "paragraph",
+          "text": "166. Lesser Racked-tailed Drongo 167. Hair-crested Drongo 168. Black-naped Monarch 169. Indian Paradise-Flycatcher 170. Long-tailed Shrike 171. Grey-backed Shrike 172. Eurasian Jay 173. Black-headed Jay 174. Red-billed Blue-Magpie 175. Yellow-billed/Red-billed Blue-magpie 176. Common Green-Magpie 177. Rufous Treepie 178. Lemon-rumped Warbler 179. Sulphur-bellied Warbler 180. Tickell’s Leaf Warbler 181. Dusky Warbler 182. Common Chiffchaff 183. Whistler’s Warbler 184. Green/Greenish Warbler 185. Western Crowned Warbler 186. Blyth’s Leaf Warbler 187. Grey-hooded Warbler 188. Grey-bellied Tesia 189. Chestnut-crowned Bush Warbler 190. Grey-sided Bush Warbler 191. Chestnut-headed Tesia 192. Black-throated Tit 193. Brownish-flanked Bush Warbler 194. Aberrant Bush Warbler 195. Black-throated Tit 196. Lesser Whitethroat 197. Whiskered Yuhina 198. Black-chinned Yuhina 199. Indian White-eye 200. Dark-sided Flycatcher 201. Asian Brown Flycatcher 202. Indian Robin 203. Oriental Magpie-Robin 204. Blue-throated Blue Flycatcher 205. Small Niltava 206. Ruffous-bellied Niltava 207. Verditer Flycatcher 208. Indian Blue Robin 209. Bluethroat 210. Blue Whistling-Thrush 211. Little Forktail 212. Spotted forktail 213. Slaty-backed Forktail 214. Siberian Rubythroat 215. Himalayan Rubythroat 216. Himalayan Bluetail 217. Golden Bush-Robin 218. Slaty-blue Flycatcher 219. Rufous –gorgeted Flycatcher 220. Little Pied Flycatcher 221. Ultramarine Flycatcher 222. Rusty-tailed Flycatcher 223. Taiga Flycatcher 224. Red-breasted Flycatcher 225. Crested Bunting 226. Chestnut-eared Bunting 227. Rock Bunting 228. White-capped Bunting 229. Pied Cuckoo 230. Asian Koel 231. Banded Bay Cuckoo 232. Large Hawk-Cuckoo 233. Common Hawk-Cuckoo 234. Indian Cuckoo 235. Himalayan Cuckoo 236. Common Cuckoo 237. Sirkeer Malkoha 238. Grey Nightjar 239. Lagre-tailed Nightjar 240. Himalayan Swiftlet 241. Alpine Swaift 242. Little Swift 243. White-breasted Waterhen 244. Brown Crake 245. Common Crane 246. Black-winged Stilt 247. Indian Grey Hornbill 248. Common Kingfisher 249. White Throated Kingfisher 250. Crested Kingfisher 251. Blue-bearded Beer-eater 252. Chestnut-headed Bee-eater 253. Indian Roller 254. Coppersmith Barbet 255. Great Barbet 256. Lineated Barbet 257. Brown-headed Barbet 258. Blue-throated Barbet 259. Speckled Piculet 260. Grey-capped Woodpecker 261. Brown-fronted Woodpecker 262. Rufous-bellied Woodpecker 263. Fulvous-breasted Woodpecker 264. Himalayan Woodpecker 265. Greater Flameback 266. Lesser Yellownape 267. Scaly-bellied Woodpecker 268. Grey-headed Woodpecker 269. Greater Yellownape 270. Grey Treepie 271. Red-billed Chough 272. House Crow 273. Large-billed Crow 274. Yellow-bellied Fairy-Fantail 275. Grey-headed Canary-Fiycatcher 276. Fire-capped Tit 277. Yellow-browed Tit 278. Coal Tit 279. Green-backed Tit 280. Cinereous Tit 281. Himalayan Black-lored Tit 282. Common Tailorbird 283. Striated Prinia 284. Grey-crowned Prinia 285. Grey-breasted Prinia 286. Ashy Prinia 287. Thick-billed Warbler 288. Black-chinned Babbler 289. White-browed Scimitar-Babbler 290. Rusty-cheeked Scimitar-Babbler 291. Striated Laughingthrush 292. Jungle Babbler 293. White-crested Laughingthrush 294. Rufous-chinged Laughingthrush 295. Spotted Laughingthrush 296. White-throated Laughingthrush 297. Streaked Laughingthrush 298. Chestnut-crowned Laughingthrush 299. Rufous Sibia 300. Red-billed Leiothrix 301. Blue-winged Minla 302. Chestnut-tailed Minla 303. Wallcreeper 304. Chestnut-bellied Nuthatch 305. White-tailed Nuthatch 306. White-cheeked Nuthatch 307. Velvet-fronted Nuthatch 308. Blue-fronted Redstart 309. Plumbeous Redstart 310. White-capped Redstart 311. Blue-capped Redstart 312. Black Redstart 313. Chestnut-bellied Rock-Thrush 314. Blue-capped Rock-Thrush 315. Blue Rock Thrush 316. Siberian Stonechat 317. Pied Bushchat 318. Grey Bushchat 319. Brown Rock Chat 320. Fire-breasted Flowerpecker 321. Purple Sunbird 322. Fire-tailed Sunbird 323. Green-tailed Sunbird 324. Crimson Sunbird 325. Orange-bellied Leafbird 326. White-rumped Munia 327. Scaly-breasted Munia 328. Asian Emerald Dove 329. Pin-tailed Green-Pigeon 330. Wedge-tailed Green-Pigeon"
+        }
+      ]
+    }
+  ]
+}

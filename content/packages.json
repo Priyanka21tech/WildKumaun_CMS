@@ -1,0 +1,155 @@
+{
+  "source": "index.html (Packages section) + work-from-hills.html + sattal-5n-6d-birding-tour.html",
+  "sectionTitle": "Packages",
+  "packages": [
+    {
+      "id": "work-from-hills",
+      "title": "Work from Hills",
+      "blurb": "A stunning_location, not to mention the high-speed internet. Amidst_nature and with modern_amenities, close_to_Delhi. Wild Kumaon is all set to make you experience Sattal and take care of you on your remote working.",
+      "note": "Underscores in the blurb are verbatim from the live site.",
+      "image": "assets/images/work-from-hills-1024x683.jpg",
+      "cta": { "label": "Enquiry", "href": "#quiry" },
+      "page": "/work-from-hills",
+      "durations": ["A Week", "2 Week", "1 Month"],
+      "detailCta": { "label": "Make A Enquiry", "sic": "Make An Enquiry" }
+    },
+    {
+      "id": "kumaon-culture",
+      "title": "Kumaon Culture with us on weekends.",
+      "blurb": "Curated local, cultural and heritage experiences of the Kumaon region.",
+      "image": "assets/images/kumaon-culture-img-1024x683.jpg",
+      "cta": { "label": "Enquiry", "href": "#quiry" },
+      "page": null
+    },
+    {
+      "id": "camping-adventure",
+      "title": "Camping and Adventure in Kumaon.",
+      "blurb": "Adventure is a necessity and we never forget it!",
+      "image": "assets/images/camping-and-adventures-1024x683.jpg",
+      "cta": { "label": "Enquiry", "href": "#quiry" },
+      "page": null
+    },
+    {
+      "id": "birding-tours",
+      "title": "Birding Tours",
+      "blurb": "Target Oriented, Beginners or Photography focused… our dedicated team designs and deliver the tour you want",
+      "image": "assets/images/birding-tour-img-1024x683.jpg",
+      "cta": { "label": "Enquiry", "href": "#quiry" },
+      "page": "/sattal-5n-6d-birding-tour"
+    }
+  ],
+  "tours": [
+    {
+      "id": "sattal-5n-6d",
+      "title": "BIRDING TOURS",
+      "slug": "/sattal-5n-6d-birding-tour",
+      "duration": "5 Nights / 6 Days",
+      "overview": [
+        "Overview : Welcome to WILD KUMAON, your premier destination for extraordinary birding tours. Immerse yourself in the enchanting world of avian wonders as we take you on unforgettable journeys to some of the most remarkable birding destinations in Kumaon and Uttarakhand.",
+        "At WILD KUMAON, we prioritize your safety, comfort, and satisfaction throughout your birding adventure. Our itineraries are carefully designed to maximize your birding opportunities while also providing time to soak in the natural beauty and tranquility of Sattal and around. Our expert guidance, comfortable accommodations, and seamless logistics make your birdwatching experience truly exceptional.",
+        "Whether you’re an avid birder, target oriented or a novice enthusiast. our itineraries cater to all levels of experience.",
+        "Our team of naturalists is not only knowledgeable but also deeply connected to the local birding community. This network allows us to stay informed about the latest bird sightings, ensuring that we always provide you with the most up-to-date information and the best opportunities to spot rare and sought-after species during our tours.",
+        "The benefits of our network of naturalists and their field sightings updates extend directly to you, our valued customers.",
+        "Ready to embark on an extraordinary birding adventure in Sattal and other regions of Uttarakhand? choose our tours here or contact us now to customize your dream birding tour and let us create a tailor-made experience that will leave you with memories to cherish for a lifetime."
+      ],
+      "highlights": [
+        "80+ Himalayan Bird Species.",
+        "Visit beautiful Lakes of Sattal.",
+        "Bird Blind session."
+      ],
+      "logistics": "The Pick and Drop can be changed according to your requirement. in this Itinerary, the tour Starts from the nearest railway Station Kathgodam and also drop at the same point.",
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Arrival at Sattal.",
+          "sessions": [
+            {
+              "when": "Morning",
+              "text": "The first morning session we will be doing a bird hide session. this will provide us with many species and also there clear and good photographs. Hides or feeders are always good for Woodpecker and Thrushes.",
+              "species": ["Lesser Yellownape Woodpecker", "Greater Yellownape Woodpecker", "Kalij Pheasant", "Red Junglefowl", "Black Throated Thrush", "Rufous Chinned LaughingThrush", "Red Billed Leiothrix"]
+            },
+            {
+              "when": "Evening",
+              "location": "Chanfi region (Sattal Vicinity)",
+              "text": "Chanfi area has flowing streams and rivers, making it a very different habitat in comparison of Sattal and only place in the itinerary with a flowing water habitat. Thus many unique birds appear there.",
+              "species": ["Asian Barred Owlet", "Brown Fish Owl", "Tawny Fish Owl", "Crested Kingfisher", "Slaty-backed Forktail", "Little Forktail", "Spotted Forktail"]
+            }
+          ]
+        },
+        {
+          "day": 2,
+          "title": "Ranibag",
+          "intro": "Ranibag is a part of the lower Himalayan foothill forest belt , extending from Haldwani to Kathgodam region. The area holds a mix of riverine, sal , and scrub forests , anad you may find some species not commonly seen in Jeolikote or Sattal .",
+          "sessions": [
+            {
+              "when": "Morning",
+              "text": "Forest and riverine birding in Ranibag .",
+              "species": ["Crested Kingfisher", "Brown-capped Pygmy Woodpecker", "White-throated Fantail", "Speckled Piculet", "Red-vented Bulbul", "Spotted Dove", "Grey-headed Canary Flycatcher", "Grey Bushchat"]
+            },
+            {
+              "when": "Evening",
+              "text": "Ranibag adjoining woodland and forest edge",
+              "species": ["Brown Rock Chat", "Himalayan Bulbul", "Rufous Treepie", "Black-hooded Oriole", "Common Woodshrike", "Common Green Magpie"]
+            }
+          ]
+        },
+        {
+          "day": 3,
+          "title": "Nainital Outskirt",
+          "intro": "Nainital Outskirt is a gem for finches and higher altitude small bird species.",
+          "sessions": [
+            {
+              "when": "Morning",
+              "text": "Nainital Outskirt visit.",
+              "species": ["Vinaceous Rosefinch", "Scaly Thrush", "Mistle Thrush", "Long-Billed Thrush", "Chestnut Thrush", "Mountain Hawk Eagle", "Black Eagle", "Rufous Bellied Woodpecker", "Himalayan Woodpecker", "Scaly bellied Woodpecker"]
+            },
+            {
+              "when": "Evening",
+              "text": "Ramgarh Visit.",
+              "species": ["Black-faced Warbler", "Whiskered Yuhina", "Collared Owlet", "Pink-browed Rosefinch", "Streaked throated Scimitar Babbler", "White-browed Scimitar Babbler", "White-tailed Nuthatch"]
+            }
+          ]
+        },
+        {
+          "day": 4,
+          "title": "Shyamkhet",
+          "sessions": [
+            {
+              "when": "Morning",
+              "text": "Shyamkhet region. ShyamKhet is below the dense habitat of Ramgarh region, and is a home to finches, sunbirds and thrushes in the winters. as these birds migrates down when there is snowfall in the higher altitude and Shyamkhet is the perfect place to find them.",
+              "species": ["European Goldfinch", "Gray-winged Bluebird", "Yellow-Breasted Greenfinch", "Maroon Oriole", "Green-tailed Sunbird", "Scaly Thrush", "Mistle Thrush", "Long-Billed Thrush", "Chestnut Thrush", "Mountain Hawk Eagle", "Black Eagle", "Rufous Bellied Woodpecker", "Himalayan Woodpecker", "Scaly bellied Woodpecker"]
+            },
+            {
+              "when": "Evening",
+              "text": "Chanfi.",
+              "species": ["Scaly-breasted Wren Babbler", "Aberrant Bush Warbler", "Western Crowned Warbler", "Himalayan and Siberian Ruby-throat", "Yellow Belly Fantail", "Bar-tailed Treecreeper", "Brown Dipper", "Crested Kingfisher", "Little Forktail", "Thrushes and Warbler"]
+            }
+          ]
+        },
+        {
+          "day": 5,
+          "title": "Pangot birding.",
+          "sessions": [
+            {
+              "when": "Morning and Evening",
+              "text": "Pangot falls inside Naina Devi Wildlife Sanctuary and itself a destination for bird watchers, we will be spending one morning session here.",
+              "species": ["Koklass Pheasant", "Himalayan Woodpecker", "Eurasian Jay", "Spot winged Grosbeak", "Himalayan Griffon", "Alpine Accentor"]
+            }
+          ]
+        },
+        {
+          "day": 6,
+          "title": "Sattal Studio",
+          "sessions": [
+            {
+              "when": "Morning session",
+              "text": "Sattal Studio region birding and Sattal Trail",
+              "species": ["Orange-bellied Leafbird", "Speckled Piculet", "Black-throated Sunbird", "Chestnut-bellied Nuthatch", "Velvet-fronted Nuthatch", "Himalayan Shrike Babbler"]
+            }
+          ]
+        }
+      ],
+      "cta": { "label": "Make A Booking" }
+    }
+  ]
+}

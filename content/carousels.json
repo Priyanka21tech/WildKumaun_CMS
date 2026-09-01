@@ -1,0 +1,668 @@
+[
+  {
+    "id": "265f31c",
+    "page": "/bird-watching-in-sattal",
+    "type": "image-carousel",
+    "settings": {
+      "slidesToShow": 2,
+      "slidesToScroll": 2,
+      "navigation": "arrows",
+      "autoplay": true,
+      "autoplaySpeed": 5000,
+      "pauseOnHover": true,
+      "pauseOnInteraction": true,
+      "infinite": true,
+      "speed": 500,
+      "spacing": 5
+    },
+    "slides": [
+      {
+        "image": "/media/birds-10-1024x683.jpg",
+        "full": "/media/birds-10.jpg",
+        "alt": "birds-10"
+      },
+      {
+        "image": "/media/birds-11-1024x683.jpg",
+        "full": "/media/birds-11.jpg",
+        "alt": "birds-11"
+      },
+      {
+        "image": "/media/birds-12-1024x683.jpg",
+        "full": "/media/birds-12.jpg",
+        "alt": "birds-12"
+      },
+      {
+        "image": "/media/birds-13-1024x683.jpg",
+        "full": "/media/birds-13.jpg",
+        "alt": "birds-13"
+      },
+      {
+        "image": "/media/birds-14-1024x683.jpg",
+        "full": "/media/birds-14.jpg",
+        "alt": "birds-14"
+      },
+      {
+        "image": "/media/birds-5-1024x683.jpg",
+        "full": "/media/birds-5.jpg",
+        "alt": "birds-5"
+      },
+      {
+        "image": "/media/birds-6-1024x683.jpg",
+        "full": "/media/birds-6.jpg",
+        "alt": "birds-6"
+      },
+      {
+        "image": "/media/birds-7-1024x683.jpg",
+        "full": "/media/birds-7.jpg",
+        "alt": "birds-7"
+      },
+      {
+        "image": "/media/birds-8-1024x683.jpg",
+        "full": "/media/birds-8.jpg",
+        "alt": "birds-8"
+      },
+      {
+        "image": "/media/birds-4-1024x683.jpg",
+        "full": "/media/birds-4.jpg",
+        "alt": "birds-4"
+      }
+    ]
+  },
+  {
+    "id": "46346f9",
+    "page": "/experiences",
+    "type": "image-carousel",
+    "settings": {
+      "slidesToShow": 4,
+      "slidesToScroll": 1,
+      "navigation": "arrows",
+      "autoplay": true,
+      "autoplaySpeed": 5000,
+      "pauseOnHover": true,
+      "pauseOnInteraction": true,
+      "infinite": true,
+      "speed": 500,
+      "spacing": 20
+    },
+    "slides": [
+      {
+        "image": "/media/swimming-5.jpg",
+        "full": "/media/swimming-5.jpg",
+        "alt": "swimming-5"
+      },
+      {
+        "image": "/media/swimming-6.jpg",
+        "full": "/media/swimming-6.jpg",
+        "alt": "swimming-6"
+      },
+      {
+        "image": "/media/swimming-7.jpg",
+        "full": "/media/swimming-7.jpg",
+        "alt": "swimming-7"
+      },
+      {
+        "image": "/media/swimming-8.jpg",
+        "full": "/media/swimming-8.jpg",
+        "alt": "swimming-8"
+      },
+      {
+        "image": "/media/swimming-1.jpg",
+        "full": "/media/swimming-1.jpg",
+        "alt": "swimming-1"
+      },
+      {
+        "image": "/media/swimming-3.jpg",
+        "full": "/media/swimming-3.jpg",
+        "alt": "swimming-3"
+      },
+      {
+        "image": "/media/swimming-4.jpg",
+        "full": "/media/swimming-4.jpg",
+        "alt": "swimming-4"
+      }
+    ]
+  },
+  {
+    "id": "166fbc6",
+    "page": "/experiences",
+    "type": "image-carousel",
+    "settings": {
+      "slidesToShow": 4,
+      "slidesToScroll": 1,
+      "navigation": "arrows",
+      "autoplay": true,
+      "autoplaySpeed": 5000,
+      "pauseOnHover": true,
+      "pauseOnInteraction": true,
+      "infinite": true,
+      "speed": 500,
+      "spacing": 20
+    },
+    "slides": [
+      {
+        "image": "/media/nature-walk-5.jpg",
+        "full": "/media/nature-walk-5.jpg",
+        "alt": "nature-walk-5"
+      },
+      {
+        "image": "/media/nature-walk-6.jpg",
+        "full": "/media/nature-walk-6.jpg",
+        "alt": "nature-walk-6"
+      },
+      {
+        "image": "/media/nature-walk-7.jpg",
+        "full": "/media/nature-walk-7.jpg",
+        "alt": "nature-walk-7"
+      },
+      {
+        "image": "/media/nature-walk-8.jpg",
+        "full": "/media/nature-walk-8.jpg",
+        "alt": "nature-walk-8"
+      },
+      {
+        "image": "/media/nature-walk-10.jpg",
+        "full": "/media/nature-walk-10.jpg",
+        "alt": "nature-walk-10"
+      },
+      {
+        "image": "/media/nature-walk-1.jpg",
+        "full": "/media/nature-walk-1.jpg",
+        "alt": "nature-walk"
+      },
+      {
+        "image": "/media/nature-walk-2.jpg",
+        "full": "/media/nature-walk-2.jpg",
+        "alt": "nature-walk-2"
+      },
+      {
+        "image": "/media/nature-walk-3.jpg",
+        "full": "/media/nature-walk-3.jpg",
+        "alt": "nature-walk-3"
+      },
+      {
+        "image": "/media/nature-walk-4.jpg",
+        "full": "/media/nature-walk-4.jpg",
+        "alt": "nature-walk-4"
+      },
+      {
+        "image": "/media/nature-walk-9.jpg",
+        "full": "/media/nature-walk-9.jpg",
+        "alt": "nature-walk-9"
+      }
+    ]
+  },
+  {
+    "id": "d482512",
+    "page": "/experiences",
+    "type": "image-carousel",
+    "settings": {
+      "slidesToShow": 4,
+      "slidesToScroll": 1,
+      "navigation": "arrows",
+      "autoplay": true,
+      "autoplaySpeed": 5000,
+      "pauseOnHover": true,
+      "pauseOnInteraction": true,
+      "infinite": true,
+      "speed": 500,
+      "spacing": 20
+    },
+    "slides": [
+      {
+        "image": "/media/birds-37.jpg",
+        "full": "/media/birds-37.jpg",
+        "alt": "birds-37"
+      },
+      {
+        "image": "/media/birds-36.jpg",
+        "full": "/media/birds-36.jpg",
+        "alt": "birds-36"
+      },
+      {
+        "image": "/media/birds-35.jpg",
+        "full": "/media/birds-35.jpg",
+        "alt": "birds-35"
+      },
+      {
+        "image": "/media/birds-34.jpg",
+        "full": "/media/birds-34.jpg",
+        "alt": "birds-34"
+      },
+      {
+        "image": "/media/birds-33.jpg",
+        "full": "/media/birds-33.jpg",
+        "alt": "birds-33"
+      },
+      {
+        "image": "/media/birds-32.jpg",
+        "full": "/media/birds-32.jpg",
+        "alt": "birds-32"
+      },
+      {
+        "image": "/media/birds-31.jpg",
+        "full": "/media/birds-31.jpg",
+        "alt": "birds-31"
+      },
+      {
+        "image": "/media/birds-30.jpg",
+        "full": "/media/birds-30.jpg",
+        "alt": "birds-30"
+      },
+      {
+        "image": "/media/birds-29.jpg",
+        "full": "/media/birds-29.jpg",
+        "alt": "birds-29"
+      },
+      {
+        "image": "/media/birds-28.jpg",
+        "full": "/media/birds-28.jpg",
+        "alt": "birds-28"
+      },
+      {
+        "image": "/media/birds-27.jpg",
+        "full": "/media/birds-27.jpg",
+        "alt": "birds-27"
+      },
+      {
+        "image": "/media/birds-26.jpg",
+        "full": "/media/birds-26.jpg",
+        "alt": "birds-26"
+      },
+      {
+        "image": "/media/birds-25.jpg",
+        "full": "/media/birds-25.jpg",
+        "alt": "birds-25"
+      },
+      {
+        "image": "/media/birds-24.jpg",
+        "full": "/media/birds-24.jpg",
+        "alt": "birds-24"
+      },
+      {
+        "image": "/media/birds-23.jpg",
+        "full": "/media/birds-23.jpg",
+        "alt": "birds-23"
+      },
+      {
+        "image": "/media/birds-22.jpg",
+        "full": "/media/birds-22.jpg",
+        "alt": "birds-22"
+      },
+      {
+        "image": "/media/birds-21.jpg",
+        "full": "/media/birds-21.jpg",
+        "alt": "birds-21"
+      },
+      {
+        "image": "/media/birds-20.jpg",
+        "full": "/media/birds-20.jpg",
+        "alt": "birds-20"
+      },
+      {
+        "image": "/media/birds-19.jpg",
+        "full": "/media/birds-19.jpg",
+        "alt": "birds-19"
+      },
+      {
+        "image": "/media/birds-18.jpg",
+        "full": "/media/birds-18.jpg",
+        "alt": "birds-18"
+      },
+      {
+        "image": "/media/birds-17.jpg",
+        "full": "/media/birds-17.jpg",
+        "alt": "birds-17"
+      },
+      {
+        "image": "/media/birds-16.jpg",
+        "full": "/media/birds-16.jpg",
+        "alt": "birds-16"
+      },
+      {
+        "image": "/media/birds-15.jpg",
+        "full": "/media/birds-15.jpg",
+        "alt": "birds-15"
+      },
+      {
+        "image": "/media/birds-14.jpg",
+        "full": "/media/birds-14.jpg",
+        "alt": "birds-14"
+      },
+      {
+        "image": "/media/birds-13.jpg",
+        "full": "/media/birds-13.jpg",
+        "alt": "birds-13"
+      },
+      {
+        "image": "/media/birds-12.jpg",
+        "full": "/media/birds-12.jpg",
+        "alt": "birds-12"
+      },
+      {
+        "image": "/media/birds-11.jpg",
+        "full": "/media/birds-11.jpg",
+        "alt": "birds-11"
+      },
+      {
+        "image": "/media/birds-10.jpg",
+        "full": "/media/birds-10.jpg",
+        "alt": "birds-10"
+      },
+      {
+        "image": "/media/birds-9.jpg",
+        "full": "/media/birds-9.jpg",
+        "alt": "birds-9"
+      },
+      {
+        "image": "/media/birds-8.jpg",
+        "full": "/media/birds-8.jpg",
+        "alt": "birds-8"
+      },
+      {
+        "image": "/media/birds-7.jpg",
+        "full": "/media/birds-7.jpg",
+        "alt": "birds-7"
+      },
+      {
+        "image": "/media/birds-6.jpg",
+        "full": "/media/birds-6.jpg",
+        "alt": "birds-6"
+      },
+      {
+        "image": "/media/birds-5.jpg",
+        "full": "/media/birds-5.jpg",
+        "alt": "birds-5"
+      },
+      {
+        "image": "/media/birds-4.jpg",
+        "full": "/media/birds-4.jpg",
+        "alt": "birds-4"
+      },
+      {
+        "image": "/media/birds-38.jpg",
+        "full": "/media/birds-38.jpg",
+        "alt": "birds-38"
+      }
+    ]
+  },
+  {
+    "id": "index-hero-1",
+    "page": "/",
+    "type": "content-slider",
+    "settings": {
+      "slidesToShow": 1,
+      "slidesToShowTablet": 1,
+      "slidesToShowMobile": 1,
+      "navigation": "arrows",
+      "autoplay": true,
+      "autoplaySpeed": 5100,
+      "pauseOnHover": true,
+      "infinite": true,
+      "speed": 500,
+      "spacing": 0
+    },
+    "slides": [
+      {
+        "image": "/media/wildkumaon-resort-img.jpg",
+        "text": "Nature enterprises and sustainable practices. Wild Kumaon Brings you the Nature experiences of Sattal.",
+        "link": null
+      },
+      {
+        "image": "/media/home-slider-2.jpg",
+        "text": "Wild Kumaon is preferred by Nature lovers, Bird watchers and anyone who wants to get surrounded by Peace and Trees.",
+        "link": null
+      },
+      {
+        "image": "/media/green-tailed-sunbird.jpg",
+        "text": "Sattal – Home for more than 250 species and an ultimate destination for birders.",
+        "link": null
+      },
+      {
+        "image": "/media/room-img-1.jpg",
+        "text": "healthy accommodation with all standard amenities, comfort inside – wild outside",
+        "link": null
+      },
+      {
+        "image": "/media/wildkumaon-resort.jpg",
+        "text": "WILD KUMAON- An Eco-Resort at Sattal It is one of the purely dedicated Wildlife Lodges in Uttarakhand, Himalayas, India. The team is dedicated to hosting a guest in ethical ways and eco-friendly practices. This place to stay is preferred by Nature Lovers and guests who want to accommodate themselves in a fresh environment and only between a few people. Accommodation is perfect if you are visiting Sattal to enjoy its birds and Nature. Wild Kumaon also loves to host on monthly basis, long stays in a Homestay manner for Work from Hills/Work from Home. Know More AMENITIES Providing Hospitality the correct way Kettle Laundry Wi-Fi Heater Hot Water Car Rentel RO Water Wi-fi High Speed Linens Fine Dinning Toiletries Parking Area Freshwater lakes nearby We are a choice of Bird Watchers and preferred by Nature Lovers, this Summer we are looking to host people who choose to stay longer, our team is dedicated to providing them with the beautiful hosting experience. Nearby Places are lakes, forests and the serene nature of Sattal, Bhimtal. Be a free bird in the Kumaon further Kumaon visits and tours designed with a decade of experience of Naturalist…call or make an enquiry to know more. Make An Enquiry Packages Work from Hills A stunning_location, not to mention the high-speed internet. Amidst_nature and with modern_amenities, close_to_Delhi. Wild Kumaon is all set to make you experience Sattal and take care of you on your remote working. Enquiry Kumaon Culture with us on weekends. Curated local, cultural and heritage experiences of the Kumaon region. Enquiry Camping and Adventure in Kumaon. Adventure is a necessity and we never forget it! Enquiry Birding Tours Target Oriented, Beginners or Photography focused… our dedicated team designs and deliver the tour you want Enquiry GALLERY TESTIMONIALS",
+        "link": "/media/open-area-img.jpg"
+      }
+    ]
+  },
+  {
+    "id": "index-hero-2",
+    "page": "/",
+    "type": "content-slider",
+    "settings": {
+      "slidesToShow": 1,
+      "slidesToShowTablet": 1,
+      "slidesToShowMobile": 1,
+      "navigation": "arrows",
+      "autoplay": true,
+      "autoplaySpeed": 5000,
+      "pauseOnHover": true,
+      "infinite": true,
+      "speed": 500,
+      "spacing": 0
+    },
+    "slides": [
+      {
+        "image": null,
+        "text": "Wild Kumaon is where you want to stay in Sattal. Below are various points which I think works in favour of them... 1. New property 2. Humble people 3. Good jungle environment 4. Good food 5. Learned naturalist 6. Good bird sighting within the premises I really enjoyed my stay there...before staying here I stayed at some other property in Sattal. I am glad I shifted here. Do visit there and enjoy the hospitality of Wild Kumaon!!!​ Dheeraj Mrig",
+        "link": null
+      },
+      {
+        "image": null,
+        "text": "We had this wonderful tour with Ankit Das Loiwal' in late March to Chopta, a team of 'Wild Kumaon'. 'Ankit' the tour leader made us experience wonderful sightings, well behaviour, comfortable and deep birding. we will always go with 'Ankit Das' from now on, really appreciate his field work and the gentle approach towards birds. We made really good photographs of higher altitude rare birds. Thankyou 'Wild Kumaon' and 'Ankit Das Loiwal' for this amazing tour. Looking forward for my next visit to Sattal and Uttarakhand. Mitesh Patel",
+        "link": null
+      },
+      {
+        "image": null,
+        "text": "We have recently been to Wild Kumaon, Sattal. It was an awesome experience... Location, ambiance, space, cleanliness are more than what I had expected. Simply great site on best location. Highly recommended to friends interested in birding. Special mention of Mr. Gopal alongwith Madan bhai for taking good care with delicious kumaoni food. A very soft spoken and knowledgeable naturalist Ankit das. Looking forward to visit again. Kanchan Zambre",
+        "link": null
+      },
+      {
+        "image": null,
+        "text": "Awesome experience... We have recently been to Wild Kumaon, Sattal. The place is fantastic, a nature lover's paradise. One can hear the chirping of the birds from morning till evening. We had the most hospitable hosts, very friendly, caring, and served very delicious food (special thanks for Kumaonis food). One can have the feeling of a family in this beautiful place. Highly recommended this stay. Thanks to Neer and the team for being an awesome host at Wild Kumaon Daljeet Dhillon View More Ask Your Queries Please enable JavaScript in your browser to complete this form. Name * Numbers of Persons * Email * Mobile * Message Message Send Ask Your Queries Want to Know more about your stay at Wild Kumaon, Bird Watching Package, fill the adjacent form Or Make A Booking Partners &amp; Associations Mob. - 9520017658 , 8433240272, 8937870470 Email. wildkumaon@gmail.com Address: WildKumaon, Sattal",
+        "link": "/guest-book"
+      }
+    ]
+  },
+  {
+    "id": "1f0100e",
+    "page": "/",
+    "type": "image-carousel",
+    "settings": {
+      "slidesToShow": 1,
+      "slidesToScroll": 1,
+      "navigation": "dots",
+      "autoplay": true,
+      "autoplaySpeed": 5000,
+      "pauseOnHover": true,
+      "pauseOnInteraction": true,
+      "infinite": true,
+      "speed": 500,
+      "spacing": 0
+    },
+    "slides": [
+      {
+        "image": "/media/open-area-img-1024x683.jpg",
+        "full": "/media/open-area-img.jpg",
+        "alt": "open-area-img"
+      },
+      {
+        "image": "/media/wild-kumaon-an-eco-resort-1024x683.jpg",
+        "full": "/media/wild-kumaon-an-eco-resort.jpg",
+        "alt": "wild-kumaon-an-eco-resort"
+      },
+      {
+        "image": "/media/forest-view-of-the-property-1024x683.jpg",
+        "full": "/media/forest-view-of-the-property.jpg",
+        "alt": "forest-view-of-the-property"
+      },
+      {
+        "image": "/media/room-img-1024x683.jpg",
+        "full": "/media/room-img.jpg",
+        "alt": "room-img"
+      }
+    ]
+  },
+  {
+    "id": "ddb0fb8",
+    "page": "/",
+    "type": "image-carousel",
+    "settings": {
+      "slidesToShow": 4,
+      "slidesToScroll": 1,
+      "navigation": "arrows",
+      "autoplay": true,
+      "autoplaySpeed": 5000,
+      "pauseOnHover": true,
+      "pauseOnInteraction": true,
+      "infinite": true,
+      "speed": 500,
+      "spacing": 20
+    },
+    "slides": [
+      {
+        "image": "/media/stay-outdoor-img.jpg",
+        "full": "/media/stay-outdoor-img.jpg",
+        "alt": "stay-outdoor-img"
+      },
+      {
+        "image": "/media/room-img.jpg",
+        "full": "/media/room-img.jpg",
+        "alt": "room-img"
+      },
+      {
+        "image": "/media/open-area-img.jpg",
+        "full": "/media/open-area-img.jpg",
+        "alt": "open-area-img"
+      },
+      {
+        "image": "/media/sitting-area-img.jpg",
+        "full": "/media/sitting-area-img.jpg",
+        "alt": "sitting-area-img"
+      },
+      {
+        "image": "/media/birds-1.jpg",
+        "full": "/media/birds-1.jpg",
+        "alt": "birds-1"
+      },
+      {
+        "image": "/media/birds-3.jpg",
+        "full": "/media/birds-3.jpg",
+        "alt": "birds-3"
+      },
+      {
+        "image": "/media/birds-2.jpg",
+        "full": "/media/birds-2.jpg",
+        "alt": "birds-2"
+      },
+      {
+        "image": "/media/outdoor-garden.jpg",
+        "full": "/media/outdoor-garden.jpg",
+        "alt": "outdoor-garden"
+      },
+      {
+        "image": "/media/forest-view-of-the-property-1.jpg",
+        "full": "/media/forest-view-of-the-property-1.jpg",
+        "alt": "forest-view-of-the-property"
+      },
+      {
+        "image": "/media/guest-enjoy-nature-view.jpg",
+        "full": "/media/guest-enjoy-nature-view.jpg",
+        "alt": "guest-enjoy-nature-view"
+      },
+      {
+        "image": "/media/wild-kumaon-an-eco-resort-1.jpg",
+        "full": "/media/wild-kumaon-an-eco-resort-1.jpg",
+        "alt": "wild-kumaon-an-eco-resort"
+      },
+      {
+        "image": "/media/balcony-view.jpg",
+        "full": "/media/balcony-view.jpg",
+        "alt": "balcony-view"
+      },
+      {
+        "image": "/media/bird-hide.jpg",
+        "full": "/media/bird-hide.jpg",
+        "alt": "bird-hide"
+      }
+    ]
+  },
+  {
+    "id": "265f31c",
+    "page": "/spring-trip-report",
+    "type": "image-carousel",
+    "settings": {
+      "slidesToShow": 2,
+      "slidesToScroll": 2,
+      "navigation": "arrows",
+      "autoplay": true,
+      "autoplaySpeed": 5000,
+      "pauseOnHover": true,
+      "pauseOnInteraction": true,
+      "infinite": true,
+      "speed": 500,
+      "spacing": 5
+    },
+    "slides": [
+      {
+        "image": "/media/IMG-20220321-WA0019-1024x1024.jpg",
+        "full": "/media/IMG-20220321-WA0019.jpg",
+        "alt": "IMG-20220321-WA0019"
+      },
+      {
+        "image": "/media/IMG-20220321-WA0020-1024x1024.jpg",
+        "full": "/media/IMG-20220321-WA0020.jpg",
+        "alt": "IMG-20220321-WA0020"
+      },
+      {
+        "image": "/media/IMG-20220321-WA0021-1024x1024.jpg",
+        "full": "/media/IMG-20220321-WA0021.jpg",
+        "alt": "IMG-20220321-WA0021"
+      },
+      {
+        "image": "/media/IMG-20220321-WA0022-1024x1024.jpg",
+        "full": "/media/IMG-20220321-WA0022.jpg",
+        "alt": "IMG-20220321-WA0022"
+      },
+      {
+        "image": "/media/IMG-20220321-WA0023-1024x1024.jpg",
+        "full": "/media/IMG-20220321-WA0023.jpg",
+        "alt": "IMG-20220321-WA0023"
+      },
+      {
+        "image": "/media/IMG-20220321-WA0013-1024x1024.jpg",
+        "full": "/media/IMG-20220321-WA0013.jpg",
+        "alt": "IMG-20220321-WA0013"
+      },
+      {
+        "image": "/media/IMG-20220321-WA0014-1024x1024.jpg",
+        "full": "/media/IMG-20220321-WA0014.jpg",
+        "alt": "IMG-20220321-WA0014"
+      },
+      {
+        "image": "/media/IMG-20220321-WA0015-1024x1024.jpg",
+        "full": "/media/IMG-20220321-WA0015.jpg",
+        "alt": "IMG-20220321-WA0015"
+      },
+      {
+        "image": "/media/IMG-20220321-WA0016-1024x1024.jpg",
+        "full": "/media/IMG-20220321-WA0016.jpg",
+        "alt": "IMG-20220321-WA0016"
+      },
+      {
+        "image": "/media/IMG-20220321-WA0017-1024x1024.jpg",
+        "full": "/media/IMG-20220321-WA0017.jpg",
+        "alt": "IMG-20220321-WA0017"
+      },
+      {
+        "image": "/media/IMG-20220321-WA0018-1024x1024.jpg",
+        "full": "/media/IMG-20220321-WA0018.jpg",
+        "alt": "IMG-20220321-WA0018"
+      }
+    ]
+  }
+]

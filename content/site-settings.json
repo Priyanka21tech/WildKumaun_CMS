@@ -1,0 +1,78 @@
+{
+  "name": "Wild Kumaon",
+  "legalName": "WILD KUMAON",
+  "tagline": "An Eco-Resort at Sattal",
+  "intro": "Forested Premises, Great location and Experienced team of Naturalist welcomes you to Sattal. Enjoy the hospitality of Wild Kumaon with well researched and excellently designed Birding and Nature tours.",
+  "metaDescription": "Nature enterprises and sustainable practices. Wild Kumaon Brings you the Nature experiences of Sattal. Wild Kumaon is preferred by Nature lovers, Bird watchers and anyone who wants to get surrounded by Peace and Trees.",
+  "logo": "assets/images/wild-kumaon-logo-finale-1-300x219.png",
+  "favicon": "assets/images/favicon-1.png",
+  "contact": {
+    "email": "wildkumaon@gmail.com",
+    "phones": [
+      { "number": "9520017658", "label": "Office — accommodation / reservations" },
+      { "number": "9548466914", "label": "Office — accommodation / reservations" },
+      { "number": "9520017658", "label": "Birding tours, Bird Hide and Outdoor excursions" },
+      { "number": "8433240272", "label": "Property Manager" },
+      { "number": "8937870470", "label": "Phone" }
+    ],
+    "whatsapp": "9520017658",
+    "footerPhones": ["9520017658", "8433240272", "8937870470"],
+    "headerPhones": ["+919520017658", "+919548466914", "+918937870470"]
+  },
+  "address": {
+    "short": "WildKumaon, Sattal",
+    "full": "Bhagatpura, Mehragaon, Sattal Rd, Sattal, Uttarakhand 263136",
+    "locality": "Sattal",
+    "region": "Uttarakhand",
+    "postalCode": "263136",
+    "country": "India"
+  },
+  "social": [
+    { "network": "Facebook", "label": "Facebook" },
+    { "network": "Instagram", "label": "Instagram" }
+  ],
+  "nav": [
+    { "label": "HOME", "href": "/" },
+    { "label": "ABOUT US", "href": "/about-us" },
+    { "label": "BIRDING GUIDES", "href": "/team" },
+    { "label": "SERVICES", "href": "#", "children": [
+      { "label": "RESTAURANT", "href": "/restaurant" },
+      { "label": "WORK FROM HILLS", "href": "/work-from-hills" },
+      { "label": "EXPERIENCES", "href": "/experiences" },
+      { "label": "WELLNESS", "href": "#" },
+      { "label": "BIRDING TOURS", "href": "/sattal-5n-6d-birding-tour" },
+      { "label": "PUBLICATION", "href": "https://www.explorewildindia.app/magazine/explore-wild-india-sep2021", "external": true }
+    ]},
+    { "label": "CONSERVATION", "href": "/conservation" },
+    { "label": "GALLERY", "href": "/gallery", "children": [
+      { "label": "BIRD ART", "href": "/bird-art" }
+    ]},
+    { "label": "CONTACT US", "href": "/contact-us" },
+    { "label": "TESTMONIALS", "href": "/guest-book", "note": "misspelling is as on the live site" },
+    { "label": "BLOG", "href": "/blog", "children": [
+      { "label": "FAQs", "href": "/faqs" }
+    ]}
+  ],
+  "ctas": {
+    "primary": "Make A Booking",
+    "secondary": "Make An Enquiry",
+    "tertiary": "Enquiry",
+    "more": "Know More"
+  },
+  "positioning": [
+    "Nature enterprises and sustainable practices. Wild Kumaon Brings you the Nature experiences of Sattal.",
+    "Wild Kumaon is preferred by Nature lovers, Bird watchers and anyone who wants to get surrounded by Peace and Trees.",
+    "Sattal \u2013 Home for more than 250 species and an ultimate destination for birders.",
+    "healthy accommodation with all standard amenities, comfort inside \u2013 wild outside"
+  ],
+  "howToReach": [
+    { "mode": "By Air", "text": "The nearest Airport to Sattal is Pantnagar Airport situated 61kms from Sattal. (Pick can be arranged)" },
+    { "mode": "By Rail", "text": "The nearest railhead to Sattal is Kathgodam situated 33kms from Sattal. (Pick up can be arranged)" },
+    { "mode": "By Road", "text": "Sattal is well connected by motorable roads connecting major cities and towns of Uttarakhand state. it takes only 6 hours to reach Sattal" }
+  ],
+  "forms": {
+    "enquiry": { "title": "ENQUIRY FORM", "fields": ["Name *", "Numbers of Persons *", "Email *", "Mobile *", "Message", "Website"], "submit": "Send" },
+    "queries": { "title": "Ask Your Queries", "blurb": "Want to Know more about your stay at Wild Kumaon, Bird Watching Package, fill the adjacent form", "fields": ["Name *", "Numbers of Persons *", "Email *", "Mobile *", "Message"], "submit": "Send" },
+    "guestbook": { "title": "Please write your comments", "note": "* indicates required field", "fields": ["Name: *", "Email: *", "Message: *"] }
+  }
+}

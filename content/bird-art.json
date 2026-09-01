@@ -1,0 +1,30 @@
+{
+  "count": 11,
+  "source": "bird-art.html",
+  "title": "Paintings by Abha Singh",
+  "artistStatement": {
+    "lead": "What Abha says about her Art,",
+    "paragraphs": [
+      "Painting is a way of life for me. It’s a combination of old and new methods. It’s constantly evolving.",
+      "Although I paint diverse subjects, birds are special for me. They rouse my imagination and creativity. It gives me the joy to paint a bird that I spot in the wild. Having studied great artists like Leonardo da Vinci, Michelangelo, Raja Ravi Verma, Kishangarh art, etc during my Masters in Fine Arts, I enjoy the conservative style of art for instance good old impressionist art or abstract art. At the same time, I enjoy experimenting with new concepts like pour in acrylic."
+    ]
+  },
+  "cta": { "label": "Order Know", "sic": "Order Now" },
+  "artworks": [
+    { "id": "tawny-fish-owl", "title": "Tawny Fish Owl", "image": "assets/images/Tawny-Fish-Owl.jpg", "titledOnPage": false },
+    { "id": "long-tailed-minivet", "title": "Long-tailed Minivet", "image": "assets/images/Long-tailed-Minivet.jpg", "altImage": "assets/images/Long-tailed-Minivet-1.jpg", "titledOnPage": true },
+    { "id": "long-tailed-broadbill", "title": "Long-tailed Broadbill", "image": "assets/images/Long-tailed-Broadbill.jpg", "altImage": "assets/images/Long-tailed-Broadbill-.jpg", "titledOnPage": true },
+    { "id": "himalayan-bulbul", "title": "Himalayan Bulbul", "image": "assets/images/Himalayan-Bulbul.jpg", "titledOnPage": true },
+    { "id": "chestnut-tailed-starling", "title": "Chestnut-tailed Starling", "image": "assets/images/Chestnut-tailed-Starling.jpg", "titledOnPage": true },
+    { "id": "chestnut-bellied-nuthatch", "title": "Chestnut bellied Nuthatch", "image": "assets/images/Chestnut-bellied-Nuthatch.jpg", "titledOnPage": true },
+    { "id": "blue-fronted-redstart", "title": "Blue fronted Redstart", "image": "assets/images/Blue-fronted-Redstart.jpg", "titledOnPage": true },
+    { "id": "red-billed-blue-magpie", "title": "Red Billed Blue Magpie", "image": "assets/images/Red-billed-blue-Magpie.jpg", "titledOnPage": true },
+    { "id": "white-crested-laughing-thrush", "title": "White-crested Laughing Thrush", "image": "assets/images/White-crested-LaughingThrush-.jpg", "titledOnPage": true },
+    { "id": "orange-headed-thrush", "title": "Orange-headed Thrush", "image": "assets/images/Orange-headed-Thrush.jpg", "titledOnPage": true },
+    { "id": "monal", "title": "Monal", "image": "assets/images/Monal.jpg", "titledOnPage": true }
+  ],
+  "artists": [
+    { "id": "shevali", "name": "SHEVALI", "image": "assets/images/Shevali.jpg" },
+    { "id": "abha", "name": "ABHA", "fullName": "Abha Singh", "image": "assets/images/Abha-Singh.jpg" }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "ok": 102,
+  "skip": 289,
+  "fail": 1,
+  "blocked": 0,
+  "failed": [
+    "wp/wildkumaon.com/wp-content/plugins/wpforms-lite/assets/pro/images/times-solid-white.svg — HTTP 403"
+  ]
+}

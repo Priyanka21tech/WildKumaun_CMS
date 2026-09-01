@@ -1,0 +1,225 @@
+'use client'
+import { useEffect } from 'react'
+import { createCarousel } from '@/lib/carousel'
+
+/**
+ * Runs the behaviour the mirrored markup needs but cannot do on its own, without
+ * pulling in jQuery, Elementor and Owl Carousel to get it.
+ *
+ *   1. Sina content slider — the page hero. Owl's stylesheet hides it outright
+ *      (.owl-carousel{display:none} until .owl-loaded is added by script), which
+ *      is why the hero reads as a tall empty band.
+ *   2. Elementor image carousels — slides are present but unsized, so the track
+ *      collapses.
+ *   3. Scroll-in sections — marked .elementor-invisible (visibility:hidden) and
+ *      revealed by script when they scroll into view.
+ *
+ * Each adapter only locates elements and reads the configuration the markup
+ * already carries; the movement itself is lib/carousel.js. When this data moves
+ * into the CMS, the adapters are what get replaced.
+ */
+
+const num = (v, fallback) => {
+  const n = Number(v)
+  return Number.isFinite(n) && v !== '' && v !== null ? n : fallback
+}
+
+const yes = (v) => v === 'yes' || v === 'true' || v === '1'
+
+function readJson(value) {
+  try {
+    return JSON.parse(value ?? '{}')
+  } catch {
+    return {}
+  }
+}
+
+/**
+ * Sina content slider — the hero. Configuration lives in data-* attributes and
+ * the slides are the element's own children, so a track has to be introduced
+ * for them to move as one.
+ */
+function initSinaSlider(root, teardown) {
+  const slides = Array.from(root.children).filter((el) =>
+    el.classList.contains('sina-cs-item'),
+  )
+  if (!slides.length) return
+
+  const d = root.dataset
+
+  // Owl wraps slides in .owl-stage inside .owl-stage-outer; recreating that
+  // structure keeps the stylesheet's own rules applying as they were written.
+  const outer = document.createElement('div')
+  outer.className = 'owl-stage-outer'
+  const stage = document.createElement('div')
+  stage.className = 'owl-stage'
+  outer.appendChild(stage)
+  slides.forEach((s) => stage.appendChild(s))
+  root.appendChild(outer)
+
+  // The stylesheet keeps .owl-carousel hidden until this class appears.
+  root.classList.add('owl-loaded', 'owl-drag')
+
+  let prevBtn = null
+  let nextBtn = null
+  if (yes(d.nav)) {
+    const nav = document.createElement('div')
+    nav.className = 'owl-nav'
+    prevBtn = document.createElement('button')
+    prevBtn.type = 'button'
+    prevBtn.className = 'owl-prev'
+    prevBtn.setAttribute('aria-label', 'Previous slide')
+    prevBtn.innerHTML = '<span aria-hidden="true">‹</span>'
+    nextBtn = document.createElement('button')
+    nextBtn.type = 'button'
+    nextBtn.className = 'owl-next'
+    nextBtn.setAttribute('aria-label', 'Next slide')
+    nextBtn.innerHTML = '<span aria-hidden="true">›</span>'
+    nav.append(prevBtn, nextBtn)
+    root.appendChild(nav)
+  }
+
+  let dotsHost = null
+  if (yes(d.dots)) {
+    dotsHost = document.createElement('div')
+    dotsHost.className = 'owl-dots'
+    root.appendChild(dotsHost)
+  }
+
+  const destroy = createCarousel(
+    {
+      viewport: outer,
+      track: stage,
+      slides,
+      prevBtn,
+      nextBtn,
+      dotsHost,
+      dotClass: 'owl-dot',
+      dotActiveClass: 'active',
+    },
+    {
+      perView: {
+        lg: num(d.itemLg, 1),
+        md: num(d.itemMd, 1),
+        sm: num(d.itemSm, 1),
+      },
+      arrows: yes(d.nav),
+      dots: yes(d.dots),
+      autoplay: yes(d.autoplay),
+      autoplaySpeed: num(d.delay, 5000),
+      pauseOnHover: yes(d.pause),
+      pauseOnInteraction: false, // Owl keeps autoplaying after a nav click
+      infinite: yes(d.loop),
+      speed: num(d.speed, 500),
+      drag: yes(d.mouseDrag) || yes(d.touchDrag),
+    },
+  )
+
+  teardown.push(() => {
+    destroy()
+    root.classList.remove('owl-loaded', 'owl-drag')
+    slides.forEach((s) => root.appendChild(s))
+    outer.remove()
+    root.querySelector('.owl-nav')?.remove()
+    root.querySelector('.owl-dots')?.remove()
+  })
+}
+
+/** Elementor image carousel — configuration is one JSON blob on the widget. */
+function initImageCarousel(widget, teardown) {
+  const viewport = widget.querySelector('.swiper-container')
+  const track = widget.querySelector('.swiper-wrapper')
+  if (!viewport || !track) return
+
+  const slides = Array.from(track.children)
+  if (!slides.length) return
+
+  const raw = readJson(widget.dataset.settings)
+  const show = num(raw.slides_to_show, 1)
+  const scope = widget.querySelector('.elementor-widget-container') ?? widget
+  const nav = raw.navigation ?? 'none'
+
+  // Tells the stylesheet the carousel is running, switching off Elementor's
+  // "not yet initialised" fallback width rule.
+  viewport.classList.add('swiper-container-initialized')
+
+  const destroy = createCarousel(
+    {
+      viewport,
+      track,
+      slides,
+      prevBtn: scope.querySelector('.elementor-swiper-button-prev'),
+      nextBtn: scope.querySelector('.elementor-swiper-button-next'),
+      dotsHost: scope.querySelector('.swiper-pagination'),
+    },
+    {
+      // Elementor's own responsive defaults for this widget.
+      perView: { lg: show, md: Math.min(2, show), sm: 1 },
+      slidesToScroll: num(raw.slides_to_scroll, 1),
+      arrows: nav === 'arrows' || nav === 'both',
+      dots: nav === 'dots' || nav === 'both',
+      autoplay: yes(raw.autoplay),
+      autoplaySpeed: num(raw.autoplay_speed, 5000),
+      pauseOnHover: yes(raw.pause_on_hover),
+      pauseOnInteraction: yes(raw.pause_on_interaction),
+      infinite: yes(raw.infinite),
+      speed: num(raw.speed, 500),
+      spacing: num(raw.image_spacing_custom?.size, 0),
+    },
+  )
+
+  teardown.push(() => {
+    destroy()
+    viewport.classList.remove('swiper-container-initialized')
+  })
+}
+
+/** Sections Elementor hides until they scroll into view. */
+function initReveals(teardown) {
+  const hidden = document.querySelectorAll('.elementor-invisible')
+  if (!hidden.length) return
+
+  // The animation names are Elementor's own and the keyframes are already in the
+  // stylesheet, so revealing is: drop the hiding class, add the animation one.
+  const reveal = (el) => {
+    const { animation } = readJson(el.dataset.settings)
+    el.classList.remove('elementor-invisible')
+    if (animation) el.classList.add('animated', animation)
+  }
+
+  if (!('IntersectionObserver' in window)) {
+    hidden.forEach(reveal)
+    return
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue
+        reveal(entry.target)
+        observer.unobserve(entry.target)
+      }
+    },
+    { rootMargin: '0px 0px -10% 0px' },
+  )
+  hidden.forEach((el) => observer.observe(el))
+  teardown.push(() => observer.disconnect())
+}
+
+export default function Enhancements({ route }) {
+  useEffect(() => {
+    const teardown = []
+
+    for (const root of document.querySelectorAll('.sina-content-slider.owl-carousel')) {
+      initSinaSlider(root, teardown)
+    }
+    for (const widget of document.querySelectorAll('[data-widget_type^="image-carousel"]')) {
+      initImageCarousel(widget, teardown)
+    }
+    initReveals(teardown)
+
+    return () => teardown.forEach((fn) => fn())
+  }, [route])
+
+  return null
+}

@@ -1,0 +1,63 @@
+{
+  "count": 4,
+  "source": "experiences.html",
+  "experiences": [
+    {
+      "id": "swimming",
+      "title": "SWIMMING EXPERIENCE",
+      "body": [
+        "It is a privilege to swim in Sattal, as the lakes here are pure freshwater lakes and surrounded by natural forests, the quality of the water is very good. Swimming in Sattal is one of the most beautiful activities to experience here, the expert team of Wild Kumaon is present in the lake with you and also provides you with the necessary equipment if required. Come experience this most beautiful lake of Nainital and its water."
+      ],
+      "details": [],
+      "duration": null,
+      "cta": null
+    },
+    {
+      "id": "nature-walk",
+      "title": "NATURE WALK EXPERIENCE",
+      "body": [
+        "It is great to be completely present and connect with nature, and the purpose of this walk is that only. Neer believes that things get better by connecting to the nature and nature can be enjoyed by being in the present. On the walk you find yourself among the birds, wildlife and the fresh water lakes. Neer gives you various types of information, interesting facts with novelty this walk talks about insects, plants, birds and the sky and discovers how we are connected with all these and what is their importance ."
+      ],
+      "details": [
+        "The experience usually goes for 2.5 hours.",
+        "The experience includes packed breakfast."
+      ],
+      "duration": "2.5 hours",
+      "cta": null
+    },
+    {
+      "id": "birdwatching",
+      "title": "BIRDWATCHING EXPERIENCE",
+      "body": [
+        "Sattal keeps on echoing with the voices of birds. Many species come here in summer and winter, this experience connects you with these species. In this three-four-hour morning experience, you walk on the trail of Sattal along with your expert Bird Guide."
+      ],
+      "details": [
+        "You will receive the photographs of the Birds you saw and a checklist of the total species.",
+        "The experience includes breakfast at Wild Kumaon premises for each participant."
+      ],
+      "duration": "3–4 hours (morning)",
+      "cta": { "label": "Enquiry", "href": "/enquiry" }
+    },
+    {
+      "id": "sound-bath",
+      "title": "GROUP SOUND BATH/IMMERSION",
+      "body": [
+        "Embark upon a journey in sound!",
+        "Specially selected instruments such as gongs, singing bowls, and others, tuned to destress your being, are deployed to take on a sonic journey.",
+        "You will at the end of the session leave feeling calm and re-energized.",
+        "The entire experience includes a group sound immersion, hydration with a light snack and lasts for approximately two hours including conversation pre and post immersion.",
+        "Your contribution in the form of a donation is highly appreciated as the proceeds are used to further the charitable work that the Shoonya One Foundation Trust undertakes."
+      ],
+      "details": [
+        "Note: The group size is limited to four people or less."
+      ],
+      "duration": "approximately two hours",
+      "groupSize": "four people or less",
+      "partner": "Shoonya One Foundation Trust",
+      "cta": {
+        "label": "Link to reserve the experience",
+        "href": "https://calendly.com/healfarm/sound-immersion?month=2021-12"
+      }
+    }
+  ]
+}

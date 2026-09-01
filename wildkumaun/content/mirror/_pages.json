@@ -1,0 +1,184 @@
+[
+  {
+    "route": "/about-us",
+    "slug": "about-us",
+    "title": "ABOUT US | Wild Kumaon Sattal",
+    "bytes": 61675,
+    "scripts": 14
+  },
+  {
+    "route": "/bird-art",
+    "slug": "bird-art",
+    "title": "BIRD ART | Wild Kumaon Sattal",
+    "bytes": 76525,
+    "scripts": 14
+  },
+  {
+    "route": "/bird-watching-in-sattal",
+    "slug": "bird-watching-in-sattal",
+    "title": "Sattal a Birding Destination | Wild Kumaon Sattal",
+    "bytes": 98711,
+    "scripts": 14
+  },
+  {
+    "route": "/birders-paradise",
+    "slug": "birders-paradise",
+    "title": "BIRDERS PARADISE | Wild Kumaon Sattal",
+    "bytes": 57215,
+    "scripts": 14
+  },
+  {
+    "route": "/birds-found-at-wild-kumaon",
+    "slug": "birds-found-at-wild-kumaon",
+    "title": "BIRDS FOUND | Wild Kumaon Sattal",
+    "bytes": 70236,
+    "scripts": 14
+  },
+  {
+    "route": "/birds-of-sattal-and-around",
+    "slug": "birds-of-sattal-and-around",
+    "title": "BIRDS OF SATTAL AND AROUND | Wild Kumaon Sattal",
+    "bytes": 98524,
+    "scripts": 14
+  },
+  {
+    "route": "/blog",
+    "slug": "blog",
+    "title": "BLOG | Wild Kumaon Sattal",
+    "bytes": 62268,
+    "scripts": 14
+  },
+  {
+    "route": "/conservation",
+    "slug": "conservation",
+    "title": "CONSERVATION | Wild Kumaon Sattal",
+    "bytes": 69612,
+    "scripts": 14
+  },
+  {
+    "route": "/contact-us",
+    "slug": "contact-us",
+    "title": "CONTACT US | Wild Kumaon Sattal",
+    "bytes": 70723,
+    "scripts": 20
+  },
+  {
+    "route": "/eco-friendly-enterprises-in-sattal",
+    "slug": "eco-friendly-enterprises-in-sattal",
+    "title": "Sattal a Birding Destination | Wild Kumaon Sattal",
+    "bytes": 67786,
+    "scripts": 14
+  },
+  {
+    "route": "/enquiry",
+    "slug": "enquiry",
+    "title": "ENQUIRY | Wild Kumaon Sattal",
+    "bytes": 57206,
+    "scripts": 14
+  },
+  {
+    "route": "/experiences",
+    "slug": "experiences",
+    "title": "EXPERIENCES | Wild Kumaon Sattal",
+    "bytes": 109097,
+    "scripts": 14
+  },
+  {
+    "route": "/facilities",
+    "slug": "facilities",
+    "title": "FACILITIES | Wild Kumaon Sattal",
+    "bytes": 71487,
+    "scripts": 14
+  },
+  {
+    "route": "/faqs",
+    "slug": "faqs",
+    "title": "FAQs | Wild Kumaon Sattal",
+    "bytes": 76734,
+    "scripts": 15
+  },
+  {
+    "route": "/gallery",
+    "slug": "gallery",
+    "title": "GALLERY | Wild Kumaon Sattal",
+    "bytes": 87952,
+    "scripts": 14
+  },
+  {
+    "route": "/guest-book",
+    "slug": "guest-book",
+    "title": "TESTMONIALS | Wild Kumaon Sattal",
+    "bytes": 83220,
+    "scripts": 16
+  },
+  {
+    "route": "/",
+    "slug": "index",
+    "title": "HOME | Wild Kumaon Sattal",
+    "bytes": 155874,
+    "scripts": 26
+  },
+  {
+    "route": "/location",
+    "slug": "location",
+    "title": "LOCATION | Wild Kumaon Sattal",
+    "bytes": 64548,
+    "scripts": 14
+  },
+  {
+    "route": "/property-photographs",
+    "slug": "property-photographs",
+    "title": "PROPERTY PHOTOGRAPHS | Wild Kumaon Sattal",
+    "bytes": 82154,
+    "scripts": 14
+  },
+  {
+    "route": "/restaurant",
+    "slug": "restaurant",
+    "title": "RESTAURANT | Wild Kumaon Sattal",
+    "bytes": 59073,
+    "scripts": 14
+  },
+  {
+    "route": "/sattal-5n-6d-birding-tour",
+    "slug": "sattal-5n-6d-birding-tour",
+    "title": "SATTAL 5N/6D BIRDING TOUR | Wild Kumaon Sattal",
+    "bytes": 97639,
+    "scripts": 14
+  },
+  {
+    "route": "/sattal",
+    "slug": "sattal",
+    "title": "SATTAL | Wild Kumaon Sattal",
+    "bytes": 71209,
+    "scripts": 14
+  },
+  {
+    "route": "/spring-trip-report",
+    "slug": "spring-trip-report",
+    "title": "Sattal a Birding Destination | Wild Kumaon Sattal",
+    "bytes": 83919,
+    "scripts": 14
+  },
+  {
+    "route": "/team",
+    "slug": "team",
+    "title": "BIRDING GUIDES AT SATTAL | Wild Kumaon Sattal",
+    "bytes": 62582,
+    "scripts": 14
+  },
+  {
+    "route": "/vision",
+    "slug": "vision",
+    "title": "VISION | Wild Kumaon Sattal",
+    "bytes": 57205,
+    "scripts": 14
+  },
+  {
+    "route": "/work-from-hills",
+    "slug": "work-from-hills",
+    "title": "Wild Kumaon - Work from Hills | Wild Kumaon Sattal",
+    "bytes": 95931,
+    "scripts": 14
+  }
+]
