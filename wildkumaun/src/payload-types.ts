@@ -70,6 +70,8 @@ export interface Config {
     users: User;
     media: Media;
     pages: Page;
+    faqs: Faq;
+    testimonials: Testimonial;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -80,6 +82,8 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
+    faqs: FaqsSelect<false> | FaqsSelect<true>;
+    testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -225,13 +229,102 @@ export interface Page {
    */
   title: string;
   /**
+   * The page's lead image. Leave it empty and the page shows none — the mirrored image is not kept as a fallback, so an empty field looks empty.
+   */
+  banner?: (number | null) | Media;
+  /**
+   * Sections this page builds from the CMS. Everything not listed here still comes from the mirrored markup, so a page with no blocks looks exactly as it did.
+   */
+  layout?:
+    | {
+        /**
+         * Sits above the reviews. Leave empty for none.
+         */
+        heading?: string | null;
+        /**
+         * The reviews to show here, in the order they should appear.
+         */
+        items: (number | Testimonial)[];
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'testimonials';
+      }[]
+    | null;
+  /**
    * The path, without the leading slash. The home page is "home".
    */
   slug: string;
   /**
-   * Optional. What the menu calls this page when that differs from the title — "BIRDING GUIDES" for the team page.
+   * What menus call this page, when that differs from the title — "BIRDING GUIDES" for the team page. Every link to this page reads it, so changing it here changes it everywhere. Falls back to the title.
    */
   navLabel?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Guest reviews. The guest book lists them all; a page picks which to show with a testimonials block.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials".
+ */
+export interface Testimonial {
+  id: number;
+  /**
+   * Who wrote it.
+   */
+  name: string;
+  quote: string;
+  /**
+   * Recorded, not currently shown on the site.
+   */
+  rating?: number | null;
+  /**
+   * Where it was left — "Google Reviews".
+   */
+  source?: string | null;
+  /**
+   * Identifies this review in the page markup. Rarely needs changing.
+   */
+  slug: string;
+  /**
+   * Low numbers first. Leave gaps so a review can be slotted in later.
+   */
+  order: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Shown on the FAQs page, in the order set here.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faqs".
+ */
+export interface Faq {
+  id: number;
+  question: string;
+  answer: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Used for the link to this question — /faqs#your-slug. Changing it breaks any link already shared.
+   */
+  slug: string;
+  /**
+   * Low numbers first. Leave gaps so a question can be slotted in later.
+   */
+  order: number;
   updatedAt: string;
   createdAt: string;
 }
@@ -270,6 +363,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'pages';
         value: number | Page;
+      } | null)
+    | ({
+        relationTo: 'faqs';
+        value: number | Faq;
+      } | null)
+    | ({
+        relationTo: 'testimonials';
+        value: number | Testimonial;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -404,8 +505,47 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
+  banner?: T;
+  layout?:
+    | T
+    | {
+        testimonials?:
+          | T
+          | {
+              heading?: T;
+              items?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
   slug?: T;
   navLabel?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faqs_select".
+ */
+export interface FaqsSelect<T extends boolean = true> {
+  question?: T;
+  answer?: T;
+  slug?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials_select".
+ */
+export interface TestimonialsSelect<T extends boolean = true> {
+  name?: T;
+  quote?: T;
+  rating?: T;
+  source?: T;
+  slug?: T;
+  order?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -531,12 +671,12 @@ export interface Header {
    */
   nav?:
     | {
-        link: {
+        link?: {
           type?: ('reference' | 'custom' | 'none') | null;
           /**
-           * The text a visitor reads. Independent of the page title.
+           * Leave empty to use the page's own menu name. Fill it in only to say something different here.
            */
-          label: string;
+          label?: string | null;
           reference?: (number | null) | Page;
           /**
            * Include the protocol, e.g. https://example.com/page.
@@ -553,12 +693,12 @@ export interface Header {
          */
         children?:
           | {
-              link: {
+              link?: {
                 type?: ('reference' | 'custom' | 'none') | null;
                 /**
-                 * The text a visitor reads. Independent of the page title.
+                 * Leave empty to use the page's own menu name. Fill it in only to say something different here.
                  */
-                label: string;
+                label?: string | null;
                 reference?: (number | null) | Page;
                 /**
                  * Include the protocol, e.g. https://example.com/page.
@@ -603,12 +743,12 @@ export interface Footer {
         heading?: string | null;
         links?:
           | {
-              link: {
+              link?: {
                 type?: ('reference' | 'custom') | null;
                 /**
-                 * The text a visitor reads. Independent of the page title.
+                 * Leave empty to use the page's own menu name. Fill it in only to say something different here.
                  */
-                label: string;
+                label?: string | null;
                 reference?: (number | null) | Page;
                 /**
                  * Include the protocol, e.g. https://example.com/page.

@@ -20,7 +20,7 @@ const payload = await getPayload({ config })
 
 const result = await seedGlobals(payload, { force: true })
 
-console.log(`pages    : ${result.pagesCreated} created`)
+console.log(`pages    : ${result.pagesCreated} created, ${result.bannersLinked} banners linked`)
 console.log(`globals  : ${result.filled.join('; ') || 'nothing written'}`)
 
 if (result.unresolved.length) {

@@ -1,4 +1,4 @@
-import { resolveHref, type LinkValue } from '../fields/link'
+import { resolveHref, resolveLabel, type LinkValue } from '../fields/link'
 
 /**
  * The header, built from the Header and Site Settings globals.
@@ -80,7 +80,7 @@ const mediaAlt = (logo: SettingsData['logo']): string =>
 
 function menuItem(item: NavItem, currentPath: string): string {
   const href = resolveHref(item.link)
-  const label = item.link?.label ?? ''
+  const label = resolveLabel(item.link)
   const children = item.children ?? []
   const hasChildren = children.length > 0
 
@@ -115,7 +115,7 @@ function menuItem(item: NavItem, currentPath: string): string {
           (child) =>
             `<li class="menu-item menu-item-type-post_type menu-item-object-page hfe-creative-menu">` +
             `<a class="hfe-sub-menu-item" href="${esc(resolveHref(child.link))}">` +
-            `${esc(child.link?.label ?? '')}</a></li>`,
+            `${esc(resolveLabel(child.link))}</a></li>`,
         )
         .join('\n')}</ul>`
     : ''

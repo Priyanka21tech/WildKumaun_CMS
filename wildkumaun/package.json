@@ -20,7 +20,9 @@
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts",
     "reset:media": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/reset-media.ts",
     "import:media": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/import-media.ts",
-    "seed:globals": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/seed-globals.ts"
+    "seed:globals": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/seed-globals.ts",
+    "seed:faqs": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/seed-faqs.ts",
+    "seed:testimonials": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/seed-testimonials.ts"
   },
   "dependencies": {
     "@payloadcms/next": "3.88.0",

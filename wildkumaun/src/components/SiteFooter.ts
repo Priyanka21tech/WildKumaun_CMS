@@ -1,4 +1,4 @@
-import { resolveHref, type LinkValue } from '../fields/link'
+import { resolveHref, resolveLabel, type LinkValue } from '../fields/link'
 import { esc, type Phone } from './SiteHeader'
 
 /**
@@ -112,7 +112,7 @@ ${(col.links ?? [])
   .map((entry) => {
     const target = entry.link?.newTab ? ' target="_blank" rel="noreferrer"' : ''
     return `<li class="elementor-icon-list-item"><a href="${esc(resolveHref(entry.link))}"${target}>${esc(
-      entry.link?.label ?? '',
+      resolveLabel(entry.link),
     )}</a></li>`
   })
   .join('\n')}

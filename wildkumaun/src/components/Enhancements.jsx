@@ -206,6 +206,61 @@ function initReveals(teardown) {
   teardown.push(() => observer.disconnect())
 }
 
+/**
+ * Essential Addons accordions — the FAQs page.
+ *
+ * The stylesheet hides every answer (`.eael-accordion-content{display:none}`) and
+ * shows it again only when `.active` is added, which the plugin's script does on
+ * click. Without that script the page is a list of questions that do nothing when
+ * you press them, and the answers are unreachable.
+ *
+ * One question open at a time, matching data-accordion-type="accordion"; a
+ * "toggle" accordion lets several be open, so that type is left to behave that
+ * way. Pressing an open question closes it.
+ */
+function initAccordions(teardown) {
+  for (const root of document.querySelectorAll('.eael-adv-accordion')) {
+    const exclusive = root.dataset.accordionType !== 'toggle'
+    const headers = [...root.querySelectorAll('.eael-accordion-header')]
+
+    const setOpen = (header, open) => {
+      const content = document.getElementById(header.getAttribute('aria-controls'))
+      header.classList.toggle('active', open)
+      header.setAttribute('aria-expanded', String(open))
+      if (content) content.classList.toggle('active', open)
+    }
+
+    for (const header of headers) {
+      header.setAttribute('role', 'button')
+      header.setAttribute('aria-expanded', 'false')
+
+      const toggle = () => {
+        const open = !header.classList.contains('active')
+        if (exclusive) for (const other of headers) setOpen(other, false)
+        setOpen(header, open)
+      }
+
+      // The markup gives headers tabindex="0" but no key handling, so a keyboard
+      // could focus a question and never open it.
+      const onKeyDown = (event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return
+        event.preventDefault()
+        toggle()
+      }
+
+      header.addEventListener('click', toggle)
+      header.addEventListener('keydown', onKeyDown)
+      teardown.push(() => {
+        header.removeEventListener('click', toggle)
+        header.removeEventListener('keydown', onKeyDown)
+      })
+    }
+
+    // The first answer opens on load, so the page does not read as empty.
+    if (headers[0]) setOpen(headers[0], true)
+  }
+}
+
 export default function Enhancements({ route }) {
   useEffect(() => {
     const teardown = []
@@ -216,6 +271,7 @@ export default function Enhancements({ route }) {
     for (const widget of document.querySelectorAll('[data-widget_type^="image-carousel"]')) {
       initImageCarousel(widget, teardown)
     }
+    initAccordions(teardown)
     initReveals(teardown)
 
     return () => teardown.forEach((fn) => fn())

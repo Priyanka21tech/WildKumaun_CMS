@@ -2,6 +2,7 @@ import type { Payload } from 'payload'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { bannerFor } from '../lib/page-banner'
 
 /**
  * Fill the Pages registry and the three globals from the extracted content.
@@ -38,6 +39,13 @@ const REPO = path.resolve(dirname, '../../..')
  */
 const MAP_URL = 'https://g.page/SattalBirding?share'
 
+/** The mirrored markup for a page, or undefined if there is none. */
+function mirrorHtml(slug: string): string | undefined {
+  const file = path.join(REPO, 'wildkumaun/content/mirror', `${slug === 'home' ? 'index' : slug}.json`)
+  if (!fs.existsSync(file)) return undefined
+  return JSON.parse(fs.readFileSync(file, 'utf8')).html as string
+}
+
 /** "/" is stored as "home": a slug cannot be a bare slash. */
 const toSlug = (route: string) => (route === '/' ? 'home' : route.replace(/^\/+|\/+$/g, ''))
 
@@ -45,6 +53,8 @@ type NavEntry = { label: string; href: string; external?: boolean; children?: Na
 
 type SeedResult = {
   pagesCreated: number
+  /** Existing pages that had their banner filled in. */
+  bannersLinked: number
   /** One line per global that had a gap filled, naming the fields. Empty when nothing was missing. */
   filled: string[]
   unresolved: string[]
@@ -93,10 +103,24 @@ export async function seedGlobals(
 
   const filled: string[] = []
 
+  /** Images are recorded by their path in assets/images; Media knows them by filename. */
+  const findMedia = async (assetPath?: string) => {
+    if (!assetPath) return undefined
+    const found = await payload.find({
+      collection: 'media',
+      where: { filename: { equals: path.basename(assetPath) } },
+      limit: 1,
+      pagination: false,
+      depth: 0,
+    })
+    return (found.docs[0]?.id as number | undefined) ?? undefined
+  }
+
   // -------------------------------------------------------------- pages
 
   const slugToId = new Map<string, number>()
   let pagesCreated = 0
+  let bannersLinked = 0
 
   for (const page of pagesDoc.pages as Array<{ slug: string; title?: string; navLabel?: string }>) {
     const slug = toSlug(page.slug)
@@ -109,10 +133,23 @@ export async function seedGlobals(
       depth: 0,
     })
 
+    // The banner is a CSS background in the mirror, so the file it points at has
+    // to be read out of the stylesheet before it can be linked to a Media document.
+    const mirror = mirrorHtml(slug)
+    const rule = mirror ? bannerFor(mirror) : undefined
+    const banner = rule ? await findMedia(rule.filename) : undefined
+
     if (existing.docs.length) {
-      // Left alone: the title may have been edited since, and nothing here knows
-      // better than whoever edited it.
-      slugToId.set(slug, existing.docs[0].id as number)
+      const doc = existing.docs[0]
+      slugToId.set(slug, doc.id as number)
+
+      // Title and menu name are left alone — an editor may have changed them and
+      // nothing here knows better. An empty banner is a gap, not a decision: it
+      // was added to the collection after these pages were created.
+      if (banner && !doc.banner) {
+        await payload.update({ collection: 'pages', id: doc.id, data: { banner } })
+        bannersLinked++
+      }
       continue
     }
 
@@ -122,6 +159,7 @@ export async function seedGlobals(
         title: page.title?.trim() || page.navLabel?.trim() || slug,
         slug,
         navLabel: page.navLabel?.trim() || undefined,
+        banner,
       },
     })
     slugToId.set(slug, doc.id as number)
@@ -150,7 +188,9 @@ export async function seedGlobals(
       return { type: 'custom' as const, label, url: href }
     }
 
-    return { type: 'reference' as const, label, reference: id, anchor: anchor || undefined }
+    // No label: the menu reads the page's own navLabel. Writing one here would
+    // pin the old name in place and renaming the page would change nothing.
+    return { type: 'reference' as const, reference: id, anchor: anchor || undefined }
   }
 
   // ------------------------------------------------------- site settings
@@ -177,19 +217,6 @@ export async function seedGlobals(
     if (!wanted.has(number) || claimed.has(number)) return false
     claimed.add(number)
     return true
-  }
-
-  /** The settings record images by their path in assets/images; Media knows them by filename. */
-  const findMedia = async (assetPath?: string) => {
-    if (!assetPath) return undefined
-    const found = await payload.find({
-      collection: 'media',
-      where: { filename: { equals: path.basename(assetPath) } },
-      limit: 1,
-      pagination: false,
-      depth: 0,
-    })
-    return (found.docs[0]?.id as number | undefined) ?? undefined
   }
 
   const [logo, favicon] = await Promise.all([
@@ -267,5 +294,5 @@ export async function seedGlobals(
     filled.push(`footer (${Object.keys(footerPatch).join(', ')})`)
   }
 
-  return { pagesCreated, filled, unresolved }
+  return { pagesCreated, bannersLinked, filled, unresolved }
 }

@@ -6,6 +6,13 @@ import { pageIndex, pageBySlugSegments } from '@/lib/pages'
 import { splitShell } from '@/lib/shell'
 import { getMediaMap } from '@/lib/media-map'
 import { responsiveHtml } from '@/lib/responsive-html'
+import { replaceAccordion } from '@/lib/faq-accordion'
+import { bannerFor, bannerOverride, replaceBannerImage } from '@/lib/page-banner'
+import {
+  replaceTestimonialGrid,
+  replaceTestimonialHeading,
+  replaceTestimonialSlides,
+} from '@/lib/testimonials-render'
 import BodyClass from '@/components/BodyClass'
 import Enhancements from '@/components/Enhancements'
 import { renderSiteHeader } from '@/components/SiteHeader'
@@ -59,11 +66,36 @@ export default async function MirrorPage({ params }: { params: Promise<{ slug?: 
 
   // depth 1 populates the logo upload and the page each menu link points at, so
   // resolveHref has a slug to build a path from rather than a bare id.
-  const [settings, header, footer, mediaMap] = await Promise.all([
+  const [settings, header, footer, mediaMap, faqs, testimonials, pageDoc] = await Promise.all([
     payload.findGlobal({ slug: 'site-settings', depth: 1 }),
     payload.findGlobal({ slug: 'header', depth: 1 }),
     payload.findGlobal({ slug: 'footer', depth: 1 }),
     getMediaMap(payload),
+    // Only the page that shows them; every other route would pay for a query it
+    // has no use for.
+    page.route === '/faqs'
+      ? payload.find({ collection: 'faqs', limit: 0, pagination: false, sort: 'order', depth: 0 })
+      : null,
+    // The guest book lists every review. Anywhere else, a testimonials block on the
+    // page says which to show, so there is nothing to query.
+    page.route === '/guest-book'
+      ? payload.find({
+          collection: 'testimonials',
+          limit: 0,
+          pagination: false,
+          sort: 'order',
+          depth: 0,
+        })
+      : null,
+    payload.find({
+      collection: 'pages',
+      where: { slug: { equals: page.route === '/' ? 'home' : page.route.slice(1) } },
+      limit: 1,
+      pagination: false,
+      // 2, so the reviews a testimonials block points at arrive with their text
+      // rather than as ids.
+      depth: 2,
+    }),
   ])
 
   /**
@@ -75,7 +107,46 @@ export default async function MirrorPage({ params }: { params: Promise<{ slug?: 
    * responsiveHtml runs first: the mirror asks for full-size originals, and this
    * points those requests at the sizes Payload generated on import.
    */
-  const shell = splitShell(responsiveHtml(page.route, page.html, mediaMap))
+  const body = responsiveHtml(page.route, page.html, mediaMap)
+
+  // The questions come from the collection now. Everything else on the page is
+  // still the mirror's, so only the accordion's items are swapped out.
+  /**
+   * An empty banner blanks the section rather than falling back to the mirror's
+   * own image. A field you can empty and see no change is not a field you control.
+   */
+  const banner = pageDoc.docs[0]?.banner
+  // depth 1 populates it; an id on its own carries no url to point at.
+  const bannerUrl = banner && typeof banner === 'object' ? (banner.url ?? null) : null
+  const bannerRule = bannerFor(page.html)
+
+  let content = faqs ? replaceAccordion(body, faqs.docs) : body
+
+  if (testimonials) content = replaceTestimonialGrid(content, testimonials.docs)
+
+  /**
+   * Blocks take over one section of the mirrored markup each. A page with no
+   * blocks renders exactly as it did, which is what makes it safe to move a
+   * section at a time.
+   */
+  for (const block of pageDoc.docs[0]?.layout ?? []) {
+    if (block.blockType !== 'testimonials') continue
+
+    const chosen = (block.items ?? []).filter(
+      (item): item is Exclude<typeof item, number> => typeof item === 'object',
+    )
+
+    content = replaceTestimonialHeading(content, block.heading)
+    content = replaceTestimonialSlides(content, chosen)
+  }
+
+  // A page whose lead image is an <img> rather than a CSS background needs the
+  // markup changed, not a rule overridden. bannerFor says which kind this is.
+  if (bannerRule) content = replaceBannerImage(content, bannerRule, bannerUrl)
+
+  const shell = splitShell(content)
+
+  const bannerStyle = bannerRule ? bannerOverride(bannerRule, bannerUrl) : ''
 
   const html = shell.ok
     ? shell.before +
@@ -89,13 +160,15 @@ export default async function MirrorPage({ params }: { params: Promise<{ slug?: 
       shell.after
     : shell.middle
 
+  const document = bannerStyle + html
+
   return (
     <>
       <BodyClass value={page.bodyClass} />
       {page.ldJson.map((json: string, i: number) => (
         <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: json }} />
       ))}
-      <div dangerouslySetInnerHTML={{ __html: html }} />
+      <div dangerouslySetInnerHTML={{ __html: document }} />
       <Enhancements route={page.route} />
     </>
   )

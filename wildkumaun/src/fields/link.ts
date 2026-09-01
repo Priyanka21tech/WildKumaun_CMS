@@ -59,10 +59,16 @@ export const link = ({
               {
                 name: 'label',
                 type: 'text',
-                required: true,
+                // Optional for a page, which already knows what to call itself. A
+                // URL or a menu parent has no page behind it, so it has to be told.
+                validate: (value: unknown, { siblingData }: { siblingData?: { type?: string } }) => {
+                  if (siblingData?.type === 'reference') return true
+                  return value ? true : 'Required for anything other than a page.'
+                },
                 admin: {
                   width: '50%',
-                  description: 'The text a visitor reads. Independent of the page title.',
+                  description:
+                    "Leave empty to use the page's own menu name. Fill it in only to say something different here.",
                 },
               },
             ] as Field[])
@@ -110,7 +116,7 @@ export const link = ({
 export type LinkValue = {
   type?: 'reference' | 'custom' | 'none' | null
   label?: string | null
-  reference?: number | { slug?: string | null } | null
+  reference?: number | { slug?: string | null; navLabel?: string | null; title?: string | null } | null
   url?: string | null
   anchor?: string | null
   newTab?: boolean | null
@@ -138,4 +144,24 @@ export function resolveHref(value?: LinkValue | null): string {
   if (!page?.slug) return anchor || '#'
 
   return `${page.slug === 'home' ? '/' : `/${page.slug}`}${anchor}`
+}
+
+/**
+ * What the link should read as.
+ *
+ * A link to a page falls back to that page's own menu name, so a page is renamed
+ * in one place — on the page — rather than everywhere something points at it. An
+ * explicit label still wins, which is how a menu says something shorter than the
+ * page would.
+ *
+ * The reference has to be populated for the fallback to work; with only an id
+ * there is nothing to read a name off, and the link renders unlabelled rather
+ * than wrong.
+ */
+export function resolveLabel(value?: LinkValue | null): string {
+  if (!value) return ''
+  if (value.label) return value.label
+
+  const page = typeof value.reference === 'object' ? value.reference : null
+  return page?.navLabel || page?.title || ''
 }

@@ -8,10 +8,14 @@ import sharp from 'sharp'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
+import { FAQs } from './collections/FAQs'
+import { Testimonials } from './collections/Testimonials'
 import { SiteSettings } from './globals/SiteSettings'
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
 import { seedGlobals } from './seed/globals'
+import { seedFaqs } from './seed/faqs'
+import { seedTestimonials } from './seed/testimonials'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -23,7 +27,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Pages],
+  collections: [Users, Media, Pages, FAQs, Testimonials],
   globals: [SiteSettings, Header, Footer],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
@@ -57,11 +61,22 @@ export default buildConfig({
       if (result.pagesCreated) {
         payload.logger.info(`Seeded ${result.pagesCreated} pages`)
       }
+      if (result.bannersLinked) {
+        payload.logger.info(`Linked banners on ${result.bannersLinked} pages`)
+      }
       for (const entry of result.filled) {
         payload.logger.info(`Filled empty ${entry}`)
       }
       for (const entry of result.unresolved) {
         payload.logger.warn(`Menu link has no page behind it, kept as a URL: ${entry}`)
+      }
+
+      const faqs = await seedFaqs(payload)
+      if (faqs.created) payload.logger.info(`Seeded ${faqs.created} FAQs`)
+
+      const testimonials = await seedTestimonials(payload)
+      if (testimonials.created) {
+        payload.logger.info(`Seeded ${testimonials.created} testimonials`)
       }
 
       // Importing 273 photographs takes minutes and generates four sizes of each,

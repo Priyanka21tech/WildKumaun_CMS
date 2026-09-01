@@ -44,6 +44,8 @@ import pg from 'pg'
 const ORPHANS = [
   { table: 'header', prefix: 'cta_' },
   { table: 'site_settings', columns: ['intro'] },
+  // Replaced by the testimonials block, which says which reviews a page shows.
+  { table: 'testimonials', columns: ['featured'] },
 ]
 
 /** Tables an array field left behind. Dropped whole. */
