@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { ContentBlock } from '../blocks/ContentBlock'
 import { TestimonialsBlock } from '../blocks/TestimonialsBlock'
 
 /**
@@ -23,10 +24,10 @@ import { TestimonialsBlock } from '../blocks/TestimonialsBlock'
  * could not be changed without editing a file, since the origin sets it either as
  * a CSS background or as a plain `<img>` in the markup.
  *
- * `layout` is where the page starts becoming its own. Each block replaces one
- * section of the mirrored markup: the testimonials block takes over the run of
- * reviews and the heading above it, and the rest of the page carries on being the
- * mirror's. Blocks are added a section at a time, as each is understood well
+ * `layout` is where the page starts becoming its own. A block replaces part of
+ * the mirrored markup: the testimonials block takes over the run of reviews and
+ * the heading above it, and the content block takes over the page's copy
+ * entirely. The rest of the page carries on being the mirror's. Blocks are added a section at a time, as each is understood well
  * enough to be worth taking over — a page with no blocks renders exactly as
  * before, so nothing has to move until it is ready to.
  *
@@ -68,7 +69,7 @@ export const Pages: CollectionConfig = {
     {
       name: 'layout',
       type: 'blocks',
-      blocks: [TestimonialsBlock],
+      blocks: [ContentBlock, TestimonialsBlock],
       admin: {
         description:
           'Sections this page builds from the CMS. Everything not listed here still comes from the mirrored markup, so a page with no blocks looks exactly as it did.',

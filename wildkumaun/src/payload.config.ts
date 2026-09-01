@@ -16,6 +16,7 @@ import { Footer } from './globals/Footer'
 import { seedGlobals } from './seed/globals'
 import { seedFaqs } from './seed/faqs'
 import { seedTestimonials } from './seed/testimonials'
+import { seedPageContent } from './seed/page-content'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -77,6 +78,11 @@ export default buildConfig({
       const testimonials = await seedTestimonials(payload)
       if (testimonials.created) {
         payload.logger.info(`Seeded ${testimonials.created} testimonials`)
+      }
+
+      const content = await seedPageContent(payload)
+      for (const slug of content.filled) {
+        payload.logger.info(`Gave /${slug} a content block`)
       }
 
       // Importing 273 photographs takes minutes and generates four sizes of each,

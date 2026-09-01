@@ -8,6 +8,7 @@ import { getMediaMap } from '@/lib/media-map'
 import { responsiveHtml } from '@/lib/responsive-html'
 import { replaceAccordion } from '@/lib/faq-accordion'
 import { bannerFor, bannerOverride, replaceBannerImage } from '@/lib/page-banner'
+import { replaceContentArea } from '@/lib/content-area'
 import {
   replaceTestimonialGrid,
   replaceTestimonialHeading,
@@ -130,14 +131,19 @@ export default async function MirrorPage({ params }: { params: Promise<{ slug?: 
    * section at a time.
    */
   for (const block of pageDoc.docs[0]?.layout ?? []) {
-    if (block.blockType !== 'testimonials') continue
+    if (block.blockType === 'content') {
+      content = replaceContentArea(content, block.content)
+      continue
+    }
 
-    const chosen = (block.items ?? []).filter(
-      (item): item is Exclude<typeof item, number> => typeof item === 'object',
-    )
+    if (block.blockType === 'testimonials') {
+      const chosen = (block.items ?? []).filter(
+        (item): item is Exclude<typeof item, number> => typeof item === 'object',
+      )
 
-    content = replaceTestimonialHeading(content, block.heading)
-    content = replaceTestimonialSlides(content, chosen)
+      content = replaceTestimonialHeading(content, block.heading)
+      content = replaceTestimonialSlides(content, chosen)
+    }
   }
 
   // A page whose lead image is an <img> rather than a CSS background needs the

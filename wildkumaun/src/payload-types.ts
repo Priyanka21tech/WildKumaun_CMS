@@ -236,19 +236,44 @@ export interface Page {
    * Sections this page builds from the CMS. Everything not listed here still comes from the mirrored markup, so a page with no blocks looks exactly as it did.
    */
   layout?:
-    | {
-        /**
-         * Sits above the reviews. Leave empty for none.
-         */
-        heading?: string | null;
-        /**
-         * The reviews to show here, in the order they should appear.
-         */
-        items: (number | Testimonial)[];
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'testimonials';
-      }[]
+    | (
+        | {
+            /**
+             * The page's copy. Everything the mirrored page used to show in its content area is replaced by this.
+             */
+            content: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            };
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'content';
+          }
+        | {
+            /**
+             * Sits above the reviews. Leave empty for none.
+             */
+            heading?: string | null;
+            /**
+             * The reviews to show here, in the order they should appear.
+             */
+            items: (number | Testimonial)[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'testimonials';
+          }
+      )[]
     | null;
   /**
    * The path, without the leading slash. The home page is "home".
@@ -509,6 +534,13 @@ export interface PagesSelect<T extends boolean = true> {
   layout?:
     | T
     | {
+        content?:
+          | T
+          | {
+              content?: T;
+              id?: T;
+              blockName?: T;
+            };
         testimonials?:
           | T
           | {
