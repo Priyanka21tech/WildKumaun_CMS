@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    pages: Page;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,6 +79,7 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -87,8 +89,16 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'site-settings': SiteSetting;
+    header: Header;
+    footer: Footer;
+  };
+  globalsSelect: {
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    header: HeaderSelect<false> | HeaderSelect<true>;
+    footer: FooterSelect<false> | FooterSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -203,6 +213,29 @@ export interface Media {
   };
 }
 /**
+ * Every page on the site. Links point at these rather than at typed paths.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: number;
+  /**
+   * Used in the browser tab and as the page heading.
+   */
+  title: string;
+  /**
+   * The path, without the leading slash. The home page is "home".
+   */
+  slug: string;
+  /**
+   * Optional. What the menu calls this page when that differs from the title — "BIRDING GUIDES" for the team page.
+   */
+  navLabel?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -233,6 +266,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'pages';
+        value: number | Page;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -363,6 +400,17 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages_select".
+ */
+export interface PagesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  navLabel?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -400,6 +448,310 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * Name, logo, contact details and address. Used across the whole site.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  name: string;
+  /**
+   * The registered name, where it differs from the trading name.
+   */
+  legalName?: string | null;
+  /**
+   * The line that sits under the name — "An Eco-Resort at Sattal".
+   */
+  tagline?: string | null;
+  logo?: (number | null) | Media;
+  favicon?: (number | null) | Media;
+  email: string;
+  /**
+   * Number only, no country code.
+   */
+  whatsapp?: string | null;
+  /**
+   * The label says what a caller gets — reservations, birding tours, the property manager. The same number may appear twice under different labels, as it does on the live site.
+   */
+  phones?:
+    | {
+        number: string;
+        label: string;
+        showInHeader?: boolean | null;
+        showInFooter?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  address?: {
+    /**
+     * The one-line form the footer uses.
+     */
+    short?: string | null;
+    locality?: string | null;
+    full?: string | null;
+    /**
+     * Where the footer address links to — the share link for the place on a map.
+     */
+    mapUrl?: string | null;
+    region?: string | null;
+    postalCode?: string | null;
+    country?: string | null;
+  };
+  social?:
+    | {
+        network: 'Facebook' | 'Instagram' | 'YouTube' | 'X' | 'TripAdvisor' | 'Other';
+        label?: string | null;
+        /**
+         * The live site links these from icons with no href set.
+         */
+        url?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The default description for pages that do not set their own. Around 155 characters.
+   */
+  metaDescription?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * The main menu, the scrolling line under it, and the search box.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header".
+ */
+export interface Header {
+  id: number;
+  /**
+   * Top-level items, in the order they appear.
+   */
+  nav?:
+    | {
+        link: {
+          type?: ('reference' | 'custom' | 'none') | null;
+          /**
+           * The text a visitor reads. Independent of the page title.
+           */
+          label: string;
+          reference?: (number | null) | Page;
+          /**
+           * Include the protocol, e.g. https://example.com/page.
+           */
+          url?: string | null;
+          /**
+           * Optional. The id of a section to jump to, without the #. Leave empty to land at the top.
+           */
+          anchor?: string | null;
+          newTab?: boolean | null;
+        };
+        /**
+         * Leave empty for an item that navigates straight to its own destination.
+         */
+        children?:
+          | {
+              link: {
+                type?: ('reference' | 'custom' | 'none') | null;
+                /**
+                 * The text a visitor reads. Independent of the page title.
+                 */
+                label: string;
+                reference?: (number | null) | Page;
+                /**
+                 * Include the protocol, e.g. https://example.com/page.
+                 */
+                url?: string | null;
+                /**
+                 * Optional. The id of a section to jump to, without the #. Leave empty to land at the top.
+                 */
+                anchor?: string | null;
+                newTab?: boolean | null;
+              };
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The line that scrolls under the menu. Leave empty to show none. Present on every page, which is why it is here and not in a page block.
+   */
+  ticker?: string | null;
+  showSearch?: boolean | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * What the bottom of every page shows. Contact details come from Site Settings.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer".
+ */
+export interface Footer {
+  id: number;
+  showPhones?: boolean | null;
+  showEmail?: boolean | null;
+  showAddress?: boolean | null;
+  /**
+   * Optional. The live footer has none; add one to group links under a heading.
+   */
+  columns?:
+    | {
+        heading?: string | null;
+        links?:
+          | {
+              link: {
+                type?: ('reference' | 'custom') | null;
+                /**
+                 * The text a visitor reads. Independent of the page title.
+                 */
+                label: string;
+                reference?: (number | null) | Page;
+                /**
+                 * Include the protocol, e.g. https://example.com/page.
+                 */
+                url?: string | null;
+                /**
+                 * Optional. The id of a section to jump to, without the #. Leave empty to land at the top.
+                 */
+                anchor?: string | null;
+                newTab?: boolean | null;
+              };
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The copyright line. Leave empty to show none. A © and the current year are added by the site.
+   */
+  legal?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  name?: T;
+  legalName?: T;
+  tagline?: T;
+  logo?: T;
+  favicon?: T;
+  email?: T;
+  whatsapp?: T;
+  phones?:
+    | T
+    | {
+        number?: T;
+        label?: T;
+        showInHeader?: T;
+        showInFooter?: T;
+        id?: T;
+      };
+  address?:
+    | T
+    | {
+        short?: T;
+        locality?: T;
+        full?: T;
+        mapUrl?: T;
+        region?: T;
+        postalCode?: T;
+        country?: T;
+      };
+  social?:
+    | T
+    | {
+        network?: T;
+        label?: T;
+        url?: T;
+        id?: T;
+      };
+  metaDescription?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header_select".
+ */
+export interface HeaderSelect<T extends boolean = true> {
+  nav?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              label?: T;
+              reference?: T;
+              url?: T;
+              anchor?: T;
+              newTab?: T;
+            };
+        children?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    label?: T;
+                    reference?: T;
+                    url?: T;
+                    anchor?: T;
+                    newTab?: T;
+                  };
+              id?: T;
+            };
+        id?: T;
+      };
+  ticker?: T;
+  showSearch?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer_select".
+ */
+export interface FooterSelect<T extends boolean = true> {
+  showPhones?: T;
+  showEmail?: T;
+  showAddress?: T;
+  columns?:
+    | T
+    | {
+        heading?: T;
+        links?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    label?: T;
+                    reference?: T;
+                    url?: T;
+                    anchor?: T;
+                    newTab?: T;
+                  };
+              id?: T;
+            };
+        id?: T;
+      };
+  legal?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

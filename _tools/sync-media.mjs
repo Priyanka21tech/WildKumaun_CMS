@@ -22,20 +22,33 @@ const ROOT = path.resolve(import.meta.dirname, '..')
 const SRC = path.join(ROOT, 'assets/images')
 const DEST = path.join(ROOT, 'wildkumaun/public/media')
 
-/** WordPress responsive copies: bedroom-img-1024x683.jpg */
-const isSizeVariant = (file) => /-\d{2,4}x\d{2,4}\.[a-z]+$/i.test(file)
+/** WordPress responsive copies are named for their dimensions: bedroom-img-1024x683.jpg */
+const looksLikeVariant = (file) => /-\d{2,4}x\d{2,4}\.[a-z0-9]+$/i.test(file)
+
+/** bedroom-img-1024x683.jpg -> bedroom-img.jpg */
+const baseName = (file) => file.replace(/-\d{2,4}x\d{2,4}(\.[a-z0-9]+)$/i, '$1')
 
 if (!fs.existsSync(SRC)) {
   console.error(`missing ${path.relative(ROOT, SRC)} — run "node _tools/fetch-assets.mjs" first`)
   process.exit(1)
 }
 
+/**
+ * A file is a byproduct only if the image it was cut from is here too. Eleven of
+ * these have no original — the site's logo among them — and they are images in
+ * their own right, so Payload owns them and this must not copy them in ahead of it.
+ * Kept identical to the rule in wildkumaun/src/scripts/import-media.ts.
+ */
+const present = new Set(fs.readdirSync(SRC))
+const isDerived = (file) => looksLikeVariant(file) && present.has(baseName(file))
+
+
 fs.mkdirSync(DEST, { recursive: true })
 
 let copied = 0
 let current = 0
 for (const entry of fs.readdirSync(SRC, { withFileTypes: true })) {
-  if (!entry.isFile() || !isSizeVariant(entry.name)) continue
+  if (!entry.isFile() || !isDerived(entry.name)) continue
   const from = path.join(SRC, entry.name)
   const to = path.join(DEST, entry.name)
   // Same size means same file here: these are fetched originals, never edited.

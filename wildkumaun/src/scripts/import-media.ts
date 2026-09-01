@@ -32,8 +32,11 @@ const IMAGES = path.join(REPO, 'assets/images')
 const ALTS = path.join(REPO, 'content/image-alts.json')
 const PUBLIC_MEDIA = path.resolve(dirname, '../../public/media')
 
-/** WordPress responsive copies: bedroom-img-1024x683.jpg */
-const isSizeVariant = (file: string) => /-\d{2,4}x\d{2,4}\.[a-z]+$/i.test(file)
+/** WordPress responsive copies are named for their dimensions: bedroom-img-1024x683.jpg */
+const looksLikeVariant = (file: string) => /-\d{2,4}x\d{2,4}\.[a-z0-9]+$/i.test(file)
+
+/** bedroom-img-1024x683.jpg -> bedroom-img.jpg */
+const baseName = (file: string) => file.replace(/-\d{2,4}x\d{2,4}(\.[a-z0-9]+)$/i, '$1')
 
 /**
  * Not editorial content: the icon fonts Font Awesome and eicons ship as SVG and
@@ -59,8 +62,20 @@ const payload = await getPayload({ config })
 
 const files = fs.readdirSync(IMAGES).sort()
 const content = files.filter((f) => !NOT_CONTENT.has(f))
-const originals = content.filter((f) => !isSizeVariant(f))
-const variants = content.filter(isSizeVariant)
+/**
+ * A file is a byproduct only if the image it was cut from is here too.
+ *
+ * Eleven files are named like responsive copies but have no original beside them
+ * — the site's own logo among them, which exists solely as
+ * wild-kumaon-logo-finale-1-300x219.png. Going by the name alone skipped all
+ * eleven, so the logo never became a Media document and the header had nothing to
+ * show. If there is no original, the file is the original.
+ */
+const present = new Set(content)
+const isDerived = (f: string) => looksLikeVariant(f) && present.has(baseName(f))
+
+const originals = content.filter((f) => !isDerived(f))
+const variants = content.filter(isDerived)
 
 console.log(
   `${files.length} files — ${originals.length} to import, ${variants.length} size variants, ` +
