@@ -1,4 +1,5 @@
 import { esc } from '../components/SiteHeader'
+import { endOfElement } from './elementor'
 
 /**
  * Render the guest reviews on the two pages that show them.
@@ -54,21 +55,6 @@ function testimonial(item: TestimonialDoc, widget: string, align: string): strin
 <span class="eael-testimonial-quote"></span> </div>
 </div>
 </div>`
-}
-
-/** Where the div or section opening at `start` closes. */
-function endOfElement(html: string, start: number, tag: 'div' | 'section'): number {
-  const pattern = new RegExp(`<\\/?${tag}\\b[^>]*>`, 'gi')
-  pattern.lastIndex = start
-  let depth = 0
-  let match: RegExpExecArray | null
-
-  while ((match = pattern.exec(html))) {
-    depth += match[0].startsWith('</') ? -1 : 1
-    if (depth === 0) return match.index + match[0].length
-  }
-
-  return -1
 }
 
 // ------------------------------------------------------------------ guest book

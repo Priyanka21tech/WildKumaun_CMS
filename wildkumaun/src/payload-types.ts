@@ -70,8 +70,12 @@ export interface Config {
     users: User;
     media: Media;
     pages: Page;
+    amenities: Amenity;
+    packages: Package;
     faqs: Faq;
     testimonials: Testimonial;
+    forms: Form;
+    enquiries: Enquiry;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -82,8 +86,12 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
+    amenities: AmenitiesSelect<false> | AmenitiesSelect<true>;
+    packages: PackagesSelect<false> | PackagesSelect<true>;
     faqs: FaqsSelect<false> | FaqsSelect<true>;
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
+    forms: FormsSelect<false> | FormsSelect<true>;
+    enquiries: EnquiriesSelect<false> | EnquiriesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -239,6 +247,25 @@ export interface Page {
     | (
         | {
             /**
+             * The banner slides, in the order they should rotate.
+             */
+            slides: {
+              /**
+               * Fills the whole banner, cropped to fit. A wide photograph works best — a tall one will be cut off top and bottom.
+               */
+              image: number | Media;
+              /**
+               * The line of text over the photograph. Leave empty for a picture alone.
+               */
+              caption?: string | null;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'hero';
+          }
+        | {
+            /**
              * The page's copy. Everything the mirrored page used to show in its content area is replaced by this.
              */
             content: {
@@ -262,6 +289,158 @@ export interface Page {
           }
         | {
             /**
+             * Which run of copy on the page this replaces.
+             */
+            target: 'home-intro' | 'home-about' | 'home-note' | 'home-cta';
+            /**
+             * Sits above the text. Leave empty for none.
+             */
+            heading?: string | null;
+            /**
+             * The paragraphs themselves.
+             */
+            body?: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            /**
+             * Optional. Shown as a small carousel beside the text, on the sections laid out in two halves.
+             */
+            images?: (number | Media)[] | null;
+            showButton?: boolean | null;
+            button?: {
+              type?: ('reference' | 'custom') | null;
+              /**
+               * Leave empty to use the page's own menu name. Fill it in only to say something different here.
+               */
+              label?: string | null;
+              reference?: (number | null) | Page;
+              /**
+               * Include the protocol, e.g. https://example.com/page.
+               */
+              url?: string | null;
+              /**
+               * Optional. The id of a section to jump to, without the #. Leave empty to land at the top.
+               */
+              anchor?: string | null;
+              newTab?: boolean | null;
+            };
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'text';
+          }
+        | {
+            /**
+             * Which list on the page this replaces.
+             */
+            target:
+              | 'home-icons'
+              | 'home-photos-1'
+              | 'home-photos-2'
+              | 'wfh-facilities'
+              | 'wfh-activities'
+              | 'premises-facilities';
+            /**
+             * Sits above the list. Leave empty for none.
+             */
+            heading?: string | null;
+            /**
+             * The line under the heading — "Providing Hospitality the correct way".
+             */
+            subtitle?: string | null;
+            display: 'icon-grid' | 'photo-grid' | 'list';
+            /**
+             * The photograph shown beside the list.
+             */
+            image?: (number | null) | Media;
+            /**
+             * What to list here, in the order it should appear.
+             */
+            items: (number | Amenity)[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'amenities';
+          }
+        | {
+            /**
+             * Which run of cards on the page this replaces.
+             */
+            target: 'home-packages';
+            /**
+             * Sits above the cards. Leave empty for none.
+             */
+            heading?: string | null;
+            /**
+             * The packages to show here, in the order they should appear.
+             */
+            items: (number | Package)[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'packages';
+          }
+        | {
+            /**
+             * Which gallery on the page this replaces.
+             */
+            target: 'home-gallery';
+            /**
+             * Sits above the photographs. Leave empty for none.
+             */
+            heading?: string | null;
+            display: 'carousel' | 'grid';
+            /**
+             * How many are visible at once on a desktop screen.
+             */
+            slidesToShow?: number | null;
+            /**
+             * The photographs, in the order they should appear.
+             */
+            images: (number | Media)[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'gallery';
+          }
+        | {
+            /**
+             * Which logo strip on the page this replaces.
+             */
+            target: 'home-partners';
+            /**
+             * Sits above the logos. Leave empty for none.
+             */
+            heading?: string | null;
+            /**
+             * The logos, in the order they should appear.
+             */
+            logos: {
+              image: number | Media;
+              /**
+               * Not shown on the page. Used as the logo’s alt text.
+               */
+              name: string;
+              /**
+               * Optional. Where the logo links to, including https://.
+               */
+              url?: string | null;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'partners';
+          }
+        | {
+            /**
              * Sits above the reviews. Leave empty for none.
              */
             heading?: string | null;
@@ -273,6 +452,63 @@ export interface Page {
             blockName?: string | null;
             blockType: 'testimonials';
           }
+        | {
+            /**
+             * Which form on the page this replaces.
+             */
+            target: 'home-enquiry';
+            /**
+             * Sits above the form. Leave empty for none.
+             */
+            heading?: string | null;
+            /**
+             * The form to show. Its questions are edited in Forms.
+             */
+            form: number | Form;
+            /**
+             * The heading in the half beside the form.
+             */
+            asideHeading?: string | null;
+            /**
+             * The copy under that heading.
+             */
+            asideBody?: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            showAsideButton?: boolean | null;
+            asideButton?: {
+              type?: ('reference' | 'custom') | null;
+              /**
+               * Leave empty to use the page's own menu name. Fill it in only to say something different here.
+               */
+              label?: string | null;
+              reference?: (number | null) | Page;
+              /**
+               * Include the protocol, e.g. https://example.com/page.
+               */
+              url?: string | null;
+              /**
+               * Optional. The id of a section to jump to, without the #. Leave empty to land at the top.
+               */
+              anchor?: string | null;
+              newTab?: boolean | null;
+            };
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'form';
+          }
       )[]
     | null;
   /**
@@ -283,6 +519,84 @@ export interface Page {
    * What menus call this page, when that differs from the title — "BIRDING GUIDES" for the team page. Every link to this page reads it, so changing it here changes it everywhere. Falls back to the title.
    */
   navLabel?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Amenities, facilities and activities. A page picks which to show with an amenities block.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "amenities".
+ */
+export interface Amenity {
+  id: number;
+  /**
+   * What it is called on the site — "Hot Water", "Nature Walk".
+   */
+  label: string;
+  /**
+   * The picture shown above the label. Leave empty for items that only ever appear in a plain list.
+   */
+  icon?: (number | null) | Media;
+  /**
+   * Identifies this item in the page markup. Rarely needs changing.
+   */
+  slug: string;
+  /**
+   * The order they are listed in here. A block can still choose its own order for one page.
+   */
+  order: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Stays and tours. A page shows a set of them with a packages block.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "packages".
+ */
+export interface Package {
+  id: number;
+  title: string;
+  /**
+   * The paragraph on the card.
+   */
+  blurb: string;
+  image: number | Media;
+  link?: {
+    type?: ('reference' | 'custom' | 'none') | null;
+    /**
+     * Leave empty to use the page's own menu name. Fill it in only to say something different here.
+     */
+    label?: string | null;
+    reference?: (number | null) | Page;
+    /**
+     * Include the protocol, e.g. https://example.com/page.
+     */
+    url?: string | null;
+    /**
+     * Optional. The id of a section to jump to, without the #. Leave empty to land at the top.
+     */
+    anchor?: string | null;
+    newTab?: boolean | null;
+  };
+  /**
+   * How long it can be booked for — "A Week", "1 Month". Leave empty for a package not sold by length.
+   */
+  durations?:
+    | {
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Identifies this package in the page markup. Rarely needs changing.
+   */
+  slug: string;
+  /**
+   * Low numbers first. Leave gaps so a package can be slotted in later.
+   */
+  order: number;
   updatedAt: string;
   createdAt: string;
 }
@@ -319,6 +633,173 @@ export interface Testimonial {
   createdAt: string;
 }
 /**
+ * The forms on the site, and what happens when one is sent.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "forms".
+ */
+export interface Form {
+  id: number;
+  title: string;
+  fields?:
+    | (
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            required?: boolean | null;
+            defaultValue?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'checkbox';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'country';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'email';
+          }
+        | {
+            message?: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'message';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            defaultValue?: number | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'number';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            defaultValue?: string | null;
+            placeholder?: string | null;
+            options?:
+              | {
+                  label: string;
+                  value: string;
+                  id?: string | null;
+                }[]
+              | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'select';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'state';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            defaultValue?: string | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'text';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            defaultValue?: string | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'textarea';
+          }
+      )[]
+    | null;
+  submitButtonLabel?: string | null;
+  confirmationType?: ('message' | 'redirect') | null;
+  confirmationMessage?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  redirect?: {
+    url: string;
+  };
+  emails?:
+    | {
+        emailTo?: string | null;
+        cc?: string | null;
+        bcc?: string | null;
+        replyTo?: string | null;
+        emailFrom?: string | null;
+        subject: string;
+        message?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Shown on the FAQs page, in the order set here.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -350,6 +831,25 @@ export interface Faq {
    * Low numbers first. Leave gaps so a question can be slotted in later.
    */
   order: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * What people have sent through the forms on the site.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "enquiries".
+ */
+export interface Enquiry {
+  id: number;
+  form: number | Form;
+  submissionData?:
+    | {
+        field: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -390,12 +890,28 @@ export interface PayloadLockedDocument {
         value: number | Page;
       } | null)
     | ({
+        relationTo: 'amenities';
+        value: number | Amenity;
+      } | null)
+    | ({
+        relationTo: 'packages';
+        value: number | Package;
+      } | null)
+    | ({
         relationTo: 'faqs';
         value: number | Faq;
       } | null)
     | ({
         relationTo: 'testimonials';
         value: number | Testimonial;
+      } | null)
+    | ({
+        relationTo: 'forms';
+        value: number | Form;
+      } | null)
+    | ({
+        relationTo: 'enquiries';
+        value: number | Enquiry;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -534,10 +1050,92 @@ export interface PagesSelect<T extends boolean = true> {
   layout?:
     | T
     | {
+        hero?:
+          | T
+          | {
+              slides?:
+                | T
+                | {
+                    image?: T;
+                    caption?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
         content?:
           | T
           | {
               content?: T;
+              id?: T;
+              blockName?: T;
+            };
+        text?:
+          | T
+          | {
+              target?: T;
+              heading?: T;
+              body?: T;
+              images?: T;
+              showButton?: T;
+              button?:
+                | T
+                | {
+                    type?: T;
+                    label?: T;
+                    reference?: T;
+                    url?: T;
+                    anchor?: T;
+                    newTab?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        amenities?:
+          | T
+          | {
+              target?: T;
+              heading?: T;
+              subtitle?: T;
+              display?: T;
+              image?: T;
+              items?: T;
+              id?: T;
+              blockName?: T;
+            };
+        packages?:
+          | T
+          | {
+              target?: T;
+              heading?: T;
+              items?: T;
+              id?: T;
+              blockName?: T;
+            };
+        gallery?:
+          | T
+          | {
+              target?: T;
+              heading?: T;
+              display?: T;
+              slidesToShow?: T;
+              images?: T;
+              id?: T;
+              blockName?: T;
+            };
+        partners?:
+          | T
+          | {
+              target?: T;
+              heading?: T;
+              logos?:
+                | T
+                | {
+                    image?: T;
+                    name?: T;
+                    url?: T;
+                    id?: T;
+                  };
               id?: T;
               blockName?: T;
             };
@@ -549,9 +1147,72 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        form?:
+          | T
+          | {
+              target?: T;
+              heading?: T;
+              form?: T;
+              asideHeading?: T;
+              asideBody?: T;
+              showAsideButton?: T;
+              asideButton?:
+                | T
+                | {
+                    type?: T;
+                    label?: T;
+                    reference?: T;
+                    url?: T;
+                    anchor?: T;
+                    newTab?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
       };
   slug?: T;
   navLabel?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "amenities_select".
+ */
+export interface AmenitiesSelect<T extends boolean = true> {
+  label?: T;
+  icon?: T;
+  slug?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "packages_select".
+ */
+export interface PackagesSelect<T extends boolean = true> {
+  title?: T;
+  blurb?: T;
+  image?: T;
+  link?:
+    | T
+    | {
+        type?: T;
+        label?: T;
+        reference?: T;
+        url?: T;
+        anchor?: T;
+        newTab?: T;
+      };
+  durations?:
+    | T
+    | {
+        label?: T;
+        id?: T;
+      };
+  slug?: T;
+  order?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -578,6 +1239,155 @@ export interface TestimonialsSelect<T extends boolean = true> {
   source?: T;
   slug?: T;
   order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "forms_select".
+ */
+export interface FormsSelect<T extends boolean = true> {
+  title?: T;
+  fields?:
+    | T
+    | {
+        checkbox?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              required?: T;
+              defaultValue?: T;
+              id?: T;
+              blockName?: T;
+            };
+        country?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              required?: T;
+              id?: T;
+              blockName?: T;
+            };
+        email?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              required?: T;
+              id?: T;
+              blockName?: T;
+            };
+        message?:
+          | T
+          | {
+              message?: T;
+              id?: T;
+              blockName?: T;
+            };
+        number?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              defaultValue?: T;
+              required?: T;
+              id?: T;
+              blockName?: T;
+            };
+        select?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              defaultValue?: T;
+              placeholder?: T;
+              options?:
+                | T
+                | {
+                    label?: T;
+                    value?: T;
+                    id?: T;
+                  };
+              required?: T;
+              id?: T;
+              blockName?: T;
+            };
+        state?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              required?: T;
+              id?: T;
+              blockName?: T;
+            };
+        text?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              defaultValue?: T;
+              required?: T;
+              id?: T;
+              blockName?: T;
+            };
+        textarea?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              defaultValue?: T;
+              required?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  submitButtonLabel?: T;
+  confirmationType?: T;
+  confirmationMessage?: T;
+  redirect?:
+    | T
+    | {
+        url?: T;
+      };
+  emails?:
+    | T
+    | {
+        emailTo?: T;
+        cc?: T;
+        bcc?: T;
+        replyTo?: T;
+        emailFrom?: T;
+        subject?: T;
+        message?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "enquiries_select".
+ */
+export interface EnquiriesSelect<T extends boolean = true> {
+  form?: T;
+  submissionData?:
+    | T
+    | {
+        field?: T;
+        value?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

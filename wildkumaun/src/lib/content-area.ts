@@ -1,5 +1,6 @@
 import { convertLexicalToHTML } from '@payloadcms/richtext-lexical/html'
 import type { SerializedEditorState } from 'lexical'
+import { innerEndOfElement } from './elementor'
 
 /**
  * Swap a page's copy for what the CMS holds.
@@ -17,27 +18,13 @@ import type { SerializedEditorState } from 'lexical'
 
 const OPEN = /<div class="entry-content[^"]*"[^>]*>/i
 
-/** Where the div opening at `start` closes. */
-function endOfDiv(html: string, start: number): number {
-  const tag = /<\/?div\b[^>]*>/gi
-  tag.lastIndex = start
-  let depth = 0
-  let match: RegExpExecArray | null
-
-  while ((match = tag.exec(html))) {
-    depth += match[0].startsWith('</') ? -1 : 1
-    if (depth === 0) return match.index
-  }
-
-  return -1
-}
-
 export function replaceContentArea(html: string, content: SerializedEditorState): string {
   const open = OPEN.exec(html)
   if (!open || open.index === undefined) return html
 
   const innerStart = open.index + open[0].length
-  const innerEnd = endOfDiv(html, open.index)
+  // The contents, not the wrapper: the div itself stays, for the reason above.
+  const innerEnd = innerEndOfElement(html, open.index, 'div')
   if (innerEnd === -1 || innerEnd < innerStart) return html
 
   const rendered = convertLexicalToHTML({ data: content, disableContainer: true })

@@ -9,6 +9,13 @@ import { responsiveHtml } from '@/lib/responsive-html'
 import { replaceAccordion } from '@/lib/faq-accordion'
 import { bannerFor, bannerOverride, replaceBannerImage } from '@/lib/page-banner'
 import { replaceContentArea } from '@/lib/content-area'
+import { replaceHero } from '@/lib/hero-render'
+import { replaceText } from '@/lib/text-render'
+import { replaceForm } from '@/lib/form-render'
+import { replaceAmenities } from '@/lib/amenities-render'
+import { replacePackages } from '@/lib/packages-render'
+import { replaceGallery } from '@/lib/gallery-render'
+import { replacePartners } from '@/lib/partners-render'
 import {
   replaceTestimonialGrid,
   replaceTestimonialHeading,
@@ -133,6 +140,44 @@ export default async function MirrorPage({ params }: { params: Promise<{ slug?: 
   for (const block of pageDoc.docs[0]?.layout ?? []) {
     if (block.blockType === 'content') {
       content = replaceContentArea(content, block.content)
+      continue
+    }
+
+    if (block.blockType === 'hero') {
+      content = replaceHero(content, block, mediaMap)
+      continue
+    }
+
+    if (block.blockType === 'text') {
+      content = replaceText(content, block, mediaMap)
+      continue
+    }
+
+    // These three take a section of the mirror over rather than the page, and
+    // each is handed the media map so the pictures it adds get the same srcset
+    // treatment the mirror's own images were given before the loop.
+    if (block.blockType === 'amenities') {
+      content = replaceAmenities(content, block, mediaMap)
+      continue
+    }
+
+    if (block.blockType === 'packages') {
+      content = replacePackages(content, block, mediaMap)
+      continue
+    }
+
+    if (block.blockType === 'gallery') {
+      content = replaceGallery(content, block, mediaMap)
+      continue
+    }
+
+    if (block.blockType === 'partners') {
+      content = replacePartners(content, block, mediaMap)
+      continue
+    }
+
+    if (block.blockType === 'form') {
+      content = replaceForm(content, block)
       continue
     }
 

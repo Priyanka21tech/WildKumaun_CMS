@@ -28,6 +28,13 @@ type LinkOptions = {
   /** Offer `none` — for menu parents that open a submenu instead of navigating. */
   allowNone?: boolean
   label?: string
+  /**
+   * Admin options for the group itself — a `condition`, in practice.
+   *
+   * Here rather than spread onto the result by the caller, because `Field` is a
+   * union of every field shape and spreading into it loses which member this is.
+   */
+  admin?: { condition?: (data: unknown, siblingData: unknown) => boolean }
 }
 
 export const link = ({
@@ -35,10 +42,12 @@ export const link = ({
   withLabel = true,
   allowNone = false,
   label = 'Link',
+  admin,
 }: LinkOptions = {}): Field => ({
   name,
   type: 'group',
   label,
+  ...(admin ? { admin } : {}),
   fields: [
     {
       type: 'row',

@@ -1,5 +1,12 @@
 import type { CollectionConfig } from 'payload'
+import { AmenitiesBlock } from '../blocks/AmenitiesBlock'
 import { ContentBlock } from '../blocks/ContentBlock'
+import { GalleryBlock } from '../blocks/GalleryBlock'
+import { HeroBlock } from '../blocks/HeroBlock'
+import { TextBlock } from '../blocks/TextBlock'
+import { FormBlock } from '../blocks/FormBlock'
+import { PackagesBlock } from '../blocks/PackagesBlock'
+import { PartnersBlock } from '../blocks/PartnersBlock'
 import { TestimonialsBlock } from '../blocks/TestimonialsBlock'
 
 /**
@@ -69,7 +76,17 @@ export const Pages: CollectionConfig = {
     {
       name: 'layout',
       type: 'blocks',
-      blocks: [ContentBlock, TestimonialsBlock],
+      blocks: [
+        HeroBlock,
+        ContentBlock,
+        TextBlock,
+        AmenitiesBlock,
+        PackagesBlock,
+        GalleryBlock,
+        PartnersBlock,
+        TestimonialsBlock,
+        FormBlock,
+      ],
       admin: {
         description:
           'Sections this page builds from the CMS. Everything not listed here still comes from the mirrored markup, so a page with no blocks looks exactly as it did.',

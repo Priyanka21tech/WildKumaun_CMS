@@ -41,7 +41,7 @@ const PLAIN_PAGES = ['about-us']
  * finds nothing is tried again without its dimensions, which is the image the copy
  * was cut from.
  */
-async function findMedia(payload: Payload, filename: string): Promise<number | undefined> {
+export async function findMedia(payload: Payload, filename: string): Promise<number | undefined> {
   for (const name of [filename, originalFilename(filename)]) {
     const found = await payload.find({
       collection: 'media',

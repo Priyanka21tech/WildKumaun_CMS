@@ -261,6 +261,79 @@ function initAccordions(teardown) {
   }
 }
 
+/**
+ * Send an enquiry.
+ *
+ * The page reaches the browser as one string of markup rather than as React
+ * components, so there is no onSubmit to attach — the handler has to find the
+ * form in the DOM the same way the carousels do.
+ *
+ * It posts to the enquiries endpoint the form-builder plugin creates. The field
+ * names are the plugin's own, so a submission arrives already matched to the
+ * questions it answers.
+ *
+ * A failure leaves the form filled in and says so. Clearing what somebody typed
+ * because the network dropped is the worst thing a form can do.
+ */
+function initForms(teardown) {
+  for (const form of document.querySelectorAll('form[data-form-id]')) {
+    const error = form.querySelector('.wpforms-error-container')
+    const confirmation = form.parentElement?.querySelector('.wpforms-confirmation-container-full')
+    const submit = form.querySelector('.wpforms-submit')
+
+    const onSubmit = async (event) => {
+      event.preventDefault()
+
+      // The browser's own validation, used rather than reimplemented — `novalidate`
+      // is on the form so this runs when we ask, not on the browser's terms.
+      if (!form.checkValidity()) {
+        form.reportValidity()
+        return
+      }
+
+      const data = new FormData(form)
+      const submissionData = [...data.entries()].map(([field, value]) => ({
+        field,
+        value: String(value),
+      }))
+
+      if (error) error.hidden = true
+      if (submit) {
+        submit.disabled = true
+        // WPForms puts the "sending" wording on the button itself, so the origin's
+        // own attribute is what this reads rather than a string invented here.
+        if (submit.dataset.altText) submit.textContent = submit.dataset.altText
+      }
+
+      try {
+        const response = await fetch('/api/enquiries', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ form: form.dataset.formId, submissionData }),
+        })
+
+        if (!response.ok) throw new Error(String(response.status))
+
+        form.hidden = true
+        if (confirmation) confirmation.hidden = false
+      } catch {
+        if (error) {
+          error.textContent = 'Sorry — that did not send. Please try again.'
+          error.hidden = false
+        }
+      } finally {
+        if (submit) {
+          submit.disabled = false
+          if (submit.dataset.submitText) submit.textContent = submit.dataset.submitText
+        }
+      }
+    }
+
+    form.addEventListener('submit', onSubmit)
+    teardown.push(() => form.removeEventListener('submit', onSubmit))
+  }
+}
+
 export default function Enhancements({ route }) {
   useEffect(() => {
     const teardown = []
@@ -273,6 +346,7 @@ export default function Enhancements({ route }) {
     }
     initAccordions(teardown)
     initReveals(teardown)
+    initForms(teardown)
 
     return () => teardown.forEach((fn) => fn())
   }, [route])

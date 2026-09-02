@@ -1,0 +1,492 @@
+import type { Payload } from 'payload'
+import path from 'node:path'
+import { endOfElement, innerEndOfElement, sliceSection } from '../lib/elementor'
+import {
+  AMENITY_TARGETS,
+  FORM_TARGETS,
+  TEXT_TARGETS,
+  GALLERY_TARGETS,
+  PACKAGE_TARGETS,
+  PARTNER_TARGETS,
+  type SectionTarget,
+} from '../lib/sections'
+import { mirror, pairsIn, slugify } from './amenities'
+import { findMedia } from './page-content'
+import { htmlToLexical } from './html-to-lexical'
+import { seedForms } from './forms'
+
+/**
+ * Give each page the blocks that render what it already shows.
+ *
+ * Until a page carries a block, the block does nothing — the mirror's own markup
+ * is what the reader sees. So the collections seeded earlier were invisible: the
+ * amenities existed as documents and every page went on rendering the origin's
+ * hard-coded copies of them. This is the step that connects the two.
+ *
+ * What each block is given is read out of the mirror, not decided here. The
+ * headings are the origin's headings, the amenity groupings are the origin's own
+ * rows, the gallery is the origin's photographs in the origin's order. That is
+ * the whole point: switching a section from the mirror to the CMS should change
+ * nothing on the page. Anything that looks different afterwards is a bug, and
+ * that is only a usable test if the content on both sides is the same.
+ *
+ * Every amenity target gets a block, which is what makes the collection worth
+ * having: the six rows across three pages share sixteen documents between them,
+ * so Kettle's icon is now one upload rather than two, and the five items on
+ * /facilities are the same documents the home page lists under a different
+ * heading in a different shape.
+ *
+ * Creates only, and per block rather than per page — a page may already carry
+ * blocks from an earlier seed or from an editor, and appending must not
+ * duplicate or drop them. A block whose target is already on the page is left
+ * exactly as it is.
+ */
+
+/**
+ * The mirrored file behind a page.
+ *
+ * The home page is `home` in Payload, because a slug cannot be "/", and
+ * `index.json` in the mirror, because that is what the origin called it. Every
+ * other page is named the same in both.
+ */
+const mirrorFor = (slug: string): string => mirror(slug === 'home' ? 'index' : slug)
+
+/** The hero's slider — the one of the two on the page that holds no reviews. */
+function heroSliderIn(html: string): { start: number; end: number } | null {
+  let from = 0
+
+  while (true) {
+    const at = html.indexOf('<div class="sina-content-slider', from)
+    if (at === -1) return null
+
+    const end = endOfElement(html, at, 'div')
+    if (end === -1) return null
+
+    if (!html.slice(at, end).includes('eael-testimonial')) return { start: at, end }
+    from = end
+  }
+}
+
+/** Each `.sina-cs-item` inside a slider. */
+function slidesIn(slider: string): string[] {
+  const found: string[] = []
+  let at = slider.indexOf('sina-cs-item')
+
+  while (at !== -1) {
+    const open = slider.lastIndexOf('<div', at)
+    const end = endOfElement(slider, open, 'div')
+    if (end === -1) break
+
+    found.push(slider.slice(open, end))
+    at = slider.indexOf('sina-cs-item', end)
+  }
+
+  return found
+}
+
+/**
+ * What each partner is called.
+ *
+ * The origin renders the logos with an empty alt attribute, so there is nothing
+ * to read: these are the names as they appear in the logos themselves. They
+ * become alt text, which is the one place the name is of any use.
+ */
+const PARTNER_NAMES: Record<string, string> = {
+  'explore-wild-india-logo.png': 'Explore Wild India',
+  'wild-india-journey-logo.png': 'Wild India Journey',
+  'untold-india-logo.png': 'Untold India',
+  'Junglehike-final-logo.png': 'Junglehike',
+  'twf-logo.png': 'The Wildlife Foundation',
+  'wild-walk-tour.png': 'Wild Walk Tour',
+  'wild-voyager.png': 'Wild Voyager',
+  'wandervogel-adventures.png': 'Wandervogel Adventures',
+}
+
+/** The words in a heading section, so a block's heading matches the origin's. */
+function headingIn(html: string, sectionId?: string): string | undefined {
+  if (!sectionId) return undefined
+
+  const markup = sliceSection(html, sectionId)
+  const found = markup?.match(/<h2[^>]*class="elementor-heading-title[^"]*"[^>]*>([\s\S]*?)<\/h2>/i)
+
+  return found?.[1]
+    .replace(/<[^>]*>/g, '')
+    .replace(/&amp;/g, '&')
+    .replace(/&nbsp;/g, ' ')
+    .trim()
+}
+
+/** The subtitle the origin puts under a heading, where it has one. */
+function subtitleIn(html: string, sectionId?: string): string | undefined {
+  if (!sectionId) return undefined
+
+  const markup = sliceSection(html, sectionId)
+  const found = markup?.match(/<p[^>]*>([\s\S]*?)<\/p>/i)
+
+  return found?.[1].replace(/<[^>]*>/g, '').trim() || undefined
+}
+
+/** The `/media/...` sources inside a section, in document order. */
+function imagesIn(html: string, sectionId: string): string[] {
+  const markup = sliceSection(html, sectionId)
+  if (!markup) return []
+
+  return [...markup.matchAll(/<img[^>]*src="\/media\/([^"]+)"[^>]*>/g)].map((match) => match[1])
+}
+
+const mediaIdFor = (payload: Payload, filename: string) =>
+  findMedia(payload, path.basename(filename.split('?')[0]))
+
+/** The Media ids for a section's images, skipping any that were never imported. */
+async function mediaIdsIn(payload: Payload, html: string, sectionId: string): Promise<number[]> {
+  const ids: number[] = []
+
+  for (const filename of imagesIn(html, sectionId)) {
+    const id = await mediaIdFor(payload, filename)
+    if (typeof id === 'number') ids.push(id)
+  }
+
+  return ids
+}
+
+/**
+ * The amenity documents behind one of the origin's rows, in the origin's order.
+ *
+ * The list-shaped row has no picture-and-label pairs to read — /facilities writes
+ * its items as a bulleted list — so the labels come out of the list items there.
+ */
+async function amenityIdsIn(
+  payload: Payload,
+  html: string,
+  target: SectionTarget,
+): Promise<number[]> {
+  const markup = sliceSection(html, target.section)
+  if (!markup) return []
+
+  const labels =
+    target.display === 'list'
+      ? [...markup.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/g)].map((match) =>
+          match[1]
+            .replace(/<[^>]*>/g, '')
+            .replace(/&nbsp;/g, ' ')
+            .trim(),
+        )
+      : pairsIn(markup).map((pair) => pair.label)
+
+  const ids: number[] = []
+
+  for (const label of labels.filter(Boolean)) {
+    const found = await payload.find({
+      collection: 'amenities',
+      where: { slug: { equals: slugify(label) } },
+      limit: 1,
+      pagination: false,
+      depth: 0,
+    })
+
+    const id = found.docs[0]?.id
+    if (typeof id === 'number') ids.push(id)
+  }
+
+  return ids
+}
+
+type Block = { blockType: string; target?: string } & Record<string, unknown>
+
+/**
+ * The hero's slides, read out of the origin's slider.
+ *
+ * Only the home page has one, and its photographs are CSS backgrounds rather
+ * than `<img>` tags — so they are read out of the `<style>` block each slide
+ * carries, not out of its markup. See src/lib/hero-render.ts.
+ */
+async function heroSlides(
+  payload: Payload,
+  html: string,
+): Promise<{ image: number; caption?: string }[]> {
+  const at = heroSliderIn(html)
+  if (!at) return []
+
+  const slides: { image: number; caption?: string }[] = []
+
+  for (const markup of slidesIn(html.slice(at.start, at.end))) {
+    const url = markup.match(/background-image:url\("([^"]+)"\)/)?.[1]
+    if (!url) continue
+
+    const id = await mediaIdFor(payload, url)
+    if (typeof id !== 'number') continue
+
+    const caption = markup
+      .replace(/<style[\s\S]*?<\/style>/g, '')
+      .match(/<div class="elementor-widget-container">\s*<p>([\s\S]*?)<\/p>/)?.[1]
+      .replace(/<[^>]*>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .trim()
+
+    slides.push({ image: id, caption: caption || undefined })
+  }
+
+  return slides
+}
+
+/**
+ * One text section's copy, as the origin wrote it.
+ *
+ * The paragraph is converted from the section's own markup rather than rebuilt
+ * from the extraction's list of sentences: the markup has the line breaks and
+ * emphasis the extraction dropped, and htmlToLexical already knows how to keep
+ * them. See src/seed/html-to-lexical.ts.
+ */
+async function textBlockFor(
+  payload: Payload,
+  html: string,
+  target: SectionTarget,
+): Promise<Block | null> {
+  const markup = sliceSection(html, target.section)
+  if (!markup || !target.item) return null
+
+  const heading = markup
+    .match(/<h2[^>]*class="elementor-heading-title[^"]*"[^>]*>([\s\S]*?)<\/h2>/i)?.[1]
+    .replace(/<[^>]*>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .trim()
+
+  const copy = target.item.text
+    ? widgetInner(markup, target.item.text)
+    : undefined
+
+  const body = copy
+    ? await htmlToLexical(copy, (src) => mediaIdFor(payload, src))
+    : undefined
+
+  const cta = target.item.button ? buttonIn(markup, target.item.button) : undefined
+
+  const images = target.item.image
+    ? await mediaIdsIn(payload, html, target.section)
+    : []
+
+  if (!heading && !body && !cta) return null
+
+  return {
+    blockType: 'text',
+    target: target.value,
+    heading,
+    body: body as never,
+    images,
+    showButton: Boolean(cta),
+    // `custom` rather than a page reference: the origin types these hrefs, and
+    // guessing which page "contact-us.html" meant is the kind of silent decision
+    // that makes a migration unverifiable.
+    button: cta ? { type: 'custom', label: cta.label, url: cta.href } : undefined,
+  }
+}
+
+/** What a widget holds, without its Elementor wrappers. */
+function widgetInner(markup: string, hash: string): string | undefined {
+  const at = markup.indexOf(`data-id="${hash}"`)
+  if (at === -1) return undefined
+
+  const open = markup.indexOf('<div class="elementor-widget-container">', at)
+  if (open === -1) return undefined
+
+  const start = open + '<div class="elementor-widget-container">'.length
+  const end = innerEndOfElement(markup, open, 'div')
+  if (end === -1 || end < start) return undefined
+
+  return markup.slice(start, end).trim()
+}
+
+/** The label and href on a button widget. */
+function buttonIn(markup: string, hash: string): { label: string; href: string } | undefined {
+  const at = markup.indexOf(`data-id="${hash}"`)
+  if (at === -1) return undefined
+
+  const scope = markup.slice(at, at + 2000)
+  const href = scope.match(/<a[^>]*href="([^"]*)"/i)?.[1]
+  const label = scope
+    .match(/<span class="elementor-button-text">([\s\S]*?)<\/span>/i)?.[1]
+    .replace(/<[^>]*>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .trim()
+
+  return label ? { label, href: href || '#' } : undefined
+}
+
+/** Every block that belongs on one page, built from what the origin shows there. */
+async function blocksFor(payload: Payload, slug: string): Promise<Block[]> {
+  const html = mirrorFor(slug)
+  const blocks: Block[] = []
+
+  if (slug === 'home') {
+    const slides = await heroSlides(payload, html)
+    // No `target`: there is one hero on the site, so HeroBlock has no target field
+    // and Payload would drop the value on save — leaving the block unmatchable and
+    // a fresh copy appended on every run.
+    if (slides.length) blocks.push({ blockType: 'hero', slides })
+  }
+
+  for (const target of AMENITY_TARGETS.filter((entry) => entry.page === slug)) {
+    const items = await amenityIdsIn(payload, html, target)
+    if (!items.length) continue
+
+    const image =
+      target.display === 'list'
+        ? await mediaIdFor(payload, imagesIn(html, target.section)[0] ?? '')
+        : undefined
+
+    blocks.push({
+      blockType: 'amenities',
+      target: target.value,
+      heading: headingIn(html, target.heading),
+      subtitle: subtitleIn(html, target.heading),
+      display: target.display,
+      image,
+      items,
+    })
+  }
+
+  for (const target of TEXT_TARGETS.filter((entry) => entry.page === slug)) {
+    const block = await textBlockFor(payload, html, target)
+    if (block) blocks.push(block)
+  }
+
+  for (const target of FORM_TARGETS.filter((entry) => entry.page === slug)) {
+    const markup = sliceSection(html, target.section)
+    if (!markup || !target.item) continue
+
+    const form = await seedForms(payload)
+    if (!form.id) continue
+
+    // The origin's two headings for this section: an h2 above the form and an h3
+    // above the copy beside it. Both say "Ask Your Queries", and both are kept —
+    // they are two widgets and an editor may want them to differ.
+    const asideBodyHtml = target.item.text ? widgetInner(markup, target.item.text) : undefined
+    const cta = target.item.button ? buttonIn(markup, target.item.button) : undefined
+
+    blocks.push({
+      blockType: 'form',
+      target: target.value,
+      heading: headingIn(html, target.section),
+      form: form.id,
+      asideHeading: markup
+        .match(/<h3[^>]*class="elementor-heading-title[^"]*"[^>]*>([\s\S]*?)<\/h3>/i)?.[1]
+        .replace(/<[^>]*>/g, '')
+        .trim(),
+      asideBody: asideBodyHtml
+        ? ((await htmlToLexical(asideBodyHtml, (src) => mediaIdFor(payload, src))) as never)
+        : undefined,
+      showAsideButton: Boolean(cta),
+      button: undefined,
+      asideButton: cta ? { type: 'custom', label: cta.label, url: cta.href } : undefined,
+    })
+  }
+
+  for (const target of PACKAGE_TARGETS.filter((entry) => entry.page === slug)) {
+    const packages = await payload.find({
+      collection: 'packages',
+      limit: 0,
+      pagination: false,
+      sort: 'order',
+      depth: 0,
+    })
+
+    if (!packages.docs.length) continue
+
+    blocks.push({
+      blockType: 'packages',
+      target: target.value,
+      heading: headingIn(html, target.heading),
+      items: packages.docs.map((doc) => doc.id),
+    })
+  }
+
+  for (const target of GALLERY_TARGETS.filter((entry) => entry.page === slug)) {
+    const images = await mediaIdsIn(payload, html, target.section)
+    if (!images.length) continue
+
+    blocks.push({
+      blockType: 'gallery',
+      target: target.value,
+      heading: headingIn(html, target.heading),
+      display: 'carousel',
+      // The four the origin's own carousel settings ask for.
+      slidesToShow: 4,
+      images,
+    })
+  }
+
+  for (const target of PARTNER_TARGETS.filter((entry) => entry.page === slug)) {
+    const logos: { image: number; name: string }[] = []
+
+    for (const filename of imagesIn(html, target.section)) {
+      const id = await mediaIdFor(payload, filename)
+      if (typeof id === 'number') {
+        logos.push({ image: id, name: PARTNER_NAMES[filename] ?? filename })
+      }
+    }
+
+    if (logos.length) {
+      blocks.push({
+        blockType: 'partners',
+        target: target.value,
+        heading: headingIn(html, target.heading),
+        logos,
+      })
+    }
+  }
+
+  return blocks
+}
+
+/** Every page some block has a target on. */
+const pagesWithTargets = (): string[] => [
+  ...new Set(
+    [
+      ...AMENITY_TARGETS,
+      ...TEXT_TARGETS,
+      ...FORM_TARGETS,
+      ...PACKAGE_TARGETS,
+      ...GALLERY_TARGETS,
+      ...PARTNER_TARGETS,
+    ].map(
+      (target) => target.page,
+    ),
+  ),
+]
+
+export async function seedPageBlocks(payload: Payload): Promise<{ added: string[] }> {
+  const added: string[] = []
+
+  for (const slug of pagesWithTargets()) {
+    const found = await payload.find({
+      collection: 'pages',
+      where: { slug: { equals: slug } },
+      limit: 1,
+      pagination: false,
+      depth: 0,
+    })
+
+    const page = found.docs[0]
+    if (!page) continue
+
+    const existing = (page.layout ?? []) as Block[]
+    const taken = new Set(existing.map((block) => `${block.blockType}:${block.target ?? ''}`))
+
+    const wanted = await blocksFor(payload, slug)
+    const missing = wanted.filter((block) => !taken.has(`${block.blockType}:${block.target ?? ''}`))
+    if (!missing.length) continue
+
+    await payload.update({
+      collection: 'pages',
+      id: page.id,
+      // The blocks the page already had come first, so nothing an editor arranged
+      // is moved. Order in this list is only what the admin panel shows anyway —
+      // each block replaces the section it names, wherever that sits on the page.
+      data: { layout: [...existing, ...missing] as never },
+    })
+
+    added.push(...missing.map((block) => `${slug} — ${block.blockType}:${block.target}`))
+  }
+
+  return { added }
+}

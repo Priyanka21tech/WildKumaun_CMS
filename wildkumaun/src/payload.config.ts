@@ -4,10 +4,13 @@ import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
+import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
+import { Amenities } from './collections/Amenities'
+import { Packages } from './collections/Packages'
 import { FAQs } from './collections/FAQs'
 import { Testimonials } from './collections/Testimonials'
 import { SiteSettings } from './globals/SiteSettings'
@@ -16,6 +19,9 @@ import { Footer } from './globals/Footer'
 import { seedGlobals } from './seed/globals'
 import { seedFaqs } from './seed/faqs'
 import { seedTestimonials } from './seed/testimonials'
+import { seedAmenities } from './seed/amenities'
+import { seedPackages } from './seed/packages'
+import { seedPageBlocks } from './seed/page-blocks'
 import { seedPageContent } from './seed/page-content'
 
 const filename = fileURLToPath(import.meta.url)
@@ -28,7 +34,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Pages, FAQs, Testimonials],
+  collections: [Users, Media, Pages, Amenities, Packages, FAQs, Testimonials],
   globals: [SiteSettings, Header, Footer],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
@@ -41,7 +47,54 @@ export default buildConfig({
     },
   }),
   sharp,
-  plugins: [],
+  plugins: [
+    /**
+     * Forms the client can change, and somewhere for what people send.
+     *
+     * Every form on the origin is dead: the enquiry form posts to WordPress with
+     * a token that expired, and the guest book's nonce with it. So there was
+     * nothing to preserve here — no working behaviour to keep faithful — which
+     * makes this the one part of the site that is a rebuild rather than a
+     * migration.
+     *
+     * The plugin rather than a hand-written block, because the client should be
+     * able to add a field to the enquiry form without a developer, and because
+     * storing submissions, validating them and confirming them is a lot of
+     * ordinary code to get subtly wrong.
+     *
+     * The submissions collection is renamed to `enquiries`. `form-submissions` is
+     * what the plugin calls it and it is accurate, but the admin panel is the
+     * client's and an enquiry is what they are.
+     */
+    formBuilderPlugin({
+      // Only what the site's forms actually use. Every extra field type is
+      // another option in a menu the client has to read past.
+      fields: {
+        text: true,
+        textarea: true,
+        email: true,
+        number: true,
+        select: true,
+        checkbox: true,
+        message: true,
+        payment: false,
+      },
+      formOverrides: {
+        admin: {
+          group: 'Forms',
+          description: 'The forms on the site, and what happens when one is sent.',
+        },
+      },
+      formSubmissionOverrides: {
+        slug: 'enquiries',
+        labels: { singular: 'Enquiry', plural: 'Enquiries' },
+        admin: {
+          group: 'Forms',
+          description: 'What people have sent through the forms on the site.',
+        },
+      },
+    }),
+  ],
 
   /**
    * Boot the site into a usable state.
@@ -92,6 +145,33 @@ export default buildConfig({
       const media = await payload.count({ collection: 'media' })
       if (media.totalDocs === 0) {
         payload.logger.warn('Media is empty — run "npm run import:media" to load the site images')
+      }
+
+      /**
+       * These two wait for the media library, unlike the seeds above.
+       *
+       * Both find their pictures by filename, and both create only. Run against
+       * an empty library they would not fail — they would quietly create every
+       * amenity without its icon and then skip them all forever after, and the
+       * only way back would be deleting the documents by hand. So on a first boot
+       * they do nothing and say so; the next boot after import:media seeds them
+       * properly.
+       */
+      if (media.totalDocs === 0) {
+        payload.logger.warn('Amenities and packages wait for the media library')
+      } else {
+        const amenities = await seedAmenities(payload)
+        if (amenities.created) payload.logger.info(`Seeded ${amenities.created} amenities`)
+
+        const packages = await seedPackages(payload)
+        if (packages.created) payload.logger.info(`Seeded ${packages.created} packages`)
+
+        // Last, because a block is a list of references and the documents it
+        // points at have to exist before it can point at them.
+        const blocks = await seedPageBlocks(payload)
+        for (const block of blocks.added) {
+          payload.logger.info(`Now rendered from the CMS: ${block}`)
+        }
       }
     } catch (err) {
       // A failed seed must not stop Payload starting: the admin panel is where
