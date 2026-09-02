@@ -12,6 +12,7 @@ import { replaceContentArea } from '@/lib/content-area'
 import { replaceHero } from '@/lib/hero-render'
 import { replaceText } from '@/lib/text-render'
 import { replaceForm } from '@/lib/form-render'
+import { replaceMap } from '@/lib/map-render'
 import { replaceAmenities } from '@/lib/amenities-render'
 import { replacePackages } from '@/lib/packages-render'
 import { replaceGallery } from '@/lib/gallery-render'
@@ -177,7 +178,14 @@ export default async function MirrorPage({ params }: { params: Promise<{ slug?: 
     }
 
     if (block.blockType === 'form') {
-      content = replaceForm(content, block)
+      // The contact details beside the form come from Site Settings rather than
+      // from the block, so the settings have to reach the renderer.
+      content = replaceForm(content, block, settings as never)
+      continue
+    }
+
+    if (block.blockType === 'map') {
+      content = replaceMap(content, block)
       continue
     }
 

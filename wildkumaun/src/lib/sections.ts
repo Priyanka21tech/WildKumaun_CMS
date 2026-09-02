@@ -82,8 +82,46 @@ export type SectionTarget = {
    * page, and this is where it is put back: as a rule on the widget, which is
    * where Elementor would have put it, and which keeps applying to whatever an
    * editor types next.
+   *
+   * A key is a widget hash, optionally followed by a descendant selector —
+   * `'6c3f0dd h2'` reaches only the headings inside that widget, for the case
+   * where the origin styled the headings and the paragraphs differently.
    */
   css?: Record<string, string>
+  /**
+   * How the pictures beside a text block are drawn.
+   *
+   * The home page's about section rotates several; conservation's petition shows
+   * one, and rendering that as a carousel of one would put arrows either side of
+   * a still image.
+   */
+  imageAs?: 'carousel' | 'image'
+  /** The form sits in the second column rather than the first. */
+  reversed?: boolean
+  /**
+   * What level the heading beside the form is.
+   *
+   * The home page makes it an h3 under its own h2; the contact page and the guest
+   * book give it an h2 of its own. It is the same field either way, so the level
+   * belongs to the placement rather than the block.
+   */
+  asideTag?: 'h2' | 'h3'
+  /**
+   * The body is everything in the section, not one widget.
+   *
+   * /team writes three headings and three paragraphs as six widgets in one
+   * section. They are one run of prose, so the seed gathers the lot into a single
+   * rich text rather than needing three targets kept in order by hand.
+   */
+  wholeSection?: boolean
+  /**
+   * A widget hash per item, where the origin's items are not interchangeable.
+   *
+   * A gallery normally renders every picture under one hash because every rule
+   * behind them is identical. Conservation's two logos are the exception: one is
+   * pushed down 200px and the other has rounded corners, so each needs its own.
+   */
+  itemWidgets?: string[]
   /** Representative hashes for the items this block renders. */
   item?: {
     image?: string
@@ -92,6 +130,13 @@ export type SectionTarget = {
     button?: string
     /** A second heading inside the same section — the form's copy has its own. */
     aside?: string
+    /** A picture in the column beside the form — the guest book shows one. */
+    asideImage?: string
+    /** The contact details beside the form: a name, an address list, the social icons. */
+    contactName?: string
+    contactList?: string
+    socialHeading?: string
+    social?: string
   }
 }
 
@@ -226,6 +271,85 @@ export const TEXT_TARGETS: SectionTarget[] = [
     span: 50,
     item: { label: 'abf38f0', text: 'b8b43e4', button: 'e000efe' },
   },
+  {
+    /**
+     * All three of the page's headings and their paragraphs, in one rich text.
+     *
+     * The origin gives each pair its own heading and text widget — six widgets in
+     * one section — but they are one run of prose about one subject, and a block
+     * per pair would mean three targets that must be kept in order by hand. Rich
+     * text already holds headings, so it holds these.
+     */
+    value: 'team-guides',
+    label: 'Birding Guides — what we offer',
+    page: 'team',
+    section: '119ccf0',
+    span: 100,
+    columns: ['fb61487'],
+    wholeSection: true,
+    // Only the headings: the origin's paragraphs carry no colour of their own.
+    css: { '6c3f0dd h2': 'color:#54595F;' },
+    item: { text: '6c3f0dd' },
+  },
+  {
+    value: 'conservation-intro',
+    label: 'Conservation — "proudly supports Sattal Conservation Club"',
+    page: 'conservation',
+    section: '81101ce',
+    span: 100,
+    columns: ['b671337'],
+    item: { label: 'f2ba109' },
+  },
+  {
+    value: 'conservation-about',
+    label: 'Conservation — about the club',
+    page: 'conservation',
+    section: 'a3eeb55',
+    span: 100,
+    columns: ['0d6b8d6'],
+    css: { af21b00: 'font-size:14pt;color:#333333;' },
+    item: { text: 'af21b00' },
+  },
+  {
+    value: 'conservation-risk',
+    label: 'Conservation — "the future of Sattal’s lakes"',
+    page: 'conservation',
+    section: '4b874f1',
+    span: 100,
+    columns: ['921bd45'],
+    item: { label: 'bd93788' },
+  },
+  {
+    value: 'conservation-detail',
+    label: 'Conservation — what is at risk',
+    page: 'conservation',
+    section: 'a9c2b5e',
+    span: 100,
+    columns: ['ff47db2'],
+    css: { '0d2056b': 'font-size:14pt;color:#333333;' },
+    item: { text: '0d2056b' },
+  },
+  {
+    value: 'conservation-petition',
+    label: 'Conservation — Save Sattal petition',
+    page: 'conservation',
+    section: '880b958',
+    span: 50,
+    columns: ['cb178b3', '9342d1a'],
+    // One photograph, not a rotation — see imageAs.
+    imageAs: 'image',
+    css: { '4d5069c': 'text-align:center;color:#333333;font-size:24pt;' },
+    item: { image: '17608e9', text: '4d5069c' },
+  },
+  {
+    value: 'contact-heading',
+    label: 'Contact Us — page heading',
+    page: 'contact-us',
+    section: '2d360af',
+    span: 100,
+    columns: ['c3e5b93'],
+    item: { label: '69b68ed' },
+  },
 ]
 
 /**
@@ -244,7 +368,54 @@ export const FORM_TARGETS: SectionTarget[] = [
     page: 'home',
     section: 'a738d72',
     span: 50,
+    asideTag: 'h3',
     item: { label: 'b60aac8', image: 'dd9d707', text: 'cc62ff1', button: '915492a', aside: '6aca2d3' },
+  },
+  {
+    value: 'contact-form',
+    label: 'Contact Us — enquiry form and address',
+    page: 'contact-us',
+    section: '528b8a8',
+    span: 50,
+    columns: ['4c8def5', '7a2e830'],
+    asideTag: 'h2',
+    item: {
+      label: '2fa0fd4',
+      image: '6148b30',
+      aside: '00e29a9',
+      contactName: 'cbd3cd7',
+      contactList: 'fadf5f1',
+      socialHeading: '6014fc7',
+      social: '07839c3',
+    },
+  },
+  {
+    /**
+     * The one target where the form sits on the right. The origin puts the
+     * photograph first here and the form beside it, the other way round from the
+     * home page — so `reversed` rather than a second set of hashes.
+     */
+    value: 'guestbook-form',
+    label: 'Guest Book — leave a comment',
+    page: 'guest-book',
+    section: 'bae9493',
+    span: 50,
+    columns: ['6be1055', '867c431'],
+    reversed: true,
+    asideTag: 'h2',
+    item: { label: '3b4dfdd', image: '881ec20', aside: '05179fe', asideImage: '70e962e' },
+  },
+]
+
+export const MAP_TARGETS: SectionTarget[] = [
+  {
+    value: 'contact-map',
+    label: 'Contact Us — map',
+    page: 'contact-us',
+    section: '386ff71',
+    span: 100,
+    columns: ['c52cb14'],
+    item: { image: '8e73bab' },
   },
 ]
 
@@ -276,6 +447,18 @@ export const GALLERY_TARGETS: SectionTarget[] = [
     heading: '3649378',
     headingWidget: 'ba86341',
     item: { image: 'ddb0fb8' },
+  },
+  {
+    value: 'conservation-logos',
+    label: 'Conservation — club logo and objectives',
+    page: 'conservation',
+    section: '1925ed8',
+    span: 50,
+    columns: ['8ccaeac', 'e4a9607'],
+    // Two pictures that are not interchangeable: one is pushed down 200px, the
+    // other has rounded corners.
+    itemWidgets: ['bc5fc85', 'badd7d4'],
+    item: { image: 'bc5fc85' },
   },
 ]
 

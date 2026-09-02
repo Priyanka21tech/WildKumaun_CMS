@@ -56,6 +56,25 @@ export const TextBlock: Block = {
       },
     },
     {
+      name: 'showImageLink',
+      type: 'checkbox',
+      label: 'Make the picture a link',
+      defaultValue: false,
+      admin: {
+        description:
+          'The conservation page’s petition poster is a link — the picture is the call to action, not a button under it.',
+      },
+    },
+    link({
+      name: 'imageLink',
+      label: 'Where the picture links to',
+      withLabel: false,
+      admin: {
+        condition: (_data, siblingData) =>
+          Boolean((siblingData as { showImageLink?: boolean } | undefined)?.showImageLink),
+      },
+    }),
+    {
       name: 'showButton',
       type: 'checkbox',
       label: 'Show a button',

@@ -291,7 +291,18 @@ export interface Page {
             /**
              * Which run of copy on the page this replaces.
              */
-            target: 'home-intro' | 'home-about' | 'home-note' | 'home-cta';
+            target:
+              | 'home-intro'
+              | 'home-about'
+              | 'home-note'
+              | 'home-cta'
+              | 'team-guides'
+              | 'conservation-intro'
+              | 'conservation-about'
+              | 'conservation-risk'
+              | 'conservation-detail'
+              | 'conservation-petition'
+              | 'contact-heading';
             /**
              * Sits above the text. Leave empty for none.
              */
@@ -318,6 +329,23 @@ export interface Page {
              * Optional. Shown as a small carousel beside the text, on the sections laid out in two halves.
              */
             images?: (number | Media)[] | null;
+            /**
+             * The conservation page’s petition poster is a link — the picture is the call to action, not a button under it.
+             */
+            showImageLink?: boolean | null;
+            imageLink?: {
+              type?: ('reference' | 'custom') | null;
+              reference?: (number | null) | Page;
+              /**
+               * Include the protocol, e.g. https://example.com/page.
+               */
+              url?: string | null;
+              /**
+               * Optional. The id of a section to jump to, without the #. Leave empty to land at the top.
+               */
+              anchor?: string | null;
+              newTab?: boolean | null;
+            };
             showButton?: boolean | null;
             button?: {
               type?: ('reference' | 'custom') | null;
@@ -393,7 +421,7 @@ export interface Page {
             /**
              * Which gallery on the page this replaces.
              */
-            target: 'home-gallery';
+            target: 'home-gallery' | 'conservation-logos';
             /**
              * Sits above the photographs. Leave empty for none.
              */
@@ -456,7 +484,7 @@ export interface Page {
             /**
              * Which form on the page this replaces.
              */
-            target: 'home-enquiry';
+            target: 'home-enquiry' | 'contact-form' | 'guestbook-form';
             /**
              * Sits above the form. Leave empty for none.
              */
@@ -488,6 +516,14 @@ export interface Page {
               [k: string]: unknown;
             } | null;
             showAsideButton?: boolean | null;
+            /**
+             * A picture in the half beside the form.
+             */
+            asideImage?: (number | null) | Media;
+            /**
+             * Taken from Site Settings, not typed here — so the address is written once and the footer cannot disagree with the contact page.
+             */
+            showContactDetails?: boolean | null;
             asideButton?: {
               type?: ('reference' | 'custom') | null;
               /**
@@ -508,6 +544,27 @@ export interface Page {
             id?: string | null;
             blockName?: string | null;
             blockType: 'form';
+          }
+        | {
+            /**
+             * Which map on the page this replaces.
+             */
+            target: 'contact-map';
+            /**
+             * What to search for — a place name or an address.
+             */
+            query: string;
+            /**
+             * Higher is closer in. 10 shows the surrounding area.
+             */
+            zoom: number;
+            /**
+             * Describes the map to a screen reader — what it shows, not that it is a map. Falls back to the search term.
+             */
+            label?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'map';
           }
       )[]
     | null;
@@ -1077,6 +1134,16 @@ export interface PagesSelect<T extends boolean = true> {
               heading?: T;
               body?: T;
               images?: T;
+              showImageLink?: T;
+              imageLink?:
+                | T
+                | {
+                    type?: T;
+                    reference?: T;
+                    url?: T;
+                    anchor?: T;
+                    newTab?: T;
+                  };
               showButton?: T;
               button?:
                 | T
@@ -1156,6 +1223,8 @@ export interface PagesSelect<T extends boolean = true> {
               asideHeading?: T;
               asideBody?: T;
               showAsideButton?: T;
+              asideImage?: T;
+              showContactDetails?: T;
               asideButton?:
                 | T
                 | {
@@ -1166,6 +1235,16 @@ export interface PagesSelect<T extends boolean = true> {
                     anchor?: T;
                     newTab?: T;
                   };
+              id?: T;
+              blockName?: T;
+            };
+        map?:
+          | T
+          | {
+              target?: T;
+              query?: T;
+              zoom?: T;
+              label?: T;
               id?: T;
               blockName?: T;
             };

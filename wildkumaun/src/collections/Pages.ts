@@ -3,6 +3,7 @@ import { AmenitiesBlock } from '../blocks/AmenitiesBlock'
 import { ContentBlock } from '../blocks/ContentBlock'
 import { GalleryBlock } from '../blocks/GalleryBlock'
 import { HeroBlock } from '../blocks/HeroBlock'
+import { MapBlock } from '../blocks/MapBlock'
 import { TextBlock } from '../blocks/TextBlock'
 import { FormBlock } from '../blocks/FormBlock'
 import { PackagesBlock } from '../blocks/PackagesBlock'
@@ -86,6 +87,7 @@ export const Pages: CollectionConfig = {
         PartnersBlock,
         TestimonialsBlock,
         FormBlock,
+        MapBlock,
       ],
       admin: {
         description:

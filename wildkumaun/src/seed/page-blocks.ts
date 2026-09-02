@@ -4,6 +4,7 @@ import { endOfElement, innerEndOfElement, sliceSection } from '../lib/elementor'
 import {
   AMENITY_TARGETS,
   FORM_TARGETS,
+  MAP_TARGETS,
   TEXT_TARGETS,
   GALLERY_TARGETS,
   PACKAGE_TARGETS,
@@ -13,7 +14,7 @@ import {
 import { mirror, pairsIn, slugify } from './amenities'
 import { findMedia } from './page-content'
 import { htmlToLexical } from './html-to-lexical'
-import { seedForms } from './forms'
+import { seedForms, seedGuestBookForm } from './forms'
 
 /**
  * Give each page the blocks that render what it already shows.
@@ -251,9 +252,11 @@ async function textBlockFor(
     .replace(/&nbsp;/g, ' ')
     .trim()
 
-  const copy = target.item.text
-    ? widgetInner(markup, target.item.text)
-    : undefined
+  const copy = target.wholeSection
+    ? allWidgetsIn(markup)
+    : target.item.text
+      ? widgetInner(markup, target.item.text)
+      : undefined
 
   const body = copy
     ? await htmlToLexical(copy, (src) => mediaIdFor(payload, src))
@@ -265,6 +268,12 @@ async function textBlockFor(
     ? await mediaIdsIn(payload, html, target.section)
     : []
 
+  // The origin sometimes makes the picture itself the link — the petition poster
+  // on /conservation opens change.org. Read off the anchor round the image widget.
+  const imageHref = target.item.image
+    ? widgetInner(markup, target.item.image)?.match(/<a[^>]*href="([^"]+)"/i)?.[1]
+    : undefined
+
   if (!heading && !body && !cta) return null
 
   return {
@@ -273,12 +282,35 @@ async function textBlockFor(
     heading,
     body: body as never,
     images,
+    showImageLink: Boolean(imageHref),
+    imageLink: imageHref
+      ? { type: 'custom' as const, url: imageHref, newTab: true }
+      : undefined,
     showButton: Boolean(cta),
     // `custom` rather than a page reference: the origin types these hrefs, and
     // guessing which page "contact-us.html" meant is the kind of silent decision
     // that makes a migration unverifiable.
     button: cta ? { type: 'custom', label: cta.label, url: cta.href } : undefined,
   }
+}
+
+/**
+ * Everything the section's heading and text widgets hold, in document order.
+ *
+ * For a section the origin split into several widgets that read as one piece of
+ * prose. The headings come through as `<h2>`, which rich text keeps.
+ */
+function allWidgetsIn(markup: string): string | undefined {
+  const parts: string[] = []
+  const pattern = /data-id="([0-9a-f]{7})"[^>]*data-widget_type="(heading|text-editor)/g
+  let match: RegExpExecArray | null
+
+  while ((match = pattern.exec(markup))) {
+    const inner = widgetInner(markup, match[1])
+    if (inner) parts.push(inner)
+  }
+
+  return parts.length ? parts.join('') : undefined
 }
 
 /** What a widget holds, without its Elementor wrappers. */
@@ -354,7 +386,11 @@ async function blocksFor(payload: Payload, slug: string): Promise<Block[]> {
     const markup = sliceSection(html, target.section)
     if (!markup || !target.item) continue
 
-    const form = await seedForms(payload)
+    // The guest book asks its own questions, so it gets its own form.
+    const form =
+      target.value === 'guestbook-form'
+        ? await seedGuestBookForm(payload)
+        : await seedForms(payload)
     if (!form.id) continue
 
     // The origin's two headings for this section: an h2 above the form and an h3
@@ -366,18 +402,56 @@ async function blocksFor(payload: Payload, slug: string): Promise<Block[]> {
     blocks.push({
       blockType: 'form',
       target: target.value,
-      heading: headingIn(html, target.section),
+      // From the widget the target names rather than the section's first heading:
+      // the guest book's form sits under the second of two, not the first.
+      heading: target.item.label
+        ? widgetInner(markup, target.item.label)
+            ?.replace(/<[^>]*>/g, '')
+            .replace(/&nbsp;/g, ' ')
+            .trim()
+        : headingIn(html, target.section),
       form: form.id,
-      asideHeading: markup
-        .match(/<h3[^>]*class="elementor-heading-title[^"]*"[^>]*>([\s\S]*?)<\/h3>/i)?.[1]
-        .replace(/<[^>]*>/g, '')
-        .trim(),
+      // Read off the widget the target names, not by tag: the home page's is an
+      // h3 and the contact page's an h2, and both are "the heading beside the form".
+      asideHeading: target.item.aside
+        ? widgetInner(markup, target.item.aside)
+            ?.replace(/<[^>]*>/g, '')
+            .replace(/&nbsp;/g, ' ')
+            .trim()
+        : undefined,
+      asideImage: target.item.asideImage
+        ? await mediaIdFor(
+            payload,
+            widgetInner(markup, target.item.asideImage)?.match(/src="\/media\/([^"]+)"/)?.[1] ?? '',
+          )
+        : undefined,
       asideBody: asideBodyHtml
         ? ((await htmlToLexical(asideBodyHtml, (src) => mediaIdFor(payload, src))) as never)
         : undefined,
+      // Only the contact page shows the address beside the form; the home page
+      // and the guest book put their own words there.
+      showContactDetails: target.value === 'contact-form',
       showAsideButton: Boolean(cta),
       button: undefined,
       asideButton: cta ? { type: 'custom', label: cta.label, url: cta.href } : undefined,
+    })
+  }
+
+  for (const target of MAP_TARGETS.filter((entry) => entry.page === slug)) {
+    const markup = sliceSection(html, target.section)
+    const src = markup?.match(/<iframe[^>]*src="([^"]+)"/i)?.[1]
+    if (!src) continue
+
+    // The origin stores the whole embed address; the block stores what it was
+    // built from, so moving the pin does not mean editing a URL by hand.
+    const params = new URLSearchParams(src.replace(/&amp;/g, '&').split('?')[1] ?? '')
+
+    blocks.push({
+      blockType: 'map',
+      target: target.value,
+      query: params.get('q') ?? undefined,
+      zoom: Number(params.get('z')) || 10,
+      label: markup?.match(/<iframe[^>]*aria-label="([^"]*)"/i)?.[1] ?? undefined,
     })
   }
 
@@ -404,11 +478,15 @@ async function blocksFor(payload: Payload, slug: string): Promise<Block[]> {
     const images = await mediaIdsIn(payload, html, target.section)
     if (!images.length) continue
 
+    // Whether the origin rotates these or lays them out is read off its markup,
+    // not assumed — conservation shows two logos side by side, not a carousel.
+    const rotates = (sliceSection(html, target.section) ?? '').includes('image-carousel')
+
     blocks.push({
       blockType: 'gallery',
       target: target.value,
       heading: headingIn(html, target.heading),
-      display: 'carousel',
+      display: rotates ? 'carousel' : 'grid',
       // The four the origin's own carousel settings ask for.
       slidesToShow: 4,
       images,
@@ -445,6 +523,7 @@ const pagesWithTargets = (): string[] => [
       ...AMENITY_TARGETS,
       ...TEXT_TARGETS,
       ...FORM_TARGETS,
+      ...MAP_TARGETS,
       ...PACKAGE_TARGETS,
       ...GALLERY_TARGETS,
       ...PARTNER_TARGETS,

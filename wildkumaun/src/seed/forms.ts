@@ -21,10 +21,11 @@ import type { Payload } from 'payload'
  * Creates only. A form already there has been through an editor's hands.
  */
 
-const FORM_TITLE = 'Enquiry'
+const ENQUIRY = 'Enquiry'
+const GUEST_BOOK = 'Guest book'
 
 /** The origin's fields, read off its markup. `name` is what a submission is filed under. */
-const FIELDS = [
+const ENQUIRY_FIELDS = [
   {
     blockType: 'text',
     name: 'name',
@@ -67,6 +68,18 @@ const FIELDS = [
   },
 ]
 
+/**
+ * The guest book asks less, because it is a different question.
+ *
+ * The origin's form wanted a name, an email and the comment itself — no dates,
+ * no party size. Someone leaving a review is not making a booking.
+ */
+const GUEST_BOOK_FIELDS = [
+  { blockType: 'text', name: 'name', label: 'Name', required: true, width: 100 },
+  { blockType: 'email', name: 'email', label: 'Email', required: true, width: 100 },
+  { blockType: 'textarea', name: 'message', label: 'Message', required: true, width: 100 },
+]
+
 /** A Lexical document holding one paragraph. */
 const paragraph = (text: string) => ({
   root: {
@@ -90,10 +103,16 @@ const paragraph = (text: string) => ({
   },
 })
 
-export async function seedForms(payload: Payload): Promise<{ created: number; id?: number }> {
+async function form(
+  payload: Payload,
+  title: string,
+  fields: unknown[],
+  submitLabel: string,
+  confirmation: string,
+): Promise<{ created: number; id?: number }> {
   const found = await payload.find({
     collection: 'forms',
-    where: { title: { equals: FORM_TITLE } },
+    where: { title: { equals: title } },
     limit: 1,
     pagination: false,
     depth: 0,
@@ -105,15 +124,33 @@ export async function seedForms(payload: Payload): Promise<{ created: number; id
   const created = await payload.create({
     collection: 'forms',
     data: {
-      title: FORM_TITLE,
-      fields: FIELDS as never,
-      submitButtonLabel: 'Send',
+      title,
+      fields: fields as never,
+      submitButtonLabel: submitLabel,
       confirmationType: 'message',
-      confirmationMessage: paragraph(
-        'Thank you — your enquiry has reached us. We will be in touch shortly.',
-      ) as never,
+      confirmationMessage: paragraph(confirmation) as never,
     },
   })
 
   return { created: 1, id: created.id as number }
 }
+
+/** The enquiry form, used on the home page and the contact page. */
+export const seedForms = (payload: Payload) =>
+  form(
+    payload,
+    ENQUIRY,
+    ENQUIRY_FIELDS,
+    'Send',
+    'Thank you — your enquiry has reached us. We will be in touch shortly.',
+  )
+
+/** The guest book's comment form. */
+export const seedGuestBookForm = (payload: Payload) =>
+  form(
+    payload,
+    GUEST_BOOK,
+    GUEST_BOOK_FIELDS,
+    'Submit',
+    'Thank you for writing — your comment has reached us.',
+  )

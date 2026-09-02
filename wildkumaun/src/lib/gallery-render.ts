@@ -48,7 +48,15 @@ export function replaceGallery(html: string, block: GalleryBlockValue, map: Medi
   const inner =
     block.display === 'grid'
       ? images
-          .map((image) => column(33, imageWidget(target.item!.image!, image), target.columns?.[0]))
+          .map((image, index) =>
+            column(
+              target.span,
+              // Per-item hashes where the origin styled its pictures differently;
+              // otherwise one hash for all, as with every other repeating run.
+              imageWidget(target.itemWidgets?.[index] ?? target.item!.image!, image),
+              target.columns?.[index] ?? target.columns?.[0],
+            ),
+          )
           .join('')
       : column(100, carousel(target.item.image, images, block.slidesToShow ?? 4), target.columns?.[0])
 

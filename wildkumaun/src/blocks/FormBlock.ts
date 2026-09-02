@@ -65,6 +65,22 @@ export const FormBlock: Block = {
       label: 'Show a button beside the form',
       defaultValue: false,
     },
+    {
+      name: 'asideImage',
+      type: 'upload',
+      relationTo: 'media',
+      admin: { description: 'A picture in the half beside the form.' },
+    },
+    {
+      name: 'showContactDetails',
+      type: 'checkbox',
+      label: 'Show the address and social links beside the form',
+      defaultValue: false,
+      admin: {
+        description:
+          'Taken from Site Settings, not typed here — so the address is written once and the footer cannot disagree with the contact page.',
+      },
+    },
     link({
       name: 'asideButton',
       label: 'Button beside the form',

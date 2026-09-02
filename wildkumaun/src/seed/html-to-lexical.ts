@@ -61,6 +61,41 @@ const upload = (mediaId: number): SerializedLexicalNode =>
     fields: {},
   }) as unknown as SerializedLexicalNode
 
+/**
+ * A bulleted or numbered list.
+ *
+ * Lexical stores a list as a `list` node of `listitem` children, each carrying
+ * its own position — the `<ul><li>` nesting the origin writes, in the shape the
+ * editor understands. Without these the converter's block scan simply did not
+ * see a list, and its words went missing from the page.
+ */
+const listNode = (
+  tag: 'ul' | 'ol',
+  items: SerializedLexicalNode[],
+): SerializedLexicalNode =>
+  ({
+    type: 'list',
+    tag,
+    listType: tag === 'ol' ? 'number' : 'bullet',
+    start: 1,
+    version: 1,
+    children: items,
+    direction: 'ltr',
+    format: '',
+    indent: 0,
+  }) as unknown as SerializedLexicalNode
+
+const listItem = (value: number, children: SerializedLexicalNode[]): SerializedLexicalNode =>
+  ({
+    type: 'listitem',
+    value,
+    version: 1,
+    children,
+    direction: 'ltr',
+    format: '',
+    indent: 0,
+  }) as unknown as SerializedLexicalNode
+
 const block = (
   type: 'paragraph' | 'heading',
   children: SerializedLexicalNode[],
@@ -164,12 +199,28 @@ export async function htmlToLexical(
   resolveImage: ResolveImage,
 ): Promise<SerializedEditorState> {
   const children: SerializedLexicalNode[] = []
-  const blocks = /<(h2|h3|h4|p)\b[^>]*>([\s\S]*?)<\/\1>/gi
+  const blocks = /<(h2|h3|h4|p|ul|ol)\b[^>]*>([\s\S]*?)<\/\1>/gi
 
   let match: RegExpExecArray | null
 
   while ((match = blocks.exec(html))) {
-    const [, tag, inner] = match
+    const [, rawTag, inner] = match
+    const tag = rawTag.toLowerCase()
+
+    if (tag === 'ul' || tag === 'ol') {
+      const items: SerializedLexicalNode[] = []
+      const listImages: SerializedLexicalNode[] = []
+
+      for (const item of inner.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/gi)) {
+        const itemNodes = trimBreaks(await inlineNodes(item[1], resolveImage, listImages))
+        if (itemNodes.length) items.push(listItem(items.length + 1, itemNodes))
+      }
+
+      children.push(...listImages)
+      if (items.length) children.push(listNode(tag, items))
+      continue
+    }
+
     const images: SerializedLexicalNode[] = []
     const nodes = trimBreaks(await inlineNodes(inner, resolveImage, images))
 
@@ -179,11 +230,7 @@ export async function htmlToLexical(
 
     if (!nodes.length) continue
 
-    children.push(
-      tag.toLowerCase() === 'p'
-        ? block('paragraph', nodes)
-        : block('heading', nodes, tag.toLowerCase()),
-    )
+    children.push(tag === 'p' ? block('paragraph', nodes) : block('heading', nodes, tag))
   }
 
   return {

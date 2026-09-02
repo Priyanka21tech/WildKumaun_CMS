@@ -120,9 +120,13 @@ export function widgetCss(css?: Record<string, string>): string {
   if (!css) return ''
 
   const rules = Object.entries(css)
-    .map(([hash, declarations]) => {
+    .map(([key, declarations]) => {
+      const [hash, descendant] = key.split(' ')
       const el = `.elementor-element.elementor-element-${hash}`
-      return `${el}, ${el} p, ${el} span{${declarations}}`
+      // A key naming a descendant styles only that; otherwise the widget and the
+      // text inside it, since the origin's `<span>` wrapper is gone.
+      const selector = descendant ? `${el} ${descendant}` : `${el}, ${el} p, ${el} span`
+      return `${selector}{${declarations}}`
     })
     .join('')
 

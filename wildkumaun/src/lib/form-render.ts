@@ -3,8 +3,8 @@ import type { SerializedEditorState } from 'lexical'
 import { esc } from '../components/SiteHeader'
 import { replaceContainer } from './elementor'
 import { resolveHref, resolveLabel, type LinkValue } from '../fields/link'
-import { FORM_TARGETS, targetFor } from './sections'
-import { column, widget } from './widgets'
+import { FORM_TARGETS, targetFor, type SectionTarget } from './sections'
+import { asMedia, column, imageWidget, widget } from './widgets'
 
 /**
  * Put a form on the page.
@@ -57,11 +57,26 @@ export type FormBlockValue = {
   form?: number | FormDoc | null
   asideHeading?: string | null
   asideBody?: SerializedEditorState | null
+  asideImage?: unknown
+  showContactDetails?: boolean | null
   showAsideButton?: boolean | null
   asideButton?: LinkValue | null
 }
 
-export function replaceForm(html: string, block: FormBlockValue): string {
+/** Enough of the Site Settings global to render the contact details. */
+export type ContactSettings = {
+  legalName?: string | null
+  name?: string | null
+  address?: { full?: string | null } | null
+  phones?: { number?: string | null; label?: string | null }[] | null
+  social?: { network?: string | null; label?: string | null; url?: string | null }[] | null
+}
+
+export function replaceForm(
+  html: string,
+  block: FormBlockValue,
+  settings?: ContactSettings,
+): string {
   const target = targetFor(FORM_TARGETS, block.target)
   if (!target?.item) return html
 
@@ -71,6 +86,7 @@ export function replaceForm(html: string, block: FormBlockValue): string {
   if (!form?.id) return html
 
   const hashes = target.item
+  const asideTag = target.asideTag ?? 'h3'
 
   const left = [
     hashes.label && block.heading
@@ -94,10 +110,14 @@ export function replaceForm(html: string, block: FormBlockValue): string {
       ? widget(
           hashes.aside,
           'heading',
-          `<h3 class="elementor-heading-title elementor-size-default">${esc(block.asideHeading)}</h3>`,
+          `<${asideTag} class="elementor-heading-title elementor-size-default">${esc(block.asideHeading)}</${asideTag}>`,
         )
       : '',
     hashes.text && asideBody ? widget(hashes.text, 'text-editor', asideBody) : '',
+    hashes.asideImage && asMedia(block.asideImage)
+      ? imageWidget(hashes.asideImage, asMedia(block.asideImage)!)
+      : '',
+    block.showContactDetails ? contactDetails(hashes, settings) : '',
     // The rule reading "Or" only means anything with something on the other side
     // of it, so it appears with the button rather than on its own.
     asideLabel ? divider() : '',
@@ -111,11 +131,106 @@ export function replaceForm(html: string, block: FormBlockValue): string {
       : '',
   ].join('')
 
+  const [first, second] = target.reversed ? [right, left] : [left, right]
+
   return replaceContainer(
     html,
     target.section,
-    column(50, left, target.columns?.[0]) + column(50, right, target.columns?.[1]),
+    column(50, first, target.columns?.[0]) + column(50, second, target.columns?.[1]),
   )
+}
+
+/**
+ * The address, phone numbers and social links beside the form.
+ *
+ * Read from Site Settings rather than stored on the block, because they are
+ * already there — the footer renders the same numbers from the same place. A
+ * copy here would be a second address to update, and the site would eventually
+ * be telling people two different things.
+ *
+ * A social network with no url is skipped rather than linked to nowhere. The
+ * origin's own icons had no href either, which is why those fields are empty:
+ * there was nothing to import.
+ */
+function contactDetails(
+  hashes: NonNullable<SectionTarget['item']>,
+  settings?: ContactSettings,
+): string {
+  if (!settings) return ''
+
+  const items: string[] = []
+
+  if (settings.address?.full) {
+    items.push(iconItem('fas fa-address-book', settings.address.full))
+  }
+
+  for (const phone of settings.phones ?? []) {
+    if (!phone.number) continue
+    const text = phone.label ? `${phone.number} (${phone.label})` : phone.number
+    items.push(iconItem('fas fa-mobile-alt', `Mobile No: ${text}`, `tel:+91${phone.number}`))
+  }
+
+  /**
+   * Every network, linked or not.
+   *
+   * The origin renders both icons with no href at all — the links were never
+   * filled in over there either. Showing only the ones with a url would drop the
+   * whole row and the heading above it, which is a visible change to the page for
+   * the sake of a link that was never there. An icon without a url renders as an
+   * icon; filling the url in Site Settings makes it clickable.
+   */
+  const links = settings.social ?? []
+
+  return [
+    hashes.contactName && settings.legalName
+      ? widget(
+          hashes.contactName,
+          'heading',
+          `<h4 class="elementor-heading-title elementor-size-default">${esc(settings.legalName)}</h4>`,
+        )
+      : '',
+    hashes.contactList && items.length
+      ? widget(
+          hashes.contactList,
+          'icon-list',
+          `<ul class="elementor-icon-list-items">${items.join('')}</ul>`,
+          'elementor-list-item-link-full_width',
+        )
+      : '',
+    hashes.socialHeading && links.length
+      ? widget(
+          hashes.socialHeading,
+          'heading',
+          `<h4 class="elementor-heading-title elementor-size-default">SOCIAL NETWORKS</h4>`,
+        )
+      : '',
+    hashes.social && links.length
+      ? widget(
+          hashes.social,
+          'social-icons',
+          `<div class="elementor-social-icons-wrapper elementor-grid">${links
+            .map((entry) => {
+              const network = (entry.network ?? '').toLowerCase()
+              const inner = `<span class="elementor-screen-only">${esc(entry.label ?? entry.network ?? '')}</span><i class="fab fa-${esc(network)}"></i>`
+              const classes = `elementor-icon elementor-social-icon elementor-social-icon-${esc(network)}`
+
+              return `<span class="elementor-grid-item">${
+                entry.url
+                  ? `<a class="${classes}" href="${esc(entry.url)}" target="_blank" rel="noopener noreferrer">${inner}</a>`
+                  : `<span class="${classes}">${inner}</span>`
+              }</span>`
+            })
+            .join('')}</div>`,
+        )
+      : '',
+  ].join('')
+}
+
+/** One row of the address list: an icon, some words, sometimes a link round both. */
+function iconItem(icon: string, text: string, href?: string): string {
+  const inner = `<span class="elementor-icon-list-icon"><i aria-hidden="true" class="${esc(icon)}"></i></span><span class="elementor-icon-list-text">${esc(text)}</span>`
+
+  return `<li class="elementor-icon-list-item">${href ? `<a href="${esc(href)}">${inner}</a>` : inner}</li>`
 }
 
 const divider = (): string =>
