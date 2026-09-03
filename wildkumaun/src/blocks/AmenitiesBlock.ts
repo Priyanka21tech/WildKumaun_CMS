@@ -63,7 +63,7 @@ export const AmenitiesBlock: Block = {
       options: [
         { label: 'Icon grid — seven to a row', value: 'icon-grid' },
         { label: 'Photo grid — three to a row', value: 'photo-grid' },
-        { label: 'Bulleted list beside a photograph', value: 'list' },
+        { label: 'Bulle e a photograph', value: 'list' },
       ],
     },
     {

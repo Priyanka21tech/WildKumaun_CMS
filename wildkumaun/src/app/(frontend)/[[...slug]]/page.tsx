@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 
-import { pageIndex, pageBySlugSegments } from '@/lib/pages'
+import { pageBySlugSegments } from '@/lib/pages'
 import { splitShell } from '@/lib/shell'
 import { getMediaMap } from '@/lib/media-map'
 import { responsiveHtml } from '@/lib/responsive-html'
@@ -11,8 +11,10 @@ import { bannerFor, bannerOverride, replaceBannerImage } from '@/lib/page-banner
 import { replaceContentArea } from '@/lib/content-area'
 import { replaceHero } from '@/lib/hero-render'
 import { replaceText } from '@/lib/text-render'
+import { replaceColumns } from '@/lib/columns-render'
 import { replaceForm } from '@/lib/form-render'
 import { replaceMap } from '@/lib/map-render'
+import { replaceArtwork } from '@/lib/artwork-render'
 import { replaceAmenities } from '@/lib/amenities-render'
 import { replacePackages } from '@/lib/packages-render'
 import { replaceGallery } from '@/lib/gallery-render'
@@ -36,11 +38,20 @@ import { renderSiteFooter } from '@/components/SiteFooter'
  */
 export const dynamic = 'force-dynamic'
 
-export function generateStaticParams() {
-  return pageIndex.map((p: { route: string }) => ({
-    slug: p.route === '/' ? [] : p.route.slice(1).split('/'),
-  }))
-}
+/**
+ * No `generateStaticParams` here, deliberately.
+ *
+ * It looked harmless beside `force-dynamic` — the params could not be used, so it
+ * read as dead code. It was not: listing the routes had Next prerender them, and
+ * the responses came back `x-nextjs-cache: HIT`, so a save in the admin panel did
+ * not reach the page. Editing a source file cleared the cache, which is why this
+ * only showed up once someone changed content without changing code.
+ *
+ * When the pages move off the mirror this should become ISR with on-demand
+ * revalidation — prerendered again, but with a publish clearing the pages that
+ * changed. Until then the site is small and the queries are quick, and content
+ * that appears the moment it is saved matters more than the milliseconds.
+ */
 
 export async function generateMetadata({ params }: { params: Promise<{ slug?: string[] }> }) {
   const { slug } = await params
@@ -154,6 +165,11 @@ export default async function MirrorPage({ params }: { params: Promise<{ slug?: 
       continue
     }
 
+    if (block.blockType === 'columns') {
+      content = replaceColumns(content, block, mediaMap)
+      continue
+    }
+
     // These three take a section of the mirror over rather than the page, and
     // each is handed the media map so the pictures it adds get the same srcset
     // treatment the mirror's own images were given before the loop.
@@ -181,6 +197,11 @@ export default async function MirrorPage({ params }: { params: Promise<{ slug?: 
       // The contact details beside the form come from Site Settings rather than
       // from the block, so the settings have to reach the renderer.
       content = replaceForm(content, block, settings as never)
+      continue
+    }
+
+    if (block.blockType === 'artwork') {
+      content = replaceArtwork(content, block, mediaMap)
       continue
     }
 

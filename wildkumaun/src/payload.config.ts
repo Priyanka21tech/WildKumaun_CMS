@@ -11,6 +11,7 @@ import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Amenities } from './collections/Amenities'
 import { Packages } from './collections/Packages'
+import { BirdArt } from './collections/BirdArt'
 import { FAQs } from './collections/FAQs'
 import { Testimonials } from './collections/Testimonials'
 import { SiteSettings } from './globals/SiteSettings'
@@ -21,6 +22,7 @@ import { seedFaqs } from './seed/faqs'
 import { seedTestimonials } from './seed/testimonials'
 import { seedAmenities } from './seed/amenities'
 import { seedPackages } from './seed/packages'
+import { seedBirdArt } from './seed/bird-art'
 import { seedPageBlocks } from './seed/page-blocks'
 import { seedPageContent } from './seed/page-content'
 
@@ -34,7 +36,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Pages, Amenities, Packages, FAQs, Testimonials],
+  collections: [Users, Media, Pages, Amenities, Packages, BirdArt, FAQs, Testimonials],
   globals: [SiteSettings, Header, Footer],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
@@ -165,6 +167,9 @@ export default buildConfig({
 
         const packages = await seedPackages(payload)
         if (packages.created) payload.logger.info(`Seeded ${packages.created} packages`)
+
+        const birdArt = await seedBirdArt(payload)
+        if (birdArt.created) payload.logger.info(`Seeded ${birdArt.created} paintings`)
 
         // Last, because a block is a list of references and the documents it
         // points at have to exist before it can point at them.

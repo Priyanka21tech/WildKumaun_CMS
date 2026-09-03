@@ -3,6 +3,8 @@ import path from 'node:path'
 import { endOfElement, innerEndOfElement, sliceSection } from '../lib/elementor'
 import {
   AMENITY_TARGETS,
+  ARTWORK_TARGETS,
+  COLUMN_TARGETS,
   FORM_TARGETS,
   MAP_TARGETS,
   TEXT_TARGETS,
@@ -15,6 +17,7 @@ import { mirror, pairsIn, slugify } from './amenities'
 import { findMedia } from './page-content'
 import { htmlToLexical } from './html-to-lexical'
 import { seedForms, seedGuestBookForm } from './forms'
+import { seedBirdArt } from './bird-art'
 
 /**
  * Give each page the blocks that render what it already shows.
@@ -258,15 +261,11 @@ async function textBlockFor(
       ? widgetInner(markup, target.item.text)
       : undefined
 
-  const body = copy
-    ? await htmlToLexical(copy, (src) => mediaIdFor(payload, src))
-    : undefined
+  const body = copy ? await htmlToLexical(copy, (src) => mediaIdFor(payload, src)) : undefined
 
   const cta = target.item.button ? buttonIn(markup, target.item.button) : undefined
 
-  const images = target.item.image
-    ? await mediaIdsIn(payload, html, target.section)
-    : []
+  const images = target.item.image ? await mediaIdsIn(payload, html, target.section) : []
 
   // The origin sometimes makes the picture itself the link — the petition poster
   // on /conservation opens change.org. Read off the anchor round the image widget.
@@ -283,9 +282,7 @@ async function textBlockFor(
     body: body as never,
     images,
     showImageLink: Boolean(imageHref),
-    imageLink: imageHref
-      ? { type: 'custom' as const, url: imageHref, newTab: true }
-      : undefined,
+    imageLink: imageHref ? { type: 'custom' as const, url: imageHref, newTab: true } : undefined,
     showButton: Boolean(cta),
     // `custom` rather than a page reference: the origin types these hrefs, and
     // guessing which page "contact-us.html" meant is the kind of silent decision
@@ -311,6 +308,77 @@ function allWidgetsIn(markup: string): string | undefined {
   }
 
   return parts.length ? parts.join('') : undefined
+}
+
+/**
+ * One row of columns, read as the origin wrote them.
+ *
+ * Each column is taken whole rather than by widget hash, because the three are
+ * not interchangeable here: "By Air" and "By Rail" are separate widgets with
+ * separate ids, and reading only the hash the target names would seed the first
+ * column's words three times.
+ */
+async function columnsBlockFor(
+  payload: Payload,
+  html: string,
+  target: SectionTarget,
+): Promise<Block | null> {
+  const markup = sliceSection(html, target.section)
+  if (!markup || !target.item) return null
+
+  const items: { heading?: string; body?: unknown }[] = []
+
+  for (const col of columnsIn(markup)) {
+    const heading = col
+      .match(/<h2[^>]*class="elementor-heading-title[^"]*"[^>]*>([\s\S]*?)<\/h2>/i)?.[1]
+      .replace(/<[^>]*>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .trim()
+
+    const copy = firstTextIn(col)
+    const body = copy ? await htmlToLexical(copy, (src) => mediaIdFor(payload, src)) : undefined
+
+    if (!heading && !body) continue
+    items.push({ heading, body })
+  }
+
+  if (!items.length) return null
+
+  // From the whole page, not from the section: the heading over these columns is
+  // a widget in the column outside them. See `headingWidget` in src/lib/sections.ts.
+  const heading = target.headingWidget
+    ? widgetInner(html, target.headingWidget)
+        ?.replace(/<[^>]*>/g, '')
+        .replace(/&nbsp;/g, ' ')
+        .trim()
+    : undefined
+
+  return { blockType: 'columns', target: target.value, heading, items: items as never }
+}
+
+/** Each column of a section, as markup, in the order the origin lists them. */
+function columnsIn(markup: string): string[] {
+  const found: string[] = []
+  const pattern = /<div class="elementor-column[^"]*"[^>]*data-element_type="column"[^>]*>/g
+  let match: RegExpExecArray | null
+
+  while ((match = pattern.exec(markup))) {
+    const end = endOfElement(markup, match.index, 'div')
+    if (end === -1) continue
+
+    found.push(markup.slice(match.index, end))
+    // Past the column just taken, so a column nested in this one is not read as
+    // a second column of the row.
+    pattern.lastIndex = end
+  }
+
+  return found
+}
+
+/** What the column's text widget holds, whatever hash the origin gave it. */
+function firstTextIn(col: string): string | undefined {
+  const hash = col.match(/data-id="([0-9a-f]{7})"[^>]*data-widget_type="text-editor/)?.[1]
+  return hash ? widgetInner(col, hash) : undefined
 }
 
 /** What a widget holds, without its Elementor wrappers. */
@@ -382,6 +450,11 @@ async function blocksFor(payload: Payload, slug: string): Promise<Block[]> {
     if (block) blocks.push(block)
   }
 
+  for (const target of COLUMN_TARGETS.filter((entry) => entry.page === slug)) {
+    const block = await columnsBlockFor(payload, html, target)
+    if (block) blocks.push(block)
+  }
+
   for (const target of FORM_TARGETS.filter((entry) => entry.page === slug)) {
     const markup = sliceSection(html, target.section)
     if (!markup || !target.item) continue
@@ -437,6 +510,64 @@ async function blocksFor(payload: Payload, slug: string): Promise<Block[]> {
     })
   }
 
+  for (const target of ARTWORK_TARGETS.filter((entry) => entry.page === slug)) {
+    const markup = sliceSection(html, target.section)
+    if (!markup) continue
+
+    if (target.value.endsWith('-artists')) {
+      // A portrait and a name to a column, read as pairs the way the amenity
+      // rows are.
+      const people: { image: number; name: string }[] = []
+
+      for (const pair of pairsIn(markup)) {
+        const id = pair.icon ? await mediaIdFor(payload, pair.icon) : undefined
+        if (typeof id === 'number') people.push({ image: id, name: pair.label })
+      }
+
+      if (people.length) {
+        blocks.push({ blockType: 'artwork', target: target.value, display: 'artists', people })
+      }
+      continue
+    }
+
+    /**
+     * Only the paintings this run actually shows.
+     *
+     * The collection holds eleven; the origin's gallery shows ten. The Tawny
+     * Fish Owl is the odd one out — it is a painting, and the page uses it as the
+     * picture beside the artist's statement rather than putting it in the run
+     * below. Seeding all eleven would quietly add a twelfth picture to the
+     * gallery, so the run is matched against the filenames the origin lists.
+     */
+    const shown = new Set(imagesIn(html, target.section).map((f) => f.toLowerCase()))
+
+    const art = await payload.find({
+      collection: 'bird-art',
+      limit: 0,
+      pagination: false,
+      sort: 'order',
+      depth: 1,
+    })
+
+    art.docs = art.docs.filter((doc) => {
+      const files = [doc.image, doc.altImage]
+        .map((m) => (m && typeof m === 'object' ? m.filename : null))
+        .filter((f): f is string => Boolean(f))
+
+      return files.some((f) => shown.has(f.toLowerCase()))
+    })
+
+    if (art.docs.length) {
+      blocks.push({
+        blockType: 'artwork',
+        target: target.value,
+        display: 'paintings',
+        columns: 4,
+        items: art.docs.map((d) => d.id),
+      })
+    }
+  }
+
   for (const target of MAP_TARGETS.filter((entry) => entry.page === slug)) {
     const markup = sliceSection(html, target.section)
     const src = markup?.match(/<iframe[^>]*src="([^"]+)"/i)?.[1]
@@ -478,15 +609,29 @@ async function blocksFor(payload: Payload, slug: string): Promise<Block[]> {
     const images = await mediaIdsIn(payload, html, target.section)
     if (!images.length) continue
 
-    // Whether the origin rotates these or lays them out is read off its markup,
-    // not assumed — conservation shows two logos side by side, not a carousel.
-    const rotates = (sliceSection(html, target.section) ?? '').includes('image-carousel')
+    // Whether the origin rotates these, lays them in a row, or shows WordPress's
+    // captioned thumbnails is read off its markup rather than assumed.
+    const markup = sliceSection(html, target.section) ?? ''
+    const rotates = markup.includes('image-carousel')
+    const thumbnails = markup.includes('image-gallery')
+
+    // A preview on the gallery index carries its own heading and button inside
+    // the section; elsewhere the heading has a section to itself.
+    const inlineHeading = target.item?.label
+      ? widgetInner(markup, target.item.label)
+          ?.replace(/<[^>]*>/g, '')
+          .replace(/&nbsp;/g, ' ')
+          .trim()
+      : undefined
+    const cta = target.item?.button ? buttonIn(markup, target.item.button) : undefined
 
     blocks.push({
       blockType: 'gallery',
       target: target.value,
-      heading: headingIn(html, target.heading),
-      display: rotates ? 'carousel' : 'grid',
+      heading: inlineHeading ?? headingIn(html, target.heading),
+      showButton: Boolean(cta),
+      button: cta ? { type: 'custom' as const, url: cta.href, label: cta.label } : undefined,
+      display: rotates ? 'carousel' : thumbnails ? 'gallery' : 'grid',
       // The four the origin's own carousel settings ask for.
       slidesToShow: 4,
       images,
@@ -522,14 +667,14 @@ const pagesWithTargets = (): string[] => [
     [
       ...AMENITY_TARGETS,
       ...TEXT_TARGETS,
+      ...COLUMN_TARGETS,
       ...FORM_TARGETS,
       ...MAP_TARGETS,
+      ...ARTWORK_TARGETS,
       ...PACKAGE_TARGETS,
       ...GALLERY_TARGETS,
       ...PARTNER_TARGETS,
-    ].map(
-      (target) => target.page,
-    ),
+    ].map((target) => target.page),
   ),
 ]
 

@@ -50,8 +50,7 @@ export function img(media: MediaDoc, className = ''): string {
   if (!media.filename) return ''
 
   const classAttr = className ? ` class="${className}"` : ''
-  const size =
-    media.width && media.height ? ` width="${media.width}" height="${media.height}"` : ''
+  const size = media.width && media.height ? ` width="${media.width}" height="${media.height}"` : ''
 
   return `<img${classAttr} src="/media/${esc(media.filename)}" alt="${esc(media.alt ?? '')}" decoding="async" loading="lazy"${size}/>`
 }
@@ -72,8 +71,25 @@ export const headingWidget = (hash: string, text: string, level: 'h2' | 'h4' = '
     `<${level} class="elementor-heading-title elementor-size-default">${esc(text)}</${level}>`,
   )
 
-export const textWidget = (hash: string, html: string): string =>
-  widget(hash, 'text-editor', html)
+export const textWidget = (hash: string, html: string): string => widget(hash, 'text-editor', html)
+
+/**
+ * Give headings inside rich text the class Elementor styles them by.
+ *
+ * A heading the origin wrote is a heading widget, and its size and weight come
+ * from `.elementor-heading-title`. The same heading typed into rich text comes
+ * out as a bare `<h2>`, which the theme draws at its own default — noticeably
+ * smaller. Adding the class is what makes a heading an editor writes look like
+ * the ones already on the page.
+ *
+ * Only headings with no class of their own are touched, so anything deliberate
+ * is left alone.
+ */
+export const elementorHeadings = (html: string): string =>
+  html.replace(
+    /<(h[1-6])>/g,
+    (_match, tag) => `<${tag} class="elementor-heading-title elementor-size-default">`,
+  )
 
 /**
  * One of the columns inside a section's container.

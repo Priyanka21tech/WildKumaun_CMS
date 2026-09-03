@@ -58,7 +58,15 @@ export type SectionTarget = {
   headingColumn?: string
   /** `data-id` of the separate heading section above it, where the origin made one. */
   heading?: string
-  /** The heading widget inside that section. */
+  /**
+   * The heading widget inside that section.
+   *
+   * Or, where there is no separate section, the heading widget standing beside
+   * the one being replaced. /work-from-hills puts "How to Reach" in the same
+   * column as the inner section holding the three ways of getting there, so the
+   * block that owns those columns reaches its heading with replaceWidget rather
+   * than renderHeadingSection. `heading` is what tells the two cases apart.
+   */
   headingWidget?: string
   /** The widget the origin puts a subtitle in, under the heading. */
   subtitleWidget?: string
@@ -122,6 +130,8 @@ export type SectionTarget = {
    * pushed down 200px and the other has rounded corners, so each needs its own.
    */
   itemWidgets?: string[]
+  /** A heading hash per item, for the same reason as `itemWidgets`. */
+  labelWidgets?: string[]
   /** Representative hashes for the items this block renders. */
   item?: {
     image?: string
@@ -154,7 +164,8 @@ export const AMENITY_TARGETS: SectionTarget[] = [
     headingWidget: '65e98f5',
     subtitleWidget: '93634b3',
     css: {
-      '93634b3': 'text-align:center;font-family:georgia,palatino,serif;font-size:12pt;color:#333333;',
+      '93634b3':
+        'text-align:center;font-family:georgia,palatino,serif;font-size:12pt;color:#333333;',
     },
     item: { image: '9b70847', label: '45a166e' },
   },
@@ -342,6 +353,110 @@ export const TEXT_TARGETS: SectionTarget[] = [
     item: { image: '17608e9', text: '4d5069c' },
   },
   {
+    value: 'sattal-heading',
+    label: 'Sattal — page heading',
+    page: 'sattal',
+    section: 'd61e616',
+    span: 100,
+    columns: ['4654401'],
+    item: { label: 'c51489d' },
+  },
+  {
+    value: 'sattal-cta',
+    label: 'Sattal — enquiry button',
+    page: 'sattal',
+    section: 'ba2cad9',
+    span: 100,
+    columns: ['5782db2'],
+    item: { button: 'aeeb66a' },
+  },
+  {
+    value: 'gallery-intro',
+    label: 'Gallery — heading and intro',
+    page: 'gallery',
+    section: '3d8537b',
+    span: 100,
+    columns: ['9661ca4'],
+    css: { '8a09d30': 'font-size:14pt;color:#333333;' },
+    item: { label: '6c7ad06', text: '8a09d30' },
+  },
+  {
+    value: 'gallery-about',
+    label: 'Gallery — photograph and copy',
+    page: 'gallery',
+    section: '2e59e9f',
+    span: 50,
+    columns: ['98c985f', '7206ac4'],
+    imageAs: 'image',
+    css: { ca55a6c: 'font-size:14pt;color:#333333;' },
+    item: { image: 'c2386e6', text: 'ca55a6c' },
+  },
+  {
+    value: 'property-heading',
+    label: 'Property Photographs — page heading',
+    page: 'property-photographs',
+    section: '14314ab',
+    span: 100,
+    columns: ['a7ff1bd'],
+    item: { label: '694befd' },
+  },
+  {
+    value: 'property-cta',
+    label: 'Property Photographs — enquiry button',
+    page: 'property-photographs',
+    section: '6ee37bd',
+    span: 100,
+    columns: ['d43b741'],
+    item: { button: '50ae635' },
+  },
+  {
+    value: 'birds-heading',
+    label: 'Birds of Sattal — page heading',
+    page: 'birds-of-sattal-and-around',
+    section: 'd298d39',
+    span: 100,
+    columns: ['1207f3d'],
+    item: { label: '271e6c1' },
+  },
+  {
+    value: 'birds-cta',
+    label: 'Birds of Sattal — enquiry button',
+    page: 'birds-of-sattal-and-around',
+    section: '0d7995c',
+    span: 100,
+    columns: ['53ef25e'],
+    item: { button: '3f2ef0a' },
+  },
+  {
+    value: 'birdart-heading',
+    label: 'Bird Art — page heading',
+    page: 'bird-art',
+    section: '7258641',
+    span: 100,
+    columns: ['daa3709'],
+    item: { label: 'c9e0f99' },
+  },
+  {
+    value: 'birdart-statement',
+    label: "Bird Art — the artist's statement",
+    page: 'bird-art',
+    section: 'b62c3dc',
+    span: 50,
+    columns: ['e134592', '5edf3a1'],
+    imageAs: 'image',
+    css: { '56d5fb5': 'font-size:14pt;color:#333333;' },
+    item: { image: 'e633ede', text: '56d5fb5' },
+  },
+  {
+    value: 'birdart-cta',
+    label: 'Bird Art — order button',
+    page: 'bird-art',
+    section: '151f728',
+    span: 100,
+    columns: ['954ae53'],
+    item: { button: '0de8e17' },
+  },
+  {
     value: 'contact-heading',
     label: 'Contact Us — page heading',
     page: 'contact-us',
@@ -349,6 +464,51 @@ export const TEXT_TARGETS: SectionTarget[] = [
     span: 100,
     columns: ['c3e5b93'],
     item: { label: '69b68ed' },
+  },
+
+  //services page subpages handled
+  {
+    value: 'wfh-intro',
+    label: 'Work from Hills — "WILD KUMAON- An Eco-Resort at Sattal"',
+    page: 'work-from-hills',
+    section: '71d5ed9',
+    span: 100,
+    columns: ['b3310be'],
+    item: { label: '7af7769' },
+  },
+  {
+    value: 'wfh-about',
+    label: 'Work from Hills — about the resort',
+    page: 'work-from-hills',
+    section: '4fa3378',
+    span: 100,
+    columns: ['92d6133'],
+    css: { '799f534': 'font-family:georgia,palatino,serif;font-size:14pt;color:#333333;' },
+    item: { text: '799f534' },
+  },
+  {
+    /**
+     * An inner section, not a top-level one — the words sit over the banner
+     * photograph, and the photograph is a background on the section outside this
+     * one. Only the words are the block's; the picture stays the banner field's.
+     */
+    value: 'wfh-banner',
+    label: 'Work from Hills — the words over the banner',
+    page: 'work-from-hills',
+    section: '315bb9f',
+    span: 50,
+    // The origin leaves the left half empty and puts the copy in the right.
+    columns: ['f213cbe', '9ef53ab'],
+    item: { label: '2509249', text: '7adb31b' },
+  },
+  {
+    value: 'wfh-enquiry',
+    label: 'Work from Hills — "Make A Enquiry" button',
+    page: 'work-from-hills',
+    section: 'a3eaadd',
+    span: 100,
+    columns: ['51c4a8b'],
+    item: { button: 'b8e9df5' },
   },
 ]
 
@@ -369,7 +529,13 @@ export const FORM_TARGETS: SectionTarget[] = [
     section: 'a738d72',
     span: 50,
     asideTag: 'h3',
-    item: { label: 'b60aac8', image: 'dd9d707', text: 'cc62ff1', button: '915492a', aside: '6aca2d3' },
+    item: {
+      label: 'b60aac8',
+      image: 'dd9d707',
+      text: 'cc62ff1',
+      button: '915492a',
+      aside: '6aca2d3',
+    },
   },
   {
     value: 'contact-form',
@@ -449,6 +615,69 @@ export const GALLERY_TARGETS: SectionTarget[] = [
     item: { image: 'ddb0fb8' },
   },
   {
+    value: 'sattal-gallery',
+    label: 'Sattal — photographs',
+    page: 'sattal',
+    section: 'd108649',
+    span: 100,
+    columns: ['2258d9f'],
+    item: { image: 'a208009' },
+  },
+  {
+    value: 'gallery-sattal',
+    label: 'Gallery — SATTAL preview',
+    page: 'gallery',
+    section: '8697c1a',
+    span: 100,
+    columns: ['9913d21'],
+    item: { label: '1426e81', image: '6b1c223', button: '2d3eac1' },
+  },
+  {
+    value: 'gallery-birds',
+    label: 'Gallery — BIRDS OF SATTAL preview',
+    page: 'gallery',
+    section: '7e3a5ad',
+    span: 100,
+    columns: ['1d6505d'],
+    item: { label: 'ffc41f3', image: '1de925f', button: '7f0e8f2' },
+  },
+  {
+    value: 'gallery-property',
+    label: 'Gallery — PROPERTY PHOTOGRAPHS preview',
+    page: 'gallery',
+    section: '6827502',
+    span: 100,
+    columns: ['f55c97a'],
+    item: { label: 'bc488c4', image: '70cf5c8', button: '58c8c40' },
+  },
+  {
+    value: 'property-gallery',
+    label: 'Property Photographs — the photographs',
+    page: 'property-photographs',
+    section: '3489c90',
+    span: 100,
+    columns: ['a769d61'],
+    item: { image: '15f3289' },
+  },
+  {
+    value: 'birds-gallery-1',
+    label: 'Birds of Sattal — first run of photographs',
+    page: 'birds-of-sattal-and-around',
+    section: '45ce80c',
+    span: 100,
+    columns: ['5095439'],
+    item: { image: 'a1c1630' },
+  },
+  {
+    value: 'birds-gallery-2',
+    label: 'Birds of Sattal — second run of photographs',
+    page: 'birds-of-sattal-and-around',
+    section: '516c663',
+    span: 100,
+    columns: ['1766ea3'],
+    item: { image: '7f22dac' },
+  },
+  {
     value: 'conservation-logos',
     label: 'Conservation — club logo and objectives',
     page: 'conservation',
@@ -459,6 +688,90 @@ export const GALLERY_TARGETS: SectionTarget[] = [
     // other has rounded corners.
     itemWidgets: ['bc5fc85', 'badd7d4'],
     item: { image: 'bc5fc85' },
+  },
+
+  {
+    value: 'wfh-gallery',
+    label: 'Work from Hills — the photographs',
+    page: 'work-from-hills',
+    section: '5e7ed7b',
+    span: 100,
+    columns: ['3dc53b6'],
+    heading: 'af2fd85',
+    headingColumn: 'de8d6cc',
+    headingWidget: '600f242',
+    item: { image: '2865909' },
+  },
+]
+
+/**
+ * A row of short columns, each a title and a line or two under it.
+ *
+ * Not a text target, because a text block holds one run of prose and these are
+ * three side by side — /work-from-hills sets By Air, By Rail and By Road in
+ * their own thirds, and gathering them into one rich text would stack them.
+ * Not an amenities target either: those are documents shared between pages,
+ * and nothing here repeats anywhere else.
+ *
+ * Both of these are inner sections sitting in a column of `3a80286`, with their
+ * heading as a sibling widget rather than a section of its own — which is what
+ * `headingWidget` without `heading` means.
+ */
+export const COLUMN_TARGETS: SectionTarget[] = [
+  {
+    value: 'wfh-how-to-reach',
+    label: 'Work from Hills — How to Reach',
+    page: 'work-from-hills',
+    section: '9d03b83',
+    span: 33,
+    // One id for all three: the columns carry an identical rule, as do the
+    // headings — the yellow bar behind "By Air" is the same rule behind "By Road".
+    columns: ['d9904fd'],
+    headingWidget: 'bc7ee45',
+    css: {
+      '746dbc2':
+        'text-align:justify;font-family:georgia,palatino,serif;font-size:12pt;color:#333333;',
+    },
+    item: { label: '038ed6d', text: '746dbc2' },
+  },
+  {
+    // Three words in three columns, with no heading of their own above them.
+    value: 'wfh-duration',
+    label: 'Work from Hills — Duration',
+    page: 'work-from-hills',
+    section: 'c6ebafa',
+    span: 33,
+    columns: ['4eca80f'],
+    headingWidget: '26700f2',
+    css: {
+      '8b6f22c':
+        'text-align:center;font-family:georgia,palatino,serif;font-size:14pt;color:#333333;',
+    },
+    item: { text: '8b6f22c' },
+  },
+]
+
+export const ARTWORK_TARGETS: SectionTarget[] = [
+  {
+    value: 'birdart-paintings',
+    label: 'Bird Art — the paintings',
+    page: 'bird-art',
+    section: '6f9c0ce',
+    span: 100,
+    columns: ['4133c3d'],
+    item: { image: '1bb8b66' },
+  },
+  {
+    /** Two portraits side by side, each with its own hashes — the origin styles them apart. */
+    value: 'birdart-artists',
+    label: 'Bird Art — the artists',
+    page: 'bird-art',
+    section: '33f4688',
+    span: 50,
+    columns: ['670ea3b', '02e78ed'],
+    itemWidgets: ['ec9a2a9', '6661f8a'],
+    labelWidgets: ['a5eaa4a', 'f22bd59'],
+    item: { image: 'ec9a2a9', label: 'a5eaa4a' },
   },
 ]
 

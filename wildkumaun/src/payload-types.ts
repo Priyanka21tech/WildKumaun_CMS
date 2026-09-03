@@ -72,6 +72,7 @@ export interface Config {
     pages: Page;
     amenities: Amenity;
     packages: Package;
+    'bird-art': BirdArt;
     faqs: Faq;
     testimonials: Testimonial;
     forms: Form;
@@ -88,6 +89,7 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     amenities: AmenitiesSelect<false> | AmenitiesSelect<true>;
     packages: PackagesSelect<false> | PackagesSelect<true>;
+    'bird-art': BirdArtSelect<false> | BirdArtSelect<true>;
     faqs: FaqsSelect<false> | FaqsSelect<true>;
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -302,7 +304,22 @@ export interface Page {
               | 'conservation-risk'
               | 'conservation-detail'
               | 'conservation-petition'
-              | 'contact-heading';
+              | 'sattal-heading'
+              | 'sattal-cta'
+              | 'gallery-intro'
+              | 'gallery-about'
+              | 'property-heading'
+              | 'property-cta'
+              | 'birds-heading'
+              | 'birds-cta'
+              | 'birdart-heading'
+              | 'birdart-statement'
+              | 'birdart-cta'
+              | 'contact-heading'
+              | 'wfh-intro'
+              | 'wfh-about'
+              | 'wfh-banner'
+              | 'wfh-enquiry';
             /**
              * Sits above the text. Leave empty for none.
              */
@@ -370,6 +387,47 @@ export interface Page {
           }
         | {
             /**
+             * Which row of columns on the page this replaces.
+             */
+            target: 'wfh-how-to-reach' | 'wfh-duration';
+            /**
+             * Sits above the row — "How to Reach". Leave empty for none.
+             */
+            heading?: string | null;
+            /**
+             * One entry per column, in the order they should read across the page.
+             */
+            items: {
+              /**
+               * The column's own title — "By Air". Leave empty where it has none.
+               */
+              heading?: string | null;
+              /**
+               * What the column says.
+               */
+              body?: {
+                root: {
+                  type: string;
+                  children: {
+                    type: any;
+                    version: number;
+                    [k: string]: unknown;
+                  }[];
+                  direction: ('ltr' | 'rtl') | null;
+                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                  indent: number;
+                  version: number;
+                };
+                [k: string]: unknown;
+              } | null;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'columns';
+          }
+        | {
+            /**
              * Which list on the page this replaces.
              */
             target:
@@ -421,16 +479,51 @@ export interface Page {
             /**
              * Which gallery on the page this replaces.
              */
-            target: 'home-gallery' | 'conservation-logos';
+            target:
+              | 'home-gallery'
+              | 'sattal-gallery'
+              | 'gallery-sattal'
+              | 'gallery-birds'
+              | 'gallery-property'
+              | 'property-gallery'
+              | 'birds-gallery-1'
+              | 'birds-gallery-2'
+              | 'conservation-logos'
+              | 'wfh-gallery';
             /**
              * Sits above the photographs. Leave empty for none.
              */
             heading?: string | null;
-            display: 'carousel' | 'grid';
+            display: 'carousel' | 'grid' | 'gallery';
+            /**
+             * How many thumbnails to a row.
+             */
+            columns?: number | null;
             /**
              * How many are visible at once on a desktop screen.
              */
             slidesToShow?: number | null;
+            /**
+             * The gallery index puts an "Explore More" button under each preview, pointing at the full gallery.
+             */
+            showButton?: boolean | null;
+            button?: {
+              type?: ('reference' | 'custom') | null;
+              /**
+               * Leave empty to use the page's own menu name. Fill it in only to say something different here.
+               */
+              label?: string | null;
+              reference?: (number | null) | Page;
+              /**
+               * Include the protocol, e.g. https://example.com/page.
+               */
+              url?: string | null;
+              /**
+               * Optional. The id of a section to jump to, without the #. Leave empty to land at the top.
+               */
+              anchor?: string | null;
+              newTab?: boolean | null;
+            };
             /**
              * The photographs, in the order they should appear.
              */
@@ -565,6 +658,37 @@ export interface Page {
             id?: string | null;
             blockName?: string | null;
             blockType: 'map';
+          }
+        | {
+            /**
+             * Which run on the page this replaces.
+             */
+            target: 'birdart-paintings' | 'birdart-artists';
+            display: 'paintings' | 'artists';
+            /**
+             * The paintings to show, in the order they should appear.
+             */
+            items?: (number | BirdArt)[] | null;
+            /**
+             * How many paintings to a row.
+             */
+            columns?: number | null;
+            /**
+             * The artists, in the order they should appear.
+             */
+            people?:
+              | {
+                  image: number | Media;
+                  /**
+                   * Shown under the portrait.
+                   */
+                  name: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'artwork';
           }
       )[]
     | null;
@@ -857,6 +981,38 @@ export interface Form {
   createdAt: string;
 }
 /**
+ * Paintings shown on the Bird Art page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bird-art".
+ */
+export interface BirdArt {
+  id: number;
+  /**
+   * What the painting is of — shown under it on the page.
+   */
+  title: string;
+  image: number | Media;
+  /**
+   * A second photograph of the same painting, where the page shows two. Leave empty for most.
+   */
+  altImage?: (number | null) | Media;
+  /**
+   * Who painted it.
+   */
+  artist?: string | null;
+  /**
+   * Identifies this painting in the page markup. Rarely needs changing.
+   */
+  slug: string;
+  /**
+   * Low numbers first. Leave gaps so a painting can be slotted in later.
+   */
+  order: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Shown on the FAQs page, in the order set here.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -953,6 +1109,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'packages';
         value: number | Package;
+      } | null)
+    | ({
+        relationTo: 'bird-art';
+        value: number | BirdArt;
       } | null)
     | ({
         relationTo: 'faqs';
@@ -1158,6 +1318,21 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        columns?:
+          | T
+          | {
+              target?: T;
+              heading?: T;
+              items?:
+                | T
+                | {
+                    heading?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
         amenities?:
           | T
           | {
@@ -1185,7 +1360,19 @@ export interface PagesSelect<T extends boolean = true> {
               target?: T;
               heading?: T;
               display?: T;
+              columns?: T;
               slidesToShow?: T;
+              showButton?: T;
+              button?:
+                | T
+                | {
+                    type?: T;
+                    label?: T;
+                    reference?: T;
+                    url?: T;
+                    anchor?: T;
+                    newTab?: T;
+                  };
               images?: T;
               id?: T;
               blockName?: T;
@@ -1248,6 +1435,23 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        artwork?:
+          | T
+          | {
+              target?: T;
+              display?: T;
+              items?: T;
+              columns?: T;
+              people?:
+                | T
+                | {
+                    image?: T;
+                    name?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
       };
   slug?: T;
   navLabel?: T;
@@ -1290,6 +1494,20 @@ export interface PackagesSelect<T extends boolean = true> {
         label?: T;
         id?: T;
       };
+  slug?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bird-art_select".
+ */
+export interface BirdArtSelect<T extends boolean = true> {
+  title?: T;
+  image?: T;
+  altImage?: T;
+  artist?: T;
   slug?: T;
   order?: T;
   updatedAt?: T;

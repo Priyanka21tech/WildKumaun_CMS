@@ -1,8 +1,9 @@
 import { esc } from '../components/SiteHeader'
 import { replaceContainer } from './elementor'
-import { GALLERY_TARGETS, targetFor } from './sections'
+import { resolveHref, resolveLabel, type LinkValue } from '../fields/link'
+import { GALLERY_TARGETS, targetFor, type SectionTarget } from './sections'
 import type { MediaMap } from './media-map'
-import { asMedia, column, img, imageWidget, renderHeadingSection, responsive } from './widgets'
+import { asMedia, column, img, imageWidget, renderHeadingSection, responsive, widget } from './widgets'
 import type { MediaDoc } from './widgets'
 
 /**
@@ -27,8 +28,42 @@ export type GalleryBlockValue = {
   target?: string | null
   heading?: string | null
   display?: string | null
+  columns?: number | null
   slidesToShow?: number | null
+  showButton?: boolean | null
+  button?: LinkValue | null
   images?: (number | MediaDoc)[] | null
+}
+
+/**
+ * The heading the origin put inside the section itself.
+ *
+ * Empty on the pages that give a heading its own section — there
+ * renderHeadingSection draws it, and doing both would show it twice. The gallery
+ * index is the exception: it stacks a heading, a run of thumbnails and a button
+ * into one section, and a section can only belong to one block.
+ */
+const inlineHeading = (target: SectionTarget, block: GalleryBlockValue): string =>
+  target.item?.label && block.heading
+    ? widget(
+        target.item.label,
+        'heading',
+        `<h2 class="elementor-heading-title elementor-size-default">${esc(block.heading)}</h2>`,
+      )
+    : ''
+
+/** The "Explore More" button under a preview, where the target has room for one. */
+function inlineButton(target: SectionTarget, block: GalleryBlockValue): string {
+  const hash = target.item?.button
+  const label = block.showButton ? resolveLabel(block.button) : ''
+  if (!hash || !label) return ''
+
+  return widget(
+    hash,
+    'button',
+    `<div class="elementor-button-wrapper"><a class="elementor-button elementor-button-link elementor-size-sm elementor-animation-shrink" href="${esc(resolveHref(block.button))}"><span class="elementor-button-content-wrapper"><span class="elementor-button-icon elementor-align-icon-right"><i aria-hidden="true" class="fas fa-long-arrow-alt-right"></i></span><span class="elementor-button-text">${esc(label)}</span></span></a></div>`,
+    'elementor-align-center elementor-tablet-align-center elementor-mobile-align-center',
+  )
 }
 
 const populated = (images: GalleryBlockValue['images']): MediaDoc[] =>
@@ -45,6 +80,24 @@ export function replaceGallery(html: string, block: GalleryBlockValue, map: Medi
 
   const withHeading = renderHeadingSection(html, target, block.heading)
 
+  const before = inlineHeading(target, block)
+  const after = inlineButton(target, block)
+
+  if (block.display === 'gallery') {
+    return replaceContainer(
+      withHeading,
+      target.section,
+      responsive(
+        column(
+          target.span,
+          before + thumbnails(target.item.image, images, block.columns ?? 4) + after,
+          target.columns?.[0],
+        ),
+        map,
+      ),
+    )
+  }
+
   const inner =
     block.display === 'grid'
       ? images
@@ -58,7 +111,11 @@ export function replaceGallery(html: string, block: GalleryBlockValue, map: Medi
             ),
           )
           .join('')
-      : column(100, carousel(target.item.image, images, block.slidesToShow ?? 4), target.columns?.[0])
+      : column(
+          target.span,
+          before + carousel(target.item.image, images, block.slidesToShow ?? 4) + after,
+          target.columns?.[0],
+        )
 
   return replaceContainer(withHeading, target.section, responsive(inner, map))
 }
@@ -83,6 +140,41 @@ const settings = (slidesToShow: number): string =>
     speed: 500,
     image_spacing_custom: { unit: 'px', size: 20, sizes: [] },
   })
+
+/**
+ * WordPress's own gallery: square thumbnails, each captioned with its own name.
+ *
+ * `aria-describedby` ties a picture to the caption beneath it, which is what
+ * makes the caption readable to a screen reader as a description rather than as
+ * a stray line of text. The ids only have to be unique on the page, so they are
+ * numbered from the widget rather than carrying the origin's WordPress post ids,
+ * which mean nothing here.
+ *
+ * The lightbox anchors are dropped for the same reason as in the carousel: they
+ * carry a base64 blob pointing at wildkumaon.com, and Elementor's lightbox script
+ * is not loaded, so they would take a reader off the site for nothing.
+ */
+function thumbnails(hash: string, images: MediaDoc[], columns: number): string {
+  const items = images
+    .map((image, index) => {
+      const id = `gallery-${hash}-${index + 1}`
+      const caption = image.alt || image.filename?.replace(/\.[a-z0-9]+$/i, '') || ''
+
+      return `<figure class="gallery-item">
+<div class="gallery-icon landscape">${img({ ...image, alt: '' }, 'attachment-full size-full').replace('<img', `<img aria-describedby="${id}"`)}</div>
+<figcaption class="wp-caption-text gallery-caption" id="${id}">${esc(caption)}</figcaption>
+</figure>`
+    })
+    .join('')
+
+  return `<div class="elementor-element elementor-element-${hash} gallery-spacing-custom elementor-widget elementor-widget-image-gallery" data-element_type="widget" data-id="${hash}" data-widget_type="image-gallery.default">
+<div class="elementor-widget-container">
+<div class="elementor-image-gallery">
+<div class="gallery gallery-columns-${columns} gallery-size-full" id="gallery-${hash}">${items}</div>
+</div>
+</div>
+</div>`
+}
 
 function carousel(hash: string, images: MediaDoc[], slidesToShow: number): string {
   const slides = images

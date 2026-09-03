@@ -1,8 +1,10 @@
 import type { CollectionConfig } from 'payload'
 import { AmenitiesBlock } from '../blocks/AmenitiesBlock'
+import { ColumnsBlock } from '../blocks/ColumnsBlock'
 import { ContentBlock } from '../blocks/ContentBlock'
 import { GalleryBlock } from '../blocks/GalleryBlock'
 import { HeroBlock } from '../blocks/HeroBlock'
+import { ArtworkBlock } from '../blocks/ArtworkBlock'
 import { MapBlock } from '../blocks/MapBlock'
 import { TextBlock } from '../blocks/TextBlock'
 import { FormBlock } from '../blocks/FormBlock'
@@ -81,6 +83,7 @@ export const Pages: CollectionConfig = {
         HeroBlock,
         ContentBlock,
         TextBlock,
+        ColumnsBlock,
         AmenitiesBlock,
         PackagesBlock,
         GalleryBlock,
@@ -88,6 +91,7 @@ export const Pages: CollectionConfig = {
         TestimonialsBlock,
         FormBlock,
         MapBlock,
+        ArtworkBlock,
       ],
       admin: {
         description:

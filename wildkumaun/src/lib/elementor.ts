@@ -88,6 +88,30 @@ export function replaceSection(html: string, id: string, markup: string): string
 }
 
 /**
+ * Put `markup` where that widget was.
+ *
+ * The heading over a run of columns is not always a section of its own. On
+ * /work-from-hills the origin puts "How to Reach" in the same column as the
+ * inner section holding the three ways of getting there — so the block that owns
+ * those columns cannot own its heading through renderHeadingSection, which
+ * replaces a whole section. This replaces the one widget and leaves everything
+ * beside it alone.
+ *
+ * An empty string removes the widget, the same contract replaceSection has: a
+ * heading field emptied in the admin panel takes the heading off the page rather
+ * than falling back to the origin's words.
+ */
+export function replaceWidget(html: string, widgetId: string, markup: string): string {
+  const open = new RegExp(`<div[^>]*\\bdata-id="${widgetId}"[^>]*>`, 'i').exec(html)
+  if (!open || open.index === undefined) return html
+
+  const end = endOfElement(html, open.index, 'div')
+  if (end === -1) return html
+
+  return html.slice(0, open.index) + markup + html.slice(end)
+}
+
+/**
  * Replace what is inside a section's container, leaving the section itself alone.
  *
  * This is how the blocks take a section over, and the reason is the stylesheet.

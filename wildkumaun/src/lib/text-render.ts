@@ -5,7 +5,16 @@ import { replaceContainer } from './elementor'
 import { resolveHref, resolveLabel, type LinkValue } from '../fields/link'
 import { TEXT_TARGETS, targetFor } from './sections'
 import type { MediaMap } from './media-map'
-import { asMedia, column, img, imageWidget, responsive, widget, widgetCss } from './widgets'
+import {
+  asMedia,
+  column,
+  elementorHeadings,
+  img,
+  imageWidget,
+  responsive,
+  widget,
+  widgetCss,
+} from './widgets'
 import type { MediaDoc } from './widgets'
 
 /**
@@ -52,18 +61,23 @@ export function replaceText(html: string, block: TextBlockValue, map: MediaMap):
 
   // Full width is one column holding everything.
   if (target.span === 100) {
-    return replaceContainer(html, target.section, responsive(column(100, parts, target.columns?.[0]), map))
+    return replaceContainer(
+      html,
+      target.section,
+      responsive(column(100, parts, target.columns?.[0]), map),
+    )
   }
 
   const images = (block.images ?? [])
     .map((image) => asMedia(image))
     .filter((image): image is MediaDoc => Boolean(image?.filename))
 
-  const left = !images.length || !hashes.image
-    ? ''
-    : target.imageAs === 'image'
-      ? widget(hashes.image, 'image', linked(img(images[0]), block))
-      : carousel(hashes.image, images)
+  const left =
+    !images.length || !hashes.image
+      ? ''
+      : target.imageAs === 'image'
+        ? widget(hashes.image, 'image', linked(img(images[0]), block))
+        : carousel(hashes.image, images)
 
   return replaceContainer(
     html,
@@ -71,24 +85,6 @@ export function replaceText(html: string, block: TextBlockValue, map: MediaMap):
     responsive(column(50, left, target.columns?.[0]) + column(50, parts, target.columns?.[1]), map),
   )
 }
-
-/**
- * Give headings inside rich text the class Elementor styles them by.
- *
- * A heading the origin wrote is a heading widget, and its size and weight come
- * from `.elementor-heading-title`. The same heading typed into rich text comes
- * out as a bare `<h2>`, which the theme draws at its own default — noticeably
- * smaller. Adding the class is what makes a heading an editor writes look like
- * the ones already on the page.
- *
- * Only headings with no class of their own are touched, so anything deliberate
- * is left alone.
- */
-const elementorHeadings = (html: string): string =>
-  html.replace(
-    /<(h[1-6])>/g,
-    (_match, tag) => `<${tag} class="elementor-heading-title elementor-size-default">`,
-  )
 
 /**
  * Wrap a picture in its link, where it has one.
