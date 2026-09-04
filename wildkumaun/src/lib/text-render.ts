@@ -1,7 +1,7 @@
 import { convertLexicalToHTML } from '@payloadcms/richtext-lexical/html'
 import type { SerializedEditorState } from 'lexical'
 import { esc } from '../components/SiteHeader'
-import { replaceContainer } from './elementor'
+import { replaceContainer, replaceWidget } from './elementor'
 import { resolveHref, resolveLabel, type LinkValue } from '../fields/link'
 import { TEXT_TARGETS, targetFor } from './sections'
 import type { MediaMap } from './media-map'
@@ -9,6 +9,7 @@ import {
   asMedia,
   column,
   elementorHeadings,
+  headingWidget,
   img,
   imageWidget,
   responsive,
@@ -48,13 +49,35 @@ export function replaceText(html: string, block: TextBlockValue, map: MediaMap):
 
   const hashes = target.item
 
+  /**
+   * A heading standing outside the section, where the origin put one there.
+   *
+   * /experiences writes "GROUP SOUND BATH/IMMERSION" as a widget above the inner
+   * section holding the picture and the copy, so it cannot be rendered as part of
+   * the section's own contents. `heading` on the target means a heading with a
+   * section to itself and is renderHeadingSection's business; `headingWidget`
+   * alone means this. See src/lib/sections.ts.
+   */
+  const withHeading =
+    target.headingWidget && !target.heading
+      ? replaceWidget(
+          html,
+          target.headingWidget,
+          block.heading
+            ? headingWidget(target.headingWidget, block.heading, target.headingTag)
+            : '',
+        )
+      : html
+
   const body = block.body
     ? elementorHeadings(convertLexicalToHTML({ data: block.body, disableContainer: true }))
     : ''
 
   const parts = [
     widgetCss(target.css),
-    hashes.label && block.heading ? headingWidget(hashes.label, block.heading) : '',
+    hashes.label && block.heading
+      ? headingWidget(hashes.label, block.heading, target.headingTag)
+      : '',
     hashes.text && body ? widget(hashes.text, 'text-editor', body) : '',
     hashes.button && block.showButton ? buttonWidget(hashes.button, block.button) : '',
   ].join('')
@@ -62,7 +85,7 @@ export function replaceText(html: string, block: TextBlockValue, map: MediaMap):
   // Full width is one column holding everything.
   if (target.span === 100) {
     return replaceContainer(
-      html,
+      withHeading,
       target.section,
       responsive(column(100, parts, target.columns?.[0]), map),
     )
@@ -80,7 +103,7 @@ export function replaceText(html: string, block: TextBlockValue, map: MediaMap):
         : carousel(hashes.image, images)
 
   return replaceContainer(
-    html,
+    withHeading,
     target.section,
     responsive(column(50, left, target.columns?.[0]) + column(50, parts, target.columns?.[1]), map),
   )
@@ -103,13 +126,6 @@ function linked(image: string, block: TextBlockValue): string {
   const newTab = block.imageLink?.newTab ? ' target="_blank" rel="noopener noreferrer"' : ''
   return `<a href="${esc(href)}"${newTab}>${image}</a>`
 }
-
-const headingWidget = (hash: string, text: string): string =>
-  widget(
-    hash,
-    'heading',
-    `<h2 class="elementor-heading-title elementor-size-default">${esc(text)}</h2>`,
-  )
 
 /**
  * The button beneath the copy.

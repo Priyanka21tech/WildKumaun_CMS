@@ -7,7 +7,9 @@ import { splitShell } from '@/lib/shell'
 import { getMediaMap } from '@/lib/media-map'
 import { responsiveHtml } from '@/lib/responsive-html'
 import { replaceAccordion } from '@/lib/faq-accordion'
+import { replacePostList } from '@/lib/post-list'
 import { bannerFor, bannerOverride, replaceBannerImage } from '@/lib/page-banner'
+import { isReachable } from '@/lib/reachable'
 import { replaceContentArea } from '@/lib/content-area'
 import { replaceHero } from '@/lib/hero-render'
 import { replaceText } from '@/lib/text-render'
@@ -86,7 +88,7 @@ export default async function MirrorPage({ params }: { params: Promise<{ slug?: 
 
   // depth 1 populates the logo upload and the page each menu link points at, so
   // resolveHref has a slug to build a path from rather than a bare id.
-  const [settings, header, footer, mediaMap, faqs, testimonials, pageDoc] = await Promise.all([
+  const [settings, header, footer, mediaMap, faqs, posts, testimonials, pageDoc] = await Promise.all([
     payload.findGlobal({ slug: 'site-settings', depth: 1 }),
     payload.findGlobal({ slug: 'header', depth: 1 }),
     payload.findGlobal({ slug: 'footer', depth: 1 }),
@@ -95,6 +97,15 @@ export default async function MirrorPage({ params }: { params: Promise<{ slug?: 
     // has no use for.
     page.route === '/faqs'
       ? payload.find({ collection: 'faqs', limit: 0, pagination: false, sort: 'order', depth: 0 })
+      : null,
+    /**
+     * The blog archive is the whole of that page, so it is queried by route the
+     * way the FAQs are rather than through a block. depth 1 populates the page
+     * each card points at — an id alone carries no slug to build a link from —
+     * and the optional thumbnail.
+     */
+    page.route === '/blog'
+      ? payload.find({ collection: 'posts', limit: 0, pagination: false, sort: 'order', depth: 1 })
       : null,
     // The guest book lists every review. Anywhere else, a testimonials block on the
     // page says which to show, so there is nothing to query.
@@ -132,15 +143,31 @@ export default async function MirrorPage({ params }: { params: Promise<{ slug?: 
   // The questions come from the collection now. Everything else on the page is
   // still the mirror's, so only the accordion's items are swapped out.
   /**
+   * Nothing from the CMS on a page nothing links to.
+   *
+   * Six of the origin's pages cannot be reached from anywhere on the site — see
+   * src/lib/reachable.ts. A page a reader cannot get to is not part of the site,
+   * so it is left as the mirror serves it: no blocks, and no banner override
+   * either, since an empty banner field would otherwise blank a banner the origin
+   * still shows. Whatever is stored against them stays stored, and starts
+   * rendering by itself the day something links to them.
+   */
+  const cms = isReachable(page.route) ? pageDoc.docs[0] : undefined
+
+  /**
    * An empty banner blanks the section rather than falling back to the mirror's
    * own image. A field you can empty and see no change is not a field you control.
    */
-  const banner = pageDoc.docs[0]?.banner
+  const banner = cms?.banner
   // depth 1 populates it; an id on its own carries no url to point at.
   const bannerUrl = banner && typeof banner === 'object' ? (banner.url ?? null) : null
-  const bannerRule = bannerFor(page.html)
+  // No rule on an unreachable page, so the override is never written and the
+  // origin's own background stays exactly as it is.
+  const bannerRule = cms ? bannerFor(page.html) : null
 
   let content = faqs ? replaceAccordion(body, faqs.docs) : body
+
+  if (posts) content = replacePostList(content, posts.docs, mediaMap)
 
   if (testimonials) content = replaceTestimonialGrid(content, testimonials.docs)
 
@@ -149,7 +176,7 @@ export default async function MirrorPage({ params }: { params: Promise<{ slug?: 
    * blocks renders exactly as it did, which is what makes it safe to move a
    * section at a time.
    */
-  for (const block of pageDoc.docs[0]?.layout ?? []) {
+  for (const block of cms?.layout ?? []) {
     if (block.blockType === 'content') {
       content = replaceContentArea(content, block.content)
       continue

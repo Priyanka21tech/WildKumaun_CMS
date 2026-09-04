@@ -71,6 +71,16 @@ export type SectionTarget = {
   /** The widget the origin puts a subtitle in, under the heading. */
   subtitleWidget?: string
   /**
+   * What level the headings this block writes are.
+   *
+   * h2 nearly everywhere, and h4 on the blog posts, which set each place's name —
+   * "Studio Trail", "Bend Area" — under the page's own h2. Elementor styles a
+   * heading by its widget hash, but the tag decides the theme's default size and
+   * what a screen reader makes of the page's outline, so rendering an h4 as an h2
+   * flattens the structure the origin wrote.
+   */
+  headingTag?: 'h2' | 'h4'
+  /**
    * How the origin draws this spot.
    *
    * The block's own `display` field is what actually decides, because that is the
@@ -510,6 +520,287 @@ export const TEXT_TARGETS: SectionTarget[] = [
     columns: ['51c4a8b'],
     item: { button: 'b8e9df5' },
   },
+  {
+    value: 'exp-intro',
+    label: 'Experiences — the opening words',
+    page: 'experiences',
+    section: '23aad64',
+    span: 100,
+    columns: ['fd8d87e'],
+    css: { d47c90c: 'font-family:georgia,palatino,serif;font-size:14pt;color:#333333;' },
+    item: { text: 'd47c90c' },
+  },
+  {
+    value: 'exp-swimming',
+    label: 'Experiences — "Swimming Experience"',
+    page: 'experiences',
+    section: '4375e01',
+    span: 100,
+    columns: ['2d3e781'],
+    // A heading and nothing else: the origin gives this one no copy of its own.
+    item: { label: 'c292ede' },
+  },
+  {
+    value: 'exp-nature-walk',
+    label: 'Experiences — "Nature Walk Experience"',
+    page: 'experiences',
+    section: 'bd268cb',
+    span: 100,
+    columns: ['b8e6dc0'],
+    css: {
+      d70a2f5:
+        'text-align:justify;font-family:georgia,palatino,serif;font-size:14pt;color:#333333;',
+    },
+    item: { label: '4e50e09', text: 'd70a2f5' },
+  },
+  {
+    value: 'exp-birdwatching',
+    label: 'Experiences — "Birdwatching Experience"',
+    page: 'experiences',
+    section: '5fa59d6',
+    span: 100,
+    columns: ['5b9d39c'],
+    css: {
+      fde65f5:
+        'text-align:justify;font-family:georgia,palatino,serif;font-size:14pt;color:#333333;',
+    },
+    item: { label: '5db896b', text: 'fde65f5' },
+  },
+  {
+    value: 'exp-enquiry',
+    label: 'Experiences — "Enquiry" button',
+    page: 'experiences',
+    section: 'd286f36',
+    span: 100,
+    columns: ['32e165e'],
+    item: { button: '0a82184' },
+  },
+  {
+    /**
+     * The picture and the copy are an inner section; the heading above them is a
+     * widget outside it. `headingWidget` with no `heading` is what says so — see
+     * replaceWidget in src/lib/elementor.ts.
+     */
+    value: 'exp-sound-bath',
+    label: 'Experiences — "Group Sound Bath/Immersion"',
+    page: 'experiences',
+    section: '968ccfc',
+    span: 50,
+    columns: ['1262dae', 'b9051c7'],
+    headingWidget: '71ca977',
+    // One photograph, so an image rather than a carousel of one.
+    imageAs: 'image',
+    css: {
+      fd8ca96:
+        'text-align:justify;font-family:georgia,palatino,serif;font-size:14pt;color:#333333;',
+    },
+    item: { image: '34c7c55', text: 'fd8ca96' },
+  },
+  {
+    value: 'guestbook-heading',
+    label: 'Guest Book — "What our guests say"',
+    page: 'guest-book',
+    section: '692fd85',
+    span: 100,
+    columns: ['f55c596'],
+    item: { label: '4ccc2f2' },
+  },
+  {
+    value: 'eco-intro',
+    label: 'Eco-friendly Enterprises — the article',
+    page: 'eco-friendly-enterprises-in-sattal',
+    section: '363847d',
+    span: 100,
+    columns: ['d01e518'],
+    // Three widgets that read as one piece, the way /team's do.
+    wholeSection: true,
+    item: { text: 'ef3a759' },
+  },
+  {
+    value: 'eco-outro',
+    label: 'Eco-friendly Enterprises — the closing words',
+    page: 'eco-friendly-enterprises-in-sattal',
+    section: '20173e0',
+    span: 100,
+    columns: ['9005d88'],
+    item: { text: 'df414ce' },
+  },
+  {
+    value: 'str-intro',
+    label: 'Spring Trip Report — the opening words',
+    page: 'spring-trip-report',
+    section: '363847d',
+    span: 100,
+    columns: ['d01e518'],
+    item: { text: 'ef3a759' },
+  },
+  {
+    value: 'str-highlights-heading',
+    label: 'Spring Trip Report — "Few Highlight Birds"',
+    page: 'spring-trip-report',
+    section: 'e181def',
+    span: 100,
+    columns: ['6b34092'],
+    item: { label: 'e93426c' },
+  },
+  {
+    value: 'str-highlights',
+    label: 'Spring Trip Report — the highlight birds',
+    page: 'spring-trip-report',
+    section: '20173e0',
+    span: 100,
+    columns: ['9005d88'],
+    css: { df414ce: 'text-align:justify;' },
+    item: { text: 'df414ce' },
+  },
+  {
+    value: 'str-mammals',
+    label: 'Spring Trip Report — "Mammals"',
+    page: 'spring-trip-report',
+    section: 'c6a1665',
+    span: 100,
+    columns: ['6fe33b8'],
+    item: { label: '62f68ca', text: 'a3cca88' },
+  },
+  {
+    value: 'str-cta',
+    label: 'Spring Trip Report — the button',
+    page: 'spring-trip-report',
+    section: 'be3c927',
+    span: 100,
+    columns: ['ae332f6'],
+    item: { button: '9eded53' },
+  },
+  {
+    value: 'bws-intro',
+    label: 'Bird Watching in Sattal — the opening words',
+    page: 'bird-watching-in-sattal',
+    section: '363847d',
+    span: 100,
+    columns: ['d01e518'],
+    item: { text: 'ef3a759' },
+  },
+  {
+    value: 'bws-places-heading',
+    label: 'Bird Watching in Sattal — "Bird Watching Places of Sattal"',
+    page: 'bird-watching-in-sattal',
+    section: '1c48c20',
+    span: 100,
+    columns: ['155693c'],
+    item: { label: '7c723a7' },
+  },
+  {
+    value: 'bws-species',
+    label: 'Bird Watching in Sattal — the species found',
+    page: 'bird-watching-in-sattal',
+    section: '9b0e2e2',
+    span: 100,
+    columns: ['084239f'],
+    item: { text: '7b945dd' },
+  },
+  {
+    value: 'bws-when',
+    label: 'Bird Watching in Sattal — when to visit',
+    page: 'bird-watching-in-sattal',
+    section: 'd3a8e9c',
+    span: 100,
+    columns: ['fb0f487'],
+    item: { text: '157c427' },
+  },
+  {
+    value: 'bws-where-to-stay',
+    label: 'Bird Watching in Sattal — where to stay',
+    page: 'bird-watching-in-sattal',
+    section: '7583d73',
+    span: 100,
+    columns: ['8bdf49d'],
+    item: { text: '4d57356' },
+  },
+  {
+    value: 'bws-checklist-heading',
+    label: 'Bird Watching in Sattal — "Sattal Birds Checklist"',
+    page: 'bird-watching-in-sattal',
+    section: 'e181def',
+    span: 100,
+    columns: ['6b34092'],
+    item: { label: 'e93426c' },
+  },
+  {
+    value: 'bws-cta',
+    label: 'Bird Watching in Sattal — the button',
+    page: 'bird-watching-in-sattal',
+    section: 'be3c927',
+    span: 100,
+    columns: ['ae332f6'],
+    item: { button: '9eded53' },
+  },
+  {
+    value: 'tour-heading',
+    label: 'Birding Tour — "Birding Tours"',
+    page: 'sattal-5n-6d-birding-tour',
+    section: 'b478e7b',
+    span: 100,
+    columns: ['767f9b0'],
+    item: { label: '5220072' },
+  },
+  {
+    value: 'tour-about',
+    label: 'Birding Tour — the photograph and the copy beside it',
+    page: 'sattal-5n-6d-birding-tour',
+    section: '6e00253',
+    span: 50,
+    columns: ['50fe886', 'e967a87'],
+    imageAs: 'image',
+    css: {
+      '8b178a6':
+        'text-align:justify;font-family:georgia,palatino,serif;font-size:12pt;color:#333333;',
+    },
+    item: { image: 'c94e396', text: '8b178a6' },
+  },
+  {
+    value: 'tour-detail',
+    label: 'Birding Tour — what the tour covers',
+    page: 'sattal-5n-6d-birding-tour',
+    section: '8cd8f0f',
+    span: 100,
+    columns: ['3f1d0e0'],
+    css: {
+      '27e5532':
+        'text-align:justify;font-family:georgia,palatino,serif;font-size:12pt;color:#333333;',
+    },
+    item: { text: '27e5532' },
+  },
+  {
+    value: 'tour-price',
+    label: 'Birding Tour — the price line',
+    page: 'sattal-5n-6d-birding-tour',
+    section: 'ef46e80',
+    span: 100,
+    columns: ['b8c2e88'],
+    css: {
+      '26054ce':
+        'text-align:justify;font-family:georgia,palatino,serif;font-size:18pt;color:#333333;',
+    },
+    item: { text: '26054ce' },
+  },
+  {
+    value: 'tour-itinerary-heading',
+    label: 'Birding Tour — "Itinerary"',
+    page: 'sattal-5n-6d-birding-tour',
+    section: '31cfca1',
+    span: 100,
+    columns: ['ddd0ced'],
+    item: { label: '5d546bc' },
+  },
+  {
+    value: 'tour-cta',
+    label: 'Birding Tour — the button',
+    page: 'sattal-5n-6d-birding-tour',
+    section: 'd750894',
+    span: 100,
+    columns: ['211ac50'],
+    item: { button: 'f13bec0' },
+  },
 ]
 
 /**
@@ -702,6 +993,62 @@ export const GALLERY_TARGETS: SectionTarget[] = [
     headingWidget: '600f242',
     item: { image: '2865909' },
   },
+  {
+    value: 'exp-swimming-photos',
+    label: 'Experiences — swimming photographs',
+    page: 'experiences',
+    section: '257f949',
+    span: 100,
+    columns: ['ea6d8e1'],
+    item: { image: '46346f9' },
+  },
+  {
+    value: 'exp-nature-walk-photos',
+    label: 'Experiences — nature walk photographs',
+    page: 'experiences',
+    section: 'c727f50',
+    span: 100,
+    columns: ['502dd7c'],
+    item: { image: '166fbc6' },
+  },
+  {
+    value: 'exp-birdwatching-photos',
+    label: 'Experiences — birdwatching photographs',
+    page: 'experiences',
+    section: '16f00c7',
+    span: 100,
+    columns: ['545df0e'],
+    item: { image: 'd482512' },
+  },
+  {
+    // The one picture at the top of the post, as a gallery of one: the origin
+    // writes it as an image widget in a section of its own.
+    value: 'bws-photo',
+    label: 'Bird Watching in Sattal — the opening photograph',
+    page: 'bird-watching-in-sattal',
+    section: '434cde7',
+    span: 100,
+    columns: ['90567c7'],
+    item: { image: 'a7629ae' },
+  },
+  {
+    value: 'bws-photos',
+    label: 'Bird Watching in Sattal — the photographs',
+    page: 'bird-watching-in-sattal',
+    section: 'ea70685',
+    span: 100,
+    columns: ['4e92835'],
+    item: { image: '265f31c' },
+  },
+  {
+    value: 'str-photos',
+    label: 'Spring Trip Report — the photographs',
+    page: 'spring-trip-report',
+    section: 'ea70685',
+    span: 100,
+    columns: ['4e92835'],
+    item: { image: '265f31c' },
+  },
 ]
 
 /**
@@ -748,6 +1095,91 @@ export const COLUMN_TARGETS: SectionTarget[] = [
         'text-align:center;font-family:georgia,palatino,serif;font-size:14pt;color:#333333;',
     },
     item: { text: '8b6f22c' },
+  },
+  {
+    /**
+     * The blog posts set a place's name in one half and its description in the
+     * other. Two columns rather than one target with both, because the halves are
+     * separate columns with separate rules — so `columns` names each.
+     */
+    value: 'str-report',
+    label: 'Spring Trip Report — "Trip report"',
+    page: 'spring-trip-report',
+    section: 'fc3c1cd',
+    span: 50,
+    columns: ['67f0ded', '60f695f'],
+    headingTag: 'h4',
+    item: { label: '2757f11', text: 'a0c8849' },
+  },
+  {
+    value: 'str-species',
+    label: 'Spring Trip Report — "Bird species seen"',
+    page: 'spring-trip-report',
+    section: '6cec2f3',
+    span: 50,
+    columns: ['c470f60', 'db6a32f'],
+    headingTag: 'h4',
+    item: { label: '6566379', text: 'd019d2d' },
+  },
+  {
+    value: 'bws-studio-trail',
+    label: 'Bird Watching in Sattal — "Studio Trail"',
+    page: 'bird-watching-in-sattal',
+    section: 'fc3c1cd',
+    span: 50,
+    columns: ['67f0ded', '60f695f'],
+    headingTag: 'h4',
+    item: { label: '2757f11', text: 'a0c8849' },
+  },
+  {
+    value: 'bws-bend-area',
+    label: 'Bird Watching in Sattal — "Bend Area"',
+    page: 'bird-watching-in-sattal',
+    section: '6cec2f3',
+    span: 50,
+    columns: ['c470f60', 'db6a32f'],
+    headingTag: 'h4',
+    item: { label: '6566379', text: 'd019d2d' },
+  },
+  {
+    value: 'bws-panna-lake',
+    label: 'Bird Watching in Sattal — "Panna Lake / Garur Tal"',
+    page: 'bird-watching-in-sattal',
+    section: '42f6caf',
+    span: 50,
+    columns: ['386d652', '2b86188'],
+    headingTag: 'h4',
+    item: { label: '5661245', text: '85a213f' },
+  },
+  {
+    value: 'bws-campus',
+    label: 'Bird Watching in Sattal — "Wild Kumaon Campus"',
+    page: 'bird-watching-in-sattal',
+    section: 'bf52e5d',
+    span: 50,
+    columns: ['d89ca8f', '6ad096e'],
+    headingTag: 'h4',
+    item: { label: 'c00be54', text: '60888f9' },
+  },
+  {
+    value: 'bws-chanfi',
+    label: 'Bird Watching in Sattal — "Chanfi"',
+    page: 'bird-watching-in-sattal',
+    section: 'd40a428',
+    span: 50,
+    columns: ['a4006b9', '9fb5e3e'],
+    headingTag: 'h4',
+    item: { label: 'cbff757', text: 'd82dcb1' },
+  },
+  {
+    // Both halves are copy here — the checklist runs down two columns.
+    value: 'bws-checklist',
+    label: 'Bird Watching in Sattal — the checklist',
+    page: 'bird-watching-in-sattal',
+    section: '20173e0',
+    span: 50,
+    columns: ['9005d88', '38805d1'],
+    item: { text: 'df414ce' },
   },
 ]
 

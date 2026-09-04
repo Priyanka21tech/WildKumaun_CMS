@@ -13,12 +13,14 @@ import { Amenities } from './collections/Amenities'
 import { Packages } from './collections/Packages'
 import { BirdArt } from './collections/BirdArt'
 import { FAQs } from './collections/FAQs'
+import { Posts } from './collections/Posts'
 import { Testimonials } from './collections/Testimonials'
 import { SiteSettings } from './globals/SiteSettings'
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
 import { seedGlobals } from './seed/globals'
 import { seedFaqs } from './seed/faqs'
+import { seedPosts } from './seed/posts'
 import { seedTestimonials } from './seed/testimonials'
 import { seedAmenities } from './seed/amenities'
 import { seedPackages } from './seed/packages'
@@ -36,7 +38,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Pages, Amenities, Packages, BirdArt, FAQs, Testimonials],
+  collections: [Users, Media, Pages, Amenities, Packages, BirdArt, FAQs, Posts, Testimonials],
   globals: [SiteSettings, Header, Footer],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
@@ -129,6 +131,16 @@ export default buildConfig({
 
       const faqs = await seedFaqs(payload)
       if (faqs.created) payload.logger.info(`Seeded ${faqs.created} FAQs`)
+
+      /**
+       * After the pages, because every card points at one and a post without its
+       * page is not created at all.
+       */
+      const posts = await seedPosts(payload)
+      if (posts.created) payload.logger.info(`Seeded ${posts.created} posts`)
+      for (const entry of posts.unresolved) {
+        payload.logger.warn(`Blog card has no page behind it, not created: ${entry}`)
+      }
 
       const testimonials = await seedTestimonials(payload)
       if (testimonials.created) {

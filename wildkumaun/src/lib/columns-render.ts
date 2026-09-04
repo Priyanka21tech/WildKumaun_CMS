@@ -55,22 +55,27 @@ export function replaceColumns(html: string, block: ColumnsBlockValue, map: Medi
     ? replaceWidget(
         html,
         target.headingWidget,
-        block.heading ? headingWidget(target.headingWidget, block.heading) : '',
+        block.heading ? headingWidget(target.headingWidget, block.heading, target.headingTag) : '',
       )
     : html
 
   const columns = items
-    .map((item) => {
+    .map((item, index) => {
       const body = item.body
         ? elementorHeadings(convertLexicalToHTML({ data: item.body, disableContainer: true }))
         : ''
 
       const parts = [
-        hashes.label && item.heading ? headingWidget(hashes.label, item.heading) : '',
+        hashes.label && item.heading
+          ? headingWidget(hashes.label, item.heading, target.headingTag)
+          : '',
         hashes.text && body ? textWidget(hashes.text, body) : '',
       ].join('')
 
-      return column(target.span, parts, target.columns?.[0])
+      // One id for the whole run where the columns are interchangeable, and an id
+      // each where they are not: the blog posts set a heading in one half and the
+      // paragraph in the other, and those two halves are styled apart.
+      return column(target.span, parts, target.columns?.[index] ?? target.columns?.[0])
     })
     .join('')
 

@@ -111,7 +111,9 @@ function headingIn(html: string, sectionId?: string): string | undefined {
   if (!sectionId) return undefined
 
   const markup = sliceSection(html, sectionId)
-  const found = markup?.match(/<h2[^>]*class="elementor-heading-title[^"]*"[^>]*>([\s\S]*?)<\/h2>/i)
+  const found = markup?.match(
+    /<h[1-6][^>]*class="elementor-heading-title[^"]*"[^>]*>([\s\S]*?)<\/h[1-6]>/i,
+  )
 
   return found?.[1]
     .replace(/<[^>]*>/g, '')
@@ -250,7 +252,7 @@ async function textBlockFor(
   if (!markup || !target.item) return null
 
   const heading = markup
-    .match(/<h2[^>]*class="elementor-heading-title[^"]*"[^>]*>([\s\S]*?)<\/h2>/i)?.[1]
+    .match(/<h[1-6][^>]*class="elementor-heading-title[^"]*"[^>]*>([\s\S]*?)<\/h[1-6]>/i)?.[1]
     .replace(/<[^>]*>/g, '')
     .replace(/&nbsp;/g, ' ')
     .trim()
@@ -330,7 +332,7 @@ async function columnsBlockFor(
 
   for (const col of columnsIn(markup)) {
     const heading = col
-      .match(/<h2[^>]*class="elementor-heading-title[^"]*"[^>]*>([\s\S]*?)<\/h2>/i)?.[1]
+      .match(/<h[1-6][^>]*class="elementor-heading-title[^"]*"[^>]*>([\s\S]*?)<\/h[1-6]>/i)?.[1]
       .replace(/<[^>]*>/g, '')
       .replace(/&nbsp;/g, ' ')
       .trim()

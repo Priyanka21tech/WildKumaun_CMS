@@ -69,10 +69,7 @@ const upload = (mediaId: number): SerializedLexicalNode =>
  * editor understands. Without these the converter's block scan simply did not
  * see a list, and its words went missing from the page.
  */
-const listNode = (
-  tag: 'ul' | 'ol',
-  items: SerializedLexicalNode[],
-): SerializedLexicalNode =>
+const listNode = (tag: 'ul' | 'ol', items: SerializedLexicalNode[]): SerializedLexicalNode =>
   ({
     type: 'list',
     tag,
@@ -199,13 +196,30 @@ export async function htmlToLexical(
   resolveImage: ResolveImage,
 ): Promise<SerializedEditorState> {
   const children: SerializedLexicalNode[] = []
-  const blocks = /<(h2|h3|h4|p|ul|ol)\b[^>]*>([\s\S]*?)<\/\1>/gi
+  /**
+   * `div` is here with the paragraphs, because WordPress's editor writes one.
+   *
+   * Text pasted into it comes out as `<div dir="auto">`, and text the editor
+   * aligned as `<div style="text-align: justify;">` — the birding tour's copy and
+   * the trip report's checklist link are both written that way. They are
+   * paragraphs in everything but the tag, and skipping them dropped the words
+   * silently: the block seeded, its body empty, and the page went on showing the
+   * mirror's copy because a block with nothing in it renders nothing.
+   */
+  const blocks = /<(h2|h3|h4|p|div|ul|ol)\b[^>]*>([\s\S]*?)<\/\1>/gi
 
   let match: RegExpExecArray | null
 
   while ((match = blocks.exec(html))) {
     const [, rawTag, inner] = match
     const tag = rawTag.toLowerCase()
+
+    // A div wrapping more divs holds no words of its own. Step back inside it, so
+    // the ones that do are what get matched.
+    if (tag === 'div' && /<div\b/i.test(inner)) {
+      blocks.lastIndex = match.index + match[0].indexOf('>') + 1
+      continue
+    }
 
     if (tag === 'ul' || tag === 'ol') {
       const items: SerializedLexicalNode[] = []
@@ -230,7 +244,9 @@ export async function htmlToLexical(
 
     if (!nodes.length) continue
 
-    children.push(tag === 'p' ? block('paragraph', nodes) : block('heading', nodes, tag))
+    children.push(
+      tag === 'p' || tag === 'div' ? block('paragraph', nodes) : block('heading', nodes, tag),
+    )
   }
 
   return {

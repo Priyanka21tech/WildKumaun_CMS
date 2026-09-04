@@ -74,6 +74,7 @@ export interface Config {
     packages: Package;
     'bird-art': BirdArt;
     faqs: Faq;
+    posts: Post;
     testimonials: Testimonial;
     forms: Form;
     enquiries: Enquiry;
@@ -91,6 +92,7 @@ export interface Config {
     packages: PackagesSelect<false> | PackagesSelect<true>;
     'bird-art': BirdArtSelect<false> | BirdArtSelect<true>;
     faqs: FaqsSelect<false> | FaqsSelect<true>;
+    posts: PostsSelect<false> | PostsSelect<true>;
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     enquiries: EnquiriesSelect<false> | EnquiriesSelect<true>;
@@ -319,7 +321,34 @@ export interface Page {
               | 'wfh-intro'
               | 'wfh-about'
               | 'wfh-banner'
-              | 'wfh-enquiry';
+              | 'wfh-enquiry'
+              | 'exp-intro'
+              | 'exp-swimming'
+              | 'exp-nature-walk'
+              | 'exp-birdwatching'
+              | 'exp-enquiry'
+              | 'exp-sound-bath'
+              | 'guestbook-heading'
+              | 'eco-intro'
+              | 'eco-outro'
+              | 'str-intro'
+              | 'str-highlights-heading'
+              | 'str-highlights'
+              | 'str-mammals'
+              | 'str-cta'
+              | 'bws-intro'
+              | 'bws-places-heading'
+              | 'bws-species'
+              | 'bws-when'
+              | 'bws-where-to-stay'
+              | 'bws-checklist-heading'
+              | 'bws-cta'
+              | 'tour-heading'
+              | 'tour-about'
+              | 'tour-detail'
+              | 'tour-price'
+              | 'tour-itinerary-heading'
+              | 'tour-cta';
             /**
              * Sits above the text. Leave empty for none.
              */
@@ -389,7 +418,17 @@ export interface Page {
             /**
              * Which row of columns on the page this replaces.
              */
-            target: 'wfh-how-to-reach' | 'wfh-duration';
+            target:
+              | 'wfh-how-to-reach'
+              | 'wfh-duration'
+              | 'str-report'
+              | 'str-species'
+              | 'bws-studio-trail'
+              | 'bws-bend-area'
+              | 'bws-panna-lake'
+              | 'bws-campus'
+              | 'bws-chanfi'
+              | 'bws-checklist';
             /**
              * Sits above the row — "How to Reach". Leave empty for none.
              */
@@ -489,7 +528,13 @@ export interface Page {
               | 'birds-gallery-1'
               | 'birds-gallery-2'
               | 'conservation-logos'
-              | 'wfh-gallery';
+              | 'wfh-gallery'
+              | 'exp-swimming-photos'
+              | 'exp-nature-walk-photos'
+              | 'exp-birdwatching-photos'
+              | 'bws-photo'
+              | 'bws-photos'
+              | 'str-photos';
             /**
              * Sits above the photographs. Leave empty for none.
              */
@@ -1048,6 +1093,39 @@ export interface Faq {
   createdAt: string;
 }
 /**
+ * The list on the Blog page, newest first by the order set here.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts".
+ */
+export interface Post {
+  id: number;
+  /**
+   * The headline on the card. It need not match the page it links to.
+   */
+  title: string;
+  /**
+   * Where the title and "Read More" go.
+   */
+  page: number | Page;
+  /**
+   * The teaser under the title. The origin ends each with an ellipsis where WordPress cut it off — write a whole sentence instead if you prefer.
+   */
+  excerpt: string;
+  /**
+   * Optional. Leave empty for a card with no picture, as the site has today.
+   */
+  image?: (number | null) | Media;
+  category: string;
+  author: string;
+  /**
+   * Low numbers first. Leave gaps so a post can be slotted in later.
+   */
+  order: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * What people have sent through the forms on the site.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1117,6 +1195,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'faqs';
         value: number | Faq;
+      } | null)
+    | ({
+        relationTo: 'posts';
+        value: number | Post;
       } | null)
     | ({
         relationTo: 'testimonials';
@@ -1521,6 +1603,21 @@ export interface FaqsSelect<T extends boolean = true> {
   question?: T;
   answer?: T;
   slug?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts_select".
+ */
+export interface PostsSelect<T extends boolean = true> {
+  title?: T;
+  page?: T;
+  excerpt?: T;
+  image?: T;
+  category?: T;
+  author?: T;
   order?: T;
   updatedAt?: T;
   createdAt?: T;
