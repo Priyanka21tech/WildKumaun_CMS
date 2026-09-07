@@ -747,6 +747,7 @@ export interface Page {
   navLabel?: string | null;
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * Amenities, facilities and activities. A page picks which to show with an amenities block.
@@ -1141,6 +1142,14 @@ export interface Enquiry {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Guest book comments only. Tick to publish this as a review on the guest book and make it available to the home page.
+   */
+  approved?: boolean | null;
+  /**
+   * The review created from this comment. Edit or remove it in Testimonials.
+   */
+  testimonial?: (number | null) | Testimonial;
   updatedAt: string;
   createdAt: string;
 }
@@ -1539,6 +1548,7 @@ export interface PagesSelect<T extends boolean = true> {
   navLabel?: T;
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1782,6 +1792,8 @@ export interface EnquiriesSelect<T extends boolean = true> {
         value?: T;
         id?: T;
       };
+  approved?: T;
+  testimonial?: T;
   updatedAt?: T;
   createdAt?: T;
 }

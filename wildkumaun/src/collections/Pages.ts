@@ -52,6 +52,13 @@ export const Pages: CollectionConfig = {
     defaultColumns: ['title', 'slug', 'updatedAt'],
     description: 'Every page on the site. Links point at these rather than at typed paths.',
   },
+// for live preview
+    versions: {
+    drafts: {
+      autosave: { interval: 375 },
+    },
+    maxPerDoc: 20,
+  },
 
   access: {
     read: () => true,

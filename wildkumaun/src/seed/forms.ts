@@ -22,7 +22,12 @@ import type { Payload } from 'payload'
  */
 
 const ENQUIRY = 'Enquiry'
-const GUEST_BOOK = 'Guest book'
+
+/**
+ * Exported because the approval hook has to recognise a guest book submission,
+ * and a second copy of the string is a second thing to keep in step.
+ */
+export const GUEST_BOOK = 'Guest book'
 
 /** The origin's fields, read off its markup. `name` is what a submission is filed under. */
 const ENQUIRY_FIELDS = [

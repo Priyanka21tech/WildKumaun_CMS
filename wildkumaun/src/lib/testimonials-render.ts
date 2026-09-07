@@ -88,8 +88,19 @@ ${columns}
 export function replaceTestimonialGrid(html: string, items: TestimonialDoc[]): string {
   if (!items.length) return html
 
-  const first = html.indexOf(`<section`, html.indexOf(GRID_SECTION_MARKER) - 4000)
-  if (first === -1 || html.indexOf(GRID_SECTION_MARKER) === -1) return html
+  /**
+   * The section the first review sits in — found by walking back from the marker
+   * to the `<section` that opens it, not by scanning forward from a guessed
+   * distance before it. A fixed look-back cannot know how much of the page it is
+   * reaching over: 4000 characters cleared the heading section above the grid on
+   * /guest-book, so "What our guests say" was replaced along with the reviews and
+   * the block that owns it then had no section left to render into.
+   */
+  const marker = html.indexOf(GRID_SECTION_MARKER)
+  if (marker === -1) return html
+
+  const first = html.lastIndexOf('<section', marker)
+  if (first === -1) return html
 
   // The grid runs from the first review's section to the end of the last one's.
   const lastWidget = html.lastIndexOf('elementor-widget-eael-testimonial')

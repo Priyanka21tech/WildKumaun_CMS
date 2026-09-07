@@ -1,3 +1,4 @@
+import { draftMode } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import config from '@payload-config'
@@ -28,6 +29,7 @@ import {
 } from '@/lib/testimonials-render'
 import BodyClass from '@/components/BodyClass'
 import Enhancements from '@/components/Enhancements'
+import { RefreshRouteOnSave } from '@/components/RefreshRouteOnSave'
 import { renderSiteHeader } from '@/components/SiteHeader'
 import { renderSiteFooter } from '@/components/SiteFooter'
 
@@ -86,6 +88,13 @@ export default async function MirrorPage({ params }: { params: Promise<{ slug?: 
 
   const payload = await getPayload({ config })
 
+  /**
+   * True only inside the admin panel's Live Preview iframe, which reaches this
+   * page through /next/preview and so carries Next's draft-mode cookie. On the
+   * public site this is false and everything below behaves exactly as it did.
+   */
+  const { isEnabled: isDraft } = await draftMode()
+
   // depth 1 populates the logo upload and the page each menu link points at, so
   // resolveHref has a slug to build a path from rather than a bare id.
   const [settings, header, footer, mediaMap, faqs, posts, testimonials, pageDoc] = await Promise.all([
@@ -126,6 +135,15 @@ export default async function MirrorPage({ params }: { params: Promise<{ slug?: 
       // 2, so the reviews a testimonials block points at arrive with their text
       // rather than as ids.
       depth: 2,
+      /**
+       * In the preview iframe, return the autosaved draft rather than the
+       * published version — the unsaved edit is the whole point of looking.
+       * overrideAccess goes with it because drafts are not publicly readable,
+       * and the route that set this cookie has already checked the reader is a
+       * signed-in editor.
+       */
+      draft: isDraft,
+      overrideAccess: isDraft,
     }),
   ])
 
@@ -271,6 +289,8 @@ export default async function MirrorPage({ params }: { params: Promise<{ slug?: 
 
   return (
     <>
+      {/* Only in the preview iframe: nothing extra is shipped to a real visitor. */}
+      {isDraft && <RefreshRouteOnSave />}
       <BodyClass value={page.bodyClass} />
       {page.ldJson.map((json: string, i: number) => (
         <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: json }} />

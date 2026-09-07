@@ -27,13 +27,14 @@
     "seed:content": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/seed-page-content.ts",
     "seed:amenities": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/seed-amenities.ts",
     "seed:packages": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/seed-packages.ts",
-  "seed:birdart": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/seed-bird-art.ts",
+    "seed:birdart": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/seed-bird-art.ts",
     "seed:blocks": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/seed-page-blocks.ts",
     "check:wfh": "cross-env NODE_OPTIONS=--no-deprecation tsx src/scripts/check-wfh.ts",
     "check:targets": "cross-env NODE_OPTIONS=--no-deprecation tsx src/scripts/check-targets.ts"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.88.0",
+    "@payloadcms/live-preview-react": "^3.88.0",
     "@payloadcms/next": "3.88.0",
     "@payloadcms/plugin-form-builder": "^3.88.0",
     "@payloadcms/richtext-lexical": "3.88.0",

@@ -27,12 +27,39 @@ import { seedPackages } from './seed/packages'
 import { seedBirdArt } from './seed/bird-art'
 import { seedPageBlocks } from './seed/page-blocks'
 import { seedPageContent } from './seed/page-content'
+import { approvalFields, publishApprovedComment } from './hooks/publishTestimonial'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export default buildConfig({
   admin: {
+
+  // live preview changes starts
+  livePreview: {
+    /**
+     * Not the page itself, but the route that switches draft mode on and then
+     * forwards to it — see src/app/(frontend)/next/preview/route.ts. Going
+     * straight to the page would preview what is already published, which is the
+     * one thing an editor does not need to see.
+     *
+     * The home page is `home` in the CMS and `/` on the site; resolveHref in
+     * src/fields/link.ts is the other place that knows this.
+     */
+    url: ({ data }) => {
+      const base = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
+      const slug = typeof data?.slug === 'string' ? data.slug : ''
+      const path = !slug || slug === 'home' ? '/' : `/${slug}`
+      return `${base}/next/preview?path=${encodeURIComponent(path)}`
+    },
+    collections: ['pages'],
+    breakpoints: [
+      { label: 'Mobile', name: 'mobile', width: 375, height: 667 },
+      { label: 'Tablet', name: 'tablet', width: 768, height: 1024 },
+      { label: 'Desktop', name: 'desktop', width: 1440, height: 900 },
+    ],
+  },
+// live preview changes ends
     user: Users.slug,
     importMap: {
       baseDir: path.resolve(dirname),
@@ -95,7 +122,15 @@ export default buildConfig({
         admin: {
           group: 'Forms',
           description: 'What people have sent through the forms on the site.',
+          defaultColumns: ['id', 'form', 'approved', 'createdAt'],
         },
+        /**
+         * A guest book comment is a review waiting for someone to agree. The
+         * checkbox and the hook behind it are what let an editor publish one
+         * without retyping it into Testimonials — see src/hooks/publishTestimonial.ts.
+         */
+        fields: ({ defaultFields }) => [...defaultFields, ...approvalFields],
+        hooks: { beforeChange: [publishApprovedComment] },
       },
     }),
   ],
