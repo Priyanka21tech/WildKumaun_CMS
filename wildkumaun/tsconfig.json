@@ -28,6 +28,20 @@
       ],
       "@payload-config": [
         "./src/payload.config.ts"
+      ],
+      // packages/payload-plugin-a11y is a sibling folder with no node_modules of
+      // its own, and `payload` is a peer dependency it expects the host to
+      // provide. TypeScript resolves the symlink to its real path and then looks
+      // for the peer beside it, where there is nothing — so it is pointed here,
+      // at the copy this site already has.
+      "payload": [
+        "./node_modules/payload"
+      ],
+      "@playwright/test": [
+        "./node_modules/@playwright/test"
+      ],
+      "@axe-core/playwright": [
+        "./node_modules/@axe-core/playwright"
       ]
     },
     "target": "ES2022"

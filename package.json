@@ -13,7 +13,9 @@
     "mirror:sync": "node _tools/sync-public.mjs",
     "mirror:media": "node _tools/sync-media.mjs",
     "mirror": "npm run mirror:pages && npm run mirror:sync && npm run mirror:media",
-    "audit": "node _tools/audit-links.mjs"
+    "audit": "node _tools/audit-links.mjs",
+    "a11y:baseline": "npm --prefix wildkumaun run a11y:baseline",
+    "a11y:alt": "npm --prefix wildkumaun run a11y:alt"
   },
   "dependencies": {
     "@payloadcms/live-preview-react": "^3.88.0"

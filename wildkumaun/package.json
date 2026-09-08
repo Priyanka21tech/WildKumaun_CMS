@@ -29,8 +29,12 @@
     "seed:packages": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/seed-packages.ts",
     "seed:birdart": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/seed-bird-art.ts",
     "seed:blocks": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/seed-page-blocks.ts",
+    "fix:media-alt": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/fix-media-alt.ts",
     "check:wfh": "cross-env NODE_OPTIONS=--no-deprecation tsx src/scripts/check-wfh.ts",
-    "check:targets": "cross-env NODE_OPTIONS=--no-deprecation tsx src/scripts/check-targets.ts"
+    "check:targets": "cross-env NODE_OPTIONS=--no-deprecation tsx src/scripts/check-targets.ts",
+    "a11y:baseline": "cross-env NODE_OPTIONS=--no-deprecation node scripts/a11y-baseline.mjs",
+    "a11y:alt": "cross-env NODE_OPTIONS=--no-deprecation tsx scripts/a11y-alt-audit.ts",
+    "a11y:last": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/a11y-last-report.ts"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.88.0",
@@ -46,9 +50,11 @@
     "payload": "3.88.0",
     "react": "19.2.6",
     "react-dom": "19.2.6",
-    "sharp": "0.34.2"
+    "sharp": "0.34.2",
+    "@webuters/payload-plugin-a11y": "file:../packages/payload-plugin-a11y"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "1.58.2",
     "@testing-library/react": "16.3.0",
     "@types/node": "22.19.9",
