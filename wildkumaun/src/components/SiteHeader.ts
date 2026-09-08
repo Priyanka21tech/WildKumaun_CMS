@@ -128,6 +128,29 @@ function menuItem(item: NavItem, currentPath: string): string {
   )
 }
 
+/**
+ * The name a screen reader gives the main menu's landmark — WCAG 1.3.1, 2.4.1.
+ *
+ * A <nav> is a landmark, and assistive technology offers the reader a list of
+ * them to jump between. Unlabelled, this one appears in that list as "navigation"
+ * and says nothing about what it holds.
+ *
+ * "Primary" rather than the guide's "Primary navigation": the role is announced
+ * from the element itself, so the longer string is read as "Primary navigation
+ * navigation". The label names the landmark; it does not repeat what it is.
+ */
+const NAV_LABEL = 'Primary'
+
+/**
+ * The menu the toggle opens, so the button can point at it with aria-controls.
+ *
+ * The origin gives the inner <ul> an id (`menu-1-340cb2d`) but leaves the <nav>
+ * without one, and the <nav> is the element site.css shows and hides. A reader
+ * following aria-controls should arrive at the thing that appears, not at a list
+ * inside it.
+ */
+const MENU_ID = 'primary-menu'
+
 export function renderSiteHeader({
   settings,
   header,
@@ -158,9 +181,10 @@ export function renderSiteHeader({
       ? ''
       : `<div class="elementor-element elementor-element-f6be383 hfe-search-layout-icon elementor-widget elementor-widget-hfe-search-button" data-element_type="widget" data-id="f6be383" data-widget_type="hfe-search-button.default">
 <div class="elementor-widget-container">
-<form action="/" class="hfe-search-button-wrapper" method="get" role="search">
+<form action="/" class="hfe-search-button-wrapper" method="get" role="search" aria-label="Site">
 <div class="hfe-search-icon-toggle">
-<input class="hfe-search-form__input" name="s" placeholder="" title="Search" type="search" value=""/>
+<label class="wk-visually-hidden" for="site-search">Search this site</label>
+<input class="hfe-search-form__input" id="site-search" name="s" placeholder="" title="Search" type="search" value=""/>
 <i aria-hidden="true" class="fas fa-search"></i>
 </div>
 </form>
@@ -231,12 +255,12 @@ ${logo}
 <div class="elementor-element elementor-element-340cb2d hfe-nav-menu__align-right hfe-submenu-icon-arrow hfe-submenu-animation-none hfe-link-redirect-child hfe-nav-menu__breakpoint-tablet elementor-widget elementor-widget-navigation-menu" data-element_type="widget" data-id="340cb2d" data-widget_type="navigation-menu.default">
 <div class="elementor-widget-container">
 <div class="hfe-nav-menu hfe-layout-horizontal hfe-nav-menu-layout horizontal hfe-pointer__none" data-layout="horizontal">
-<div class="hfe-nav-menu__toggle elementor-clickable" role="button">
+<button class="hfe-nav-menu__toggle elementor-clickable" type="button" aria-expanded="false" aria-controls="${MENU_ID}">
 <span class="screen-reader-text">Menu</span>
-<div class="hfe-nav-menu-icon">
-<i aria-hidden="true" class="fas fa-align-justify"></i> </div>
-</div>
-<nav class="hfe-nav-menu__layout-horizontal hfe-nav-menu__submenu-arrow" data-full-width="yes"><ul class="hfe-nav-menu" id="menu-1-340cb2d">
+<span class="hfe-nav-menu-icon">
+<i aria-hidden="true" class="fas fa-align-justify"></i> </span>
+</button>
+<nav class="hfe-nav-menu__layout-horizontal hfe-nav-menu__submenu-arrow" data-full-width="yes" aria-label="${NAV_LABEL}" id="${MENU_ID}"><ul class="hfe-nav-menu" id="menu-1-340cb2d">
 ${nav.map((item) => menuItem(item, currentPath)).join('\n')}
 </ul></nav>
 </div>

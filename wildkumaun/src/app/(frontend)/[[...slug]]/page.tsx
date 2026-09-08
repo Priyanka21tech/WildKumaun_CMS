@@ -12,6 +12,8 @@ import { replacePostList } from '@/lib/post-list'
 import { bannerFor, bannerOverride, replaceBannerImage } from '@/lib/page-banner'
 import { isReachable } from '@/lib/reachable'
 import { replaceContentArea } from '@/lib/content-area'
+import { withAccessibleMarkup, withHeadingStructure } from '@/lib/a11y-markup'
+import { withImageAlt } from '@/lib/image-alt'
 import { replaceHero } from '@/lib/hero-render'
 import { replaceText } from '@/lib/text-render'
 import { replaceColumns } from '@/lib/columns-render'
@@ -156,7 +158,10 @@ export default async function MirrorPage({ params }: { params: Promise<{ slug?: 
    * responsiveHtml runs first: the mirror asks for full-size originals, and this
    * points those requests at the sizes Payload generated on import.
    */
-  const body = responsiveHtml(page.route, page.html, mediaMap)
+  // withImageAlt goes first, while the src attributes still carry the origin's
+  // own filenames — responsiveHtml is about to point them at Payload's generated
+  // sizes, and the alt map is keyed on what the origin called them.
+  const body = responsiveHtml(page.route, withImageAlt(page.html), mediaMap)
 
   // The questions come from the collection now. Everything else on the page is
   // still the mirror's, so only the accordion's items are swapped out.
@@ -269,6 +274,10 @@ export default async function MirrorPage({ params }: { params: Promise<{ slug?: 
   // markup changed, not a rule overridden. bannerFor says which kind this is.
   if (bannerRule) content = replaceBannerImage(content, bannerRule, bannerUrl)
 
+  // Before splitShell, so only the page's own body is in scope — a footer column
+  // heading must never be mistaken for the page's subject.
+  content = withHeadingStructure(content, page.title)
+
   const shell = splitShell(content)
 
   const bannerStyle = bannerRule ? bannerOverride(bannerRule, bannerUrl) : ''
@@ -285,7 +294,9 @@ export default async function MirrorPage({ params }: { params: Promise<{ slug?: 
       shell.after
     : shell.middle
 
-  const document = bannerStyle + html
+  // Last, so it also covers the header, the footer and anything the CMS blocks
+  // brought in — not just what the mirror shipped.
+  const document = bannerStyle + withAccessibleMarkup(html)
 
   return (
     <>

@@ -12,7 +12,8 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 const ROOT = path.resolve(import.meta.dirname, '..')
-const DIR = path.join(ROOT, 'site/content/mirror')
+// The app moved from site/ to wildkumaun/; this is where the mirror lives now.
+const DIR = path.join(ROOT, 'wildkumaun/content/mirror')
 const OUT = path.join(ROOT, 'content/image-alts.json')
 
 const pages = JSON.parse(fs.readFileSync(path.join(DIR, '_pages.json'), 'utf8'))

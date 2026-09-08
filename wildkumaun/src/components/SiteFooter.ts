@@ -7,18 +7,26 @@ import { esc, type Phone } from './SiteHeader'
  * An HTML string for the same reason as the header — see SiteHeader.ts.
  *
  * Three columns on the live site: phone numbers, an email address, and the
- * address linking out to the map. Each is a heading widget, which is why the
- * markup is `<h2>`/`<h4>` rather than a list — the stylesheet targets those
- * headings through the `elementor-element-<hash>` classes, so they stay.
+ * address linking out to the map. Each is a heading widget in Elementor, which is
+ * why the origin's markup is `<h2>`/`<h4>` rather than a list.
  *
  * The numbers, the address and the email are not configured in the Footer global.
  * They come from Site Settings, so editing a phone number in one place changes it
  * in the header, in the footer and anywhere else it appears. Footer only decides
  * whether each block is shown.
  *
- * The origin's heading levels are inconsistent — h2, h4, h2 across the three
- * columns — and that is reproduced rather than corrected, because the styling
- * follows the tag.
+ * The origin's heading levels were inconsistent — h2, h4, h2 across the three
+ * columns — and that used to be reproduced here rather than corrected, on the
+ * grounds that the styling follows the tag. It does not: the styling follows
+ * `.elementor-heading-title`, which the copyright line below already proves by
+ * carrying it on a `<p>`. So the levels are corrected now.
+ *
+ * A phone number, an email address and a postal address are contact details, not
+ * section headings. As headings they put three entries into every page's heading
+ * outline that say nothing about the page, and on /faqs and /restaurant they were
+ * the *only* headings, so a reader navigating by heading landed on a phone
+ * number. They are paragraphs. The column headings above the link lists are real
+ * headings and stay as headings, at h2 rather than h4 so no level is skipped.
  */
 
 export type FooterData = {
@@ -71,9 +79,9 @@ export function renderSiteFooter({
     ? column(
         '48ff1bb',
         '9cf3193',
-        `<h2 class="elementor-heading-title elementor-size-default">Mob. - ${esc(
+        `<p class="elementor-heading-title elementor-size-default">Mob. - ${esc(
           phones.map((p) => p.number).join(', '),
-        )}</h2>`,
+        )}</p>`,
       )
     : ''
 
@@ -81,7 +89,7 @@ export function renderSiteFooter({
     ? column(
         '2927fe2',
         'be930eb',
-        `<h4 class="elementor-heading-title elementor-size-default">Email. ${esc(settings.email)}</h4>`,
+        `<p class="elementor-heading-title elementor-size-default">Email. ${esc(settings.email)}</p>`,
       )
     : ''
 
@@ -90,11 +98,11 @@ export function renderSiteFooter({
     ? column(
         '4184824',
         '90c5ac9',
-        `<h2 class="elementor-heading-title elementor-size-default">${
+        `<p class="elementor-heading-title elementor-size-default">${
           address?.mapUrl
             ? `<a href="${esc(address.mapUrl)}" target="_blank" rel="noreferrer">${addressText}</a>`
             : addressText
-        }</h2>`,
+        }</p>`,
       )
     : ''
 
@@ -106,7 +114,7 @@ ${columns
     (col) =>
       `<div class="elementor-column elementor-top-column elementor-element" data-element_type="column">
 <div class="elementor-widget-wrap elementor-element-populated">
-${col.heading ? `<h4 class="elementor-heading-title elementor-size-default">${esc(col.heading)}</h4>` : ''}
+${col.heading ? `<h2 class="elementor-heading-title elementor-size-default">${esc(col.heading)}</h2>` : ''}
 <ul class="elementor-icon-list-items">
 ${(col.links ?? [])
   .map((entry) => {

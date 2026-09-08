@@ -218,6 +218,64 @@ function initReveals(teardown) {
  * "toggle" accordion lets several be open, so that type is left to behave that
  * way. Pressing an open question closes it.
  */
+/**
+ * The header menu below 1024px — WCAG 2.1.1 Keyboard, 4.1.2 Name, Role, Value.
+ *
+ * This is a functional fix before it is an accessibility one. site.css hides the
+ * menu at the tablet breakpoint and shows it again only for
+ * `.hfe-active-menu + .hfe-nav-menu__layout-horizontal`; the class is added by
+ * Header Footer Elementor's frontend.js, which this app never loads — no origin
+ * JavaScript is loaded at all. So on every screen 1024px and narrower the menu
+ * was unreachable for everyone, keyboard or not: the button was there, the CSS
+ * was there, and nothing joined them.
+ *
+ * The class goes on the toggle rather than on the nav because that is the
+ * sibling the origin's selector keys on. Matching its shape rather than adding a
+ * rule of our own keeps the open state styled by the stylesheet that already
+ * knows how to style it — including the inner <ul>, which has its own rule.
+ *
+ * aria-expanded is written here rather than in the markup's initial state alone,
+ * for the same reason it is in initAccordions: it is state, and it changes.
+ */
+function initMenu(teardown) {
+  for (const toggle of document.querySelectorAll('button.hfe-nav-menu__toggle')) {
+    const menu = document.getElementById(toggle.getAttribute('aria-controls') ?? '')
+    if (!menu) continue
+
+    const setOpen = (open) => {
+      toggle.classList.toggle('hfe-active-menu', open)
+      toggle.setAttribute('aria-expanded', String(open))
+    }
+
+    const onClick = () => setOpen(toggle.getAttribute('aria-expanded') !== 'true')
+
+    /**
+     * Escape closes it and puts focus back on the button.
+     *
+     * Without the focus move the reader is left on a link inside a menu that has
+     * just been hidden, which is the same lost-focus problem the form
+     * confirmation had. Listening on the wrapper rather than the document so a
+     * key pressed elsewhere on the page does nothing.
+     */
+    const onKeyDown = (event) => {
+      if (event.key !== 'Escape') return
+      if (toggle.getAttribute('aria-expanded') !== 'true') return
+      setOpen(false)
+      toggle.focus()
+    }
+
+    const scope = toggle.parentElement ?? toggle
+
+    toggle.addEventListener('click', onClick)
+    scope.addEventListener('keydown', onKeyDown)
+
+    teardown.push(() => {
+      toggle.removeEventListener('click', onClick)
+      scope.removeEventListener('keydown', onKeyDown)
+    })
+  }
+}
+
 function initAccordions(teardown) {
   for (const root of document.querySelectorAll('.eael-adv-accordion')) {
     const exclusive = root.dataset.accordionType !== 'toggle'
@@ -230,30 +288,26 @@ function initAccordions(teardown) {
       if (content) content.classList.toggle('active', open)
     }
 
+    /**
+     * No role, no aria-expanded and no key handling set up here any more.
+     *
+     * src/lib/faq-accordion.ts renders each question as a real <button>, so the
+     * role is in the markup and Enter and Space are the browser's job. Patching
+     * those on at runtime meant the questions announced as plain text until this
+     * ran, and stayed that way if it never did.
+     *
+     * setOpen still writes aria-expanded, because that is state rather than
+     * semantics: it changes every time somebody opens a question.
+     */
     for (const header of headers) {
-      header.setAttribute('role', 'button')
-      header.setAttribute('aria-expanded', 'false')
-
       const toggle = () => {
         const open = !header.classList.contains('active')
         if (exclusive) for (const other of headers) setOpen(other, false)
         setOpen(header, open)
       }
 
-      // The markup gives headers tabindex="0" but no key handling, so a keyboard
-      // could focus a question and never open it.
-      const onKeyDown = (event) => {
-        if (event.key !== 'Enter' && event.key !== ' ') return
-        event.preventDefault()
-        toggle()
-      }
-
       header.addEventListener('click', toggle)
-      header.addEventListener('keydown', onKeyDown)
-      teardown.push(() => {
-        header.removeEventListener('click', toggle)
-        header.removeEventListener('keydown', onKeyDown)
-      })
+      teardown.push(() => header.removeEventListener('click', toggle))
     }
 
     // The first answer opens on load, so the page does not read as empty.
@@ -275,6 +329,122 @@ function initAccordions(teardown) {
  * A failure leaves the form filled in and says so. Clearing what somebody typed
  * because the network dropped is the worst thing a form can do.
  */
+
+/** The label's text without the required asterisk, for naming a field in prose. */
+function fieldLabel(form, control) {
+  const label = form.querySelector(`label[for="${CSS.escape(control.id)}"]`)
+  const text = (label?.textContent ?? control.name ?? '').replace('*', '').trim()
+  return text || control.name || 'This field'
+}
+
+/** Every control that fails constraint validation, in the order they appear. */
+function invalidFields(form) {
+  return [...form.querySelectorAll('input, textarea, select')]
+    .filter((control) => control.willValidate && !control.checkValidity())
+    .map((control) => ({
+      control,
+      label: fieldLabel(form, control),
+      /**
+       * The browser's own wording, which is already correct for the constraint
+       * that failed and already in the reader's language — except for a pattern
+       * mismatch, where it is "Please match the requested format" and names
+       * neither the format nor how to meet it. Fields that set a pattern carry
+       * their own wording for that one case; see FIELD_SEMANTICS in
+       * src/lib/form-render.ts.
+       */
+      message:
+        control.validity.patternMismatch && control.dataset.patternMessage
+          ? control.dataset.patternMessage
+          : control.validationMessage,
+    }))
+}
+
+/**
+ * What the field points at when nothing is wrong with it.
+ *
+ * A field may already describe itself — the mobile number's "10 digits, numbers
+ * only" is a hint rendered beside it — and an error must be added to that rather
+ * than written over it. Losing the hint at the exact moment somebody has got the
+ * format wrong is the worst time to lose it.
+ */
+function baseDescribedBy(form, control) {
+  return form.querySelector(`#${CSS.escape(control.id)}-hint`) ? `${control.id}-hint` : ''
+}
+
+function clearErrors(form) {
+  for (const control of form.querySelectorAll('[aria-invalid="true"]')) {
+    control.removeAttribute('aria-invalid')
+    const base = baseDescribedBy(form, control)
+    if (base) control.setAttribute('aria-describedby', base)
+    else control.removeAttribute('aria-describedby')
+  }
+  for (const slot of form.querySelectorAll('.wpforms-error')) {
+    slot.textContent = ''
+    slot.hidden = true
+  }
+}
+
+/**
+ * Say what went wrong, in both places a reader might be.
+ *
+ * The summary is for someone who has just pressed submit; the per-field message
+ * is for when they get to the field. aria-describedby ties the two together so
+ * the message is read as part of the field rather than as loose text near it.
+ *
+ * Unhidden before it is filled: a role="alert" that gains content while still
+ * hidden is not reliably announced.
+ */
+function showErrors(form, container, problems) {
+  clearErrors(form)
+
+  for (const { control, message } of problems) {
+    const slot = form.querySelector(`#${CSS.escape(control.id)}-error`)
+    if (!slot) continue
+    slot.textContent = message
+    slot.hidden = false
+    control.setAttribute('aria-invalid', 'true')
+    // The hint first, then the error: the rule, then how this answer breaks it.
+    control.setAttribute(
+      'aria-describedby',
+      [baseDescribedBy(form, control), `${control.id}-error`].filter(Boolean).join(' '),
+    )
+  }
+
+  if (!container) return
+
+  container.hidden = false
+  const heading = problems.length === 1 ? 'There is a problem' : 'There are problems'
+  container.innerHTML =
+    `<p class="wpforms-error-heading">${heading}</p><ul>` +
+    problems
+      .map(
+        ({ control, label, message }) =>
+          `<li><a href="#${encodeURIComponent(control.id)}">${label}: ${message}</a></li>`,
+      )
+      .join('') +
+    '</ul>'
+
+  // Each entry is a link to the field it names, so the reader can go straight
+  // there instead of tabbing back through the form looking for it.
+  for (const link of container.querySelectorAll('a[href^="#"]')) {
+    link.addEventListener('click', (event) => {
+      event.preventDefault()
+      const target = form.querySelector(`#${CSS.escape(decodeURIComponent(link.hash.slice(1)))}`)
+      target?.focus()
+    })
+  }
+
+  container.focus()
+}
+
+/** A message that is not about any particular field — a failed request. */
+function showMessage(container, text) {
+  if (!container) return
+  container.hidden = false
+  container.textContent = text
+  container.focus()
+}
+
 function initForms(teardown) {
   for (const form of document.querySelectorAll('form[data-form-id]')) {
     const error = form.querySelector('.wpforms-error-container')
@@ -284,12 +454,24 @@ function initForms(teardown) {
     const onSubmit = async (event) => {
       event.preventDefault()
 
-      // The browser's own validation, used rather than reimplemented — `novalidate`
-      // is on the form so this runs when we ask, not on the browser's terms.
-      if (!form.checkValidity()) {
-        form.reportValidity()
+      /**
+       * The constraints are the browser's, the reporting is not.
+       *
+       * `novalidate` is on the form so validity is checked when we ask rather
+       * than on the browser's terms, and this used to call reportValidity() to
+       * show the result. That draws a bubble that disappears on the next
+       * keystroke, names one field at a time, and is announced inconsistently
+       * across screen readers — so someone who could not see it was told
+       * nothing. checkValidity() still does the judging; showErrors does the
+       * telling, in markup that stays on the page.
+       */
+      const problems = invalidFields(form)
+      if (problems.length) {
+        showErrors(form, error, problems)
         return
       }
+
+      clearErrors(form)
 
       const data = new FormData(form)
       const submissionData = [...data.entries()].map(([field, value]) => ({
@@ -297,7 +479,10 @@ function initForms(teardown) {
         value: String(value),
       }))
 
-      if (error) error.hidden = true
+      if (error) {
+        error.hidden = true
+        error.textContent = ''
+      }
       if (submit) {
         submit.disabled = true
         // WPForms puts the "sending" wording on the button itself, so the origin's
@@ -315,12 +500,20 @@ function initForms(teardown) {
         if (!response.ok) throw new Error(String(response.status))
 
         form.hidden = true
-        if (confirmation) confirmation.hidden = false
-      } catch {
-        if (error) {
-          error.textContent = 'Sorry — that did not send. Please try again.'
-          error.hidden = false
+        if (confirmation) {
+          confirmation.hidden = false
+          /**
+           * Focus has to move, not just the content.
+           *
+           * The form it was sitting on is now hidden, so leaving focus where it
+           * was drops the reader at the top of the document with no idea whether
+           * anything happened. Moving it to the confirmation both announces the
+           * message and leaves them somewhere real.
+           */
+          confirmation.focus()
         }
+      } catch {
+        showMessage(error, 'Sorry — that did not send. Please try again.')
       } finally {
         if (submit) {
           submit.disabled = false
@@ -334,21 +527,47 @@ function initForms(teardown) {
   }
 }
 
+/**
+ * One adapter failing must not take the rest down with it.
+ *
+ * Everything here ran in a single try-less sequence, so a carousel that threw on
+ * one page silently cost that page its menu, its accordions and its form
+ * validation as well — and with no origin JavaScript loaded there is nothing else
+ * to fall back to. Nothing announced it either; the page just quietly did less
+ * than it should.
+ *
+ * Logged rather than swallowed, because an adapter that stops working is a bug to
+ * fix, not a condition to tolerate.
+ */
+function run(name, fn) {
+  try {
+    fn()
+  } catch (error) {
+    console.error(`[Enhancements] ${name} failed`, error)
+  }
+}
+
 export default function Enhancements({ route }) {
   useEffect(() => {
     const teardown = []
 
+    /**
+     * The menu goes first. Below 1024px it is the only way to reach any other
+     * page, so it is the last thing that should depend on a carousel starting.
+     */
+    run('menu', () => initMenu(teardown))
+
     for (const root of document.querySelectorAll('.sina-content-slider.owl-carousel')) {
-      initSinaSlider(root, teardown)
+      run('sina-slider', () => initSinaSlider(root, teardown))
     }
     for (const widget of document.querySelectorAll('[data-widget_type^="image-carousel"]')) {
-      initImageCarousel(widget, teardown)
+      run('image-carousel', () => initImageCarousel(widget, teardown))
     }
-    initAccordions(teardown)
-    initReveals(teardown)
-    initForms(teardown)
+    run('accordions', () => initAccordions(teardown))
+    run('reveals', () => initReveals(teardown))
+    run('forms', () => initForms(teardown))
 
-    return () => teardown.forEach((fn) => fn())
+    return () => teardown.forEach((fn) => run('teardown', fn))
   }, [route])
 
   return null

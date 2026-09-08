@@ -1,0 +1,371 @@
+/**
+ * Accessibility overrides — loaded after site.css so it wins the cascade.
+ *
+ * Deliberately outside public/wp/, which holds the mirrored origin assets that
+ * _tools/sync-public.mjs copies in. This file is ours, not the origin's.
+ *
+ * WCAG 2.4.7 Focus Visible, 2.4.11 Focus Not Obscured, 2.3.3 Animation from
+ * Interactions.
+ */
+
+/**
+ * A two-tone ring, because one colour cannot work on this header.
+ *
+ * The nav sits on #FFD014 yellow and the active item is a black block, so a dark
+ * ring disappears on the active item and a light ring disappears on the yellow.
+ * White hugging the element with a dark ring outside it stays visible on both,
+ * and on the photographic banners further down the page.
+ *
+ * !important is load-bearing here rather than lazy: Astra, Header Footer
+ * Elementor and Elementor each set outline to 0 or none on :focus, and those
+ * rules are what this has to beat. Measured before writing this — every nav item
+ * computed to outline-width 0px, and SERVICES, GALLERY and BLOG to none.
+ */
+:focus-visible {
+  outline: 3px solid #ffffff !important;
+  outline-offset: 0 !important;
+  box-shadow: 0 0 0 6px #111827 !important;
+  /**
+   * Several elements inherit 'transition: all .5s' from the origin's CSS, which
+   * fades the ring in over half a second. A keyboard user has usually pressed
+   * Tab again by then, so the ring has to be immediate.
+   */
+  transition-property: none !important;
+}
+
+/**
+ * Mouse and touch users never see the ring. :focus-visible already handles this
+ * in every current browser; this is here for the one case it does not cover —
+ * a click that lands on an element the browser still treats as focused.
+ */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/**
+ * The skip link is the first thing a keyboard user reaches, so it keeps the
+ * ring but not the dark halo, which would swamp a small white box.
+ */
+.site .skip-link:focus-visible {
+  box-shadow: 0 0 0 3px #111827 !important;
+}
+
+/**
+ * Colour contrast — WCAG 1.4.3, 4.5:1 for body-size text.
+ *
+ * Each value below is the original colour darkened or lightened in HSL with its
+ * hue and saturation held, so it still reads as the same brand colour. The ratio
+ * in each comment is measured, not estimated — see scripts/a11y-pick-color.mjs.
+ */
+:root {
+  /**
+   * was #dcb415, 1.98:1 on white — far below the 4.5:1 floor.
+   *
+   * #8d730d was the first fix, chosen against white. Scanning the other 21 pages
+   * found the header sitting on #f5f5f5 rather than white on three of them, where
+   * that shade measured 4.19:1 and failed. This one is picked against the grey,
+   * which is the worse of the two backgrounds the nav actually appears on.
+   */
+  --a11y-gold-on-light: #866d0c; /* 4.57:1 on #f5f5f5, 4.98:1 on white */
+  /* was #7a7a7a, 4.29:1 — only just short, so the change is imperceptible */
+  --a11y-muted-on-light: #757575; /* 4.61:1 */
+}
+
+/**
+ * The primary and sub navigation.
+ *
+ * Scoped by class rather than by the header template's Elementor id, which is
+ * what actually sets the gold: the id would break if the header were rebuilt,
+ * and these two classes are what the markup is keyed on either way.
+ */
+a.hfe-menu-item,
+a.hfe-sub-menu-item {
+  color: var(--a11y-gold-on-light) !important;
+}
+
+/**
+ * The current page keeps its own treatment — it sits on a black block, where
+ * bright gold reads well and the darkened gold would not.
+ */
+.menu-item.current-menu-item a.hfe-menu-item,
+.menu-item.current-menu-item a.hfe-sub-menu-item {
+  color: #ffd014 !important;
+}
+
+/**
+ * Body copy.
+ *
+ * The grey is Elementor's own --e-global-color-text, so redefining that one
+ * variable fixes every widget that inherits it rather than the handful of
+ * element ids axe happened to flag on the pages that were scanned. The shift is
+ * #7a7a7a to #757575 — 0.03 in lightness, which crosses the threshold without
+ * being visible as a change.
+ */
+.elementor-kit-6 {
+  --e-global-color-text: #757575;
+}
+
+/* Two places set the same grey directly instead of through the variable. */
+.eael-testimonial-content .eael-testimonial-text,
+.elementor-4424 .elementor-element.elementor-element-8b178a6 {
+  color: var(--a11y-muted-on-light) !important;
+}
+
+/**
+ * Form text sitting on the dark navy panel.
+ *
+ * The same enquiry form renders in two places on two different backgrounds: the
+ * brand yellow on /contact-us and the #11202A panel on the home page. Colours
+ * picked against one of them fail on the other — the label at #3a3a3a measured
+ * 1.46:1 here, and the hint at #4a4a4a measured 1.87:1 — so this is scoped to
+ * the two sections that carry that background rather than applied to every form
+ * on the site.
+ */
+.elementor-element-5020fa6 .wpforms-field-label,
+.elementor-element-4b57b20 .wpforms-field-label {
+  color: #ffffff !important; /* 16.62:1 on #11202A */
+}
+
+.elementor-element-5020fa6 .wpforms-field-hint,
+.elementor-element-4b57b20 .wpforms-field-hint {
+  color: #cfcfcf !important; /* 11.35:1 on #11202A, still quieter than the label */
+}
+
+/**
+ * The welcome line that used to be a <marquee>.
+ *
+ * src/lib/a11y-markup.ts turns it into a span, because a span is valid wherever
+ * the marquee sat across the mirrored pages. This gives it back the block layout
+ * the marquee had.
+ */
+.wk-tagline {
+  display: block;
+  width: 100%;
+}
+
+/**
+ * The h1 given to pages that have no heading of their own — /faqs, /restaurant
+ * and /blog. See src/lib/a11y-markup.ts.
+ *
+ * Hidden from sight but not from assistive technology, which is the point: the
+ * design of those pages does not show a title, and inventing a visible one would
+ * be a design change rather than an accessibility fix. Clipped rather than
+ * display:none, because display:none takes it out of the accessibility tree too.
+ */
+/**
+ * Visible to a screen reader, not to the eye.
+ *
+ * The guide calls this `.sr-only` (§6.5). Named for what it does rather than for
+ * one kind of user, since a magnifier or a braille display reads it too.
+ *
+ * Clipped rather than display:none, which would take it out of the accessibility
+ * tree as well and defeat the point.
+ */
+.wk-visually-hidden,
+.wk-page-title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/**
+ * Form errors — WCAG 3.3.1 Error Identification, 3.3.3 Error Suggestion.
+ *
+ * The colour is chosen against the background the form actually sits on, which
+ * on /contact-us is the brand yellow rather than white. Measured on the page:
+ *
+ *   #ff0000  the stylesheet's own error red   2.44:1 on #FFD014   fails
+ *   #b42318  the first choice here            4.47:1              fails, barely
+ *   #a81f15  what is used                     4.97:1 on #FFD014
+ *                                             7.31:1 on white
+ *                                             6.73:1 on the panel below
+ *
+ * That last part matters: the same form renders on more than one background, so
+ * the colour has to clear 4.5:1 on the worst of them rather than on the one that
+ * happened to be measured first.
+ *
+ * !important throughout for the same reason as the focus ring — WPForms' own
+ * rules are more specific than these and set the error red to #990000 and the
+ * container's background back to transparent.
+ *
+ * The border and the symbol carry the same meaning as the colour, because colour
+ * alone cannot — WCAG 1.4.1 Use of Colour.
+ */
+.wpforms-error-container {
+  border-left: 4px solid #a81f15 !important;
+  background: #fef3f2 !important;
+  color: #a81f15 !important;
+  padding: 0.75rem 1rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.wpforms-error-container .wpforms-error-heading {
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: #a81f15 !important;
+}
+
+.wpforms-error-container ul {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.wpforms-error-container a {
+  color: #a81f15 !important;
+}
+
+/**
+ * The hint under a label — "10 digits, numbers only".
+ *
+ * #4a4a4a on the brand yellow measures 6.51:1, so it stays readable as the quiet
+ * text it is meant to be rather than being quiet enough to fail.
+ */
+.wpforms-field-hint {
+  display: block;
+  margin: 0 0 0.25rem;
+  color: #4a4a4a;
+  font-size: 0.9em;
+}
+
+/* The per-field message, shown where the reader can act on it. */
+.wpforms-error {
+  display: block;
+  margin-top: 0.25rem;
+  color: #a81f15 !important;
+  font-size: 0.9em;
+}
+
+.wpforms-error::before {
+  content: '⚠ ';
+}
+
+/* The field itself, so the error is visible without reading the message. */
+[aria-invalid='true'] {
+  border: 2px solid #a81f15 !important;
+}
+
+/**
+ * Neither the error summary nor the confirmation is a natural tab stop; both are
+ * focused by script so the reader is taken to the answer. The ring belongs on
+ * things the reader chose to focus, so it is dropped here.
+ */
+.wpforms-error-container:focus,
+.wpforms-confirmation-container-full:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/**
+ * The FAQ questions, now an <h3> around a <button> — see src/lib/faq-accordion.ts.
+ *
+ * The element that carries the appearance is the same one it always was, the
+ * `.eael-accordion-header`; all this does is take away what the browser adds to a
+ * button and what it adds to a heading, so the accordion looks exactly as it did
+ * when the header was a div.
+ *
+ * `font: inherit` matters more than it looks: without it the button falls back to
+ * the browser's 13px system font and the questions shrink.
+ */
+.wk-faq-question {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+}
+
+button.eael-accordion-header {
+  display: block;
+  width: 100%;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  cursor: pointer;
+  /* The origin's rule is on the class, so the padding it sets still applies. */
+}
+
+/**
+ * Dropdown menus on keyboard focus — WCAG 2.1.1 Keyboard, 1.4.13.
+ *
+ * site.css opens a sub-menu on `:hover` and nothing else. The closed state is
+ * `visibility: hidden`, which takes its links out of the tab order altogether —
+ * so Services and Blog announce themselves as having a sub-menu that a keyboard
+ * user can never reach. Only a mouse could open it.
+ *
+ * `:focus-within` is the counterpart the origin left out: the sub-menu opens when
+ * focus lands anywhere inside the item, starting with the parent link itself.
+ * Tab then moves into the child links naturally, because they are visible.
+ *
+ * Both selectors, because site.css sets the hidden state at two different
+ * specificities and this has to beat the more specific of them.
+ */
+.hfe-nav-menu .menu-item-has-children:focus-within > .sub-menu,
+.hfe-nav-menu__layout-horizontal .hfe-nav-menu .menu-item-has-children:focus-within > .sub-menu {
+  visibility: visible;
+  opacity: 1;
+}
+
+/**
+ * The header's menu toggle, now a <button> — see src/components/SiteHeader.ts.
+ *
+ * The origin had a <div role="button"> with no tabindex, so it could not be
+ * reached by keyboard at all. Swapping the element in brings the browser's
+ * default button styling with it, and this takes that back off: the appearance
+ * belongs to `.hfe-nav-menu__toggle`, which site.css already styles, and none of
+ * those rules are touched here.
+ *
+ * `display` is deliberately absent. site.css hides this on desktop and shows it
+ * at the tablet breakpoint, and that decision stays with the stylesheet that
+ * makes it.
+ */
+button.hfe-nav-menu__toggle {
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+/**
+ * The carousel arrows, now <button> — see src/lib/a11y-markup.ts.
+ *
+ * Same reasoning as the menu toggle: the element changed so the browser's button
+ * styling has to be taken back off. `.elementor-swiper-button` keeps setting
+ * position, size and colour, and none of those rules are touched.
+ */
+button.elementor-swiper-button {
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+/**
+ * Respect the operating system's reduced-motion setting.
+ *
+ * The mirrored pages are full of Elementor entrance animations and a marquee,
+ * none of which check for this. Transitions are cut rather than removed so
+ * anything that relies on a transitionend event still fires.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

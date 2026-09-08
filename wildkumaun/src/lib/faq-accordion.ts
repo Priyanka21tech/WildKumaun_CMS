@@ -10,7 +10,7 @@ import { esc } from '../components/SiteHeader'
  * icons and the caret the stylesheet expects. Those class names carry the whole
  * appearance, so they are the contract.
  *
- * Two things change on the way through:
+ * Three things change on the way through:
  *
  *   The header id is the FAQ's slug — `distance-to-lakes` — where the origin used
  *   the entire question slugified into a 90-character id. Both work as an anchor;
@@ -19,6 +19,29 @@ import { esc } from '../components/SiteHeader'
  *   The answer comes from rich text, so it is whatever an editor wrote, rather
  *   than the origin's spans carrying inline font sizes and colours. The
  *   stylesheet already styles `.eael-accordion-content`, so it lands the same.
+ *
+ *   The question is a real `<button>` inside an `<h2>`, where the origin had a
+ *   `<div tabindex="0">`. This is the WAI-ARIA Authoring Practices accordion
+ *   pattern, and it buys two things the div could not:
+ *
+ *     A heading. The origin's FAQs page has exactly one heading on it, so a
+ *     screen-reader user navigating by heading finds the page title and then
+ *     nothing — seven questions, none of them in the outline. Wrapping each
+ *     question in a heading makes the page navigable the way a FAQ page should
+ *     be. h2 rather than h3 because the questions sit directly under the page's
+ *     h1 with no section between: at h3 the first one is a skipped level, and
+ *     the normaliser in a11y-markup.ts pulls it up to h2 on its own — leaving
+ *     one question at a different level from its six siblings.
+ *
+ *     Semantics that do not depend on JavaScript. Enhancements.jsx used to add
+ *     role="button" and aria-expanded at runtime, which meant that until it ran —
+ *     or at all, if it failed — the questions announced as plain text. A <button>
+ *     is a button in the markup, and brings Enter and Space with it rather than
+ *     needing a key handler.
+ *
+ *   `.eael-accordion-header` stays on the button itself, because that is what the
+ *   stylesheet and the toggling script both key off. public/a11y.css strips the
+ *   browser's own button styling so the appearance is unchanged.
  */
 
 export type FaqDoc = {
@@ -63,9 +86,9 @@ export function renderAccordion(faqs: FaqDoc[]): string {
         : ''
 
       return `<div class="eael-accordion-list">
-<div aria-controls="${contentId}" class="elementor-tab-title eael-accordion-header" data-tab="${tab}" id="${headerId}" tabindex="0"><span class="eael-advanced-accordion-icon-closed"><i aria-hidden="true" class="fa-accordion-icon fas fa-plus"></i></span><span class="eael-advanced-accordion-icon-opened"><i aria-hidden="true" class="fa-accordion-icon fas fa-minus"></i></span><span class="eael-accordion-tab-title">${esc(
+<h2 class="wk-faq-question"><button aria-controls="${contentId}" aria-expanded="false" class="elementor-tab-title eael-accordion-header" data-tab="${tab}" id="${headerId}" type="button"><span class="eael-advanced-accordion-icon-closed"><i aria-hidden="true" class="fa-accordion-icon fas fa-plus"></i></span><span class="eael-advanced-accordion-icon-opened"><i aria-hidden="true" class="fa-accordion-icon fas fa-minus"></i></span><span class="eael-accordion-tab-title">${esc(
         faq.question,
-      )}</span><i aria-hidden="true" class="fa-toggle fas fa-angle-right"></i></div><div aria-labelledby="${headerId}" class="eael-accordion-content clearfix" data-tab="${tab}" id="${contentId}">${answer}</div>
+      )}</span><i aria-hidden="true" class="fa-toggle fas fa-angle-right"></i></button></h2><div aria-labelledby="${headerId}" class="eael-accordion-content clearfix" data-tab="${tab}" id="${contentId}">${answer}</div>
 </div>`
     })
     .join('\n')

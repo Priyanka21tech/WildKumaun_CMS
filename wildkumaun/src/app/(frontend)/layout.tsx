@@ -24,6 +24,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="stylesheet" href="/wp/shell.css" />
         <link rel="preload" href="/wp/site.css" as="style" />
         <link rel="stylesheet" href="/wp/site.css" />
+        {/* Ours, and last on purpose — it overrides the origin's focus rules. */}
+        <link rel="stylesheet" href="/a11y.css" />
         <link rel="icon" href="/favicon.ico" sizes="256x256" type="image/x-icon" />
         <link rel="icon" href="/media/favicon-1.png" />
         <link rel="apple-touch-icon" href="/media/favicon-1.png" />
