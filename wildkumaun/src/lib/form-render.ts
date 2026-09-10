@@ -260,15 +260,28 @@ function formMarkup(form: FormDoc): string {
 
   const id = esc(String(form.id))
 
+  /**
+   * The error container sits above the fields, not below them.
+   *
+   * It is both the summary of what failed validation and where a network failure
+   * is reported, and either way it is the first thing the reader needs — putting
+   * it after the fields means a screen-reader user hears "there is a problem"
+   * only after tabbing past everything that caused it.
+   *
+   * role="alert" so it is announced the moment it is filled in, and tabindex="-1"
+   * so Enhancements.jsx can move focus to it: announcing the problem and then
+   * leaving focus on the submit button makes the reader hunt for the fields it
+   * named.
+   */
   return `<div class="elementor-shortcode"><div class="wpforms-container wpforms-container-full" id="wpforms-${id}">
 <form class="wpforms-validate wpforms-form" data-form-id="${id}" id="wpforms-form-${id}" method="post" novalidate>
+<div class="wpforms-error-container" role="alert" tabindex="-1" hidden></div>
 <div class="wpforms-field-container">${rendered}</div>
-<div class="wpforms-error-container" hidden></div>
 <div class="wpforms-submit-container">
 <button class="wpforms-submit" data-alt-text="Sending..." data-submit-text="${esc(form.submitButtonLabel || 'Send')}" type="submit">${esc(form.submitButtonLabel || 'Send')}</button>
 </div>
 </form>
-<div class="wpforms-confirmation-container-full" hidden>${confirmation}</div>
+<div class="wpforms-confirmation-container-full" role="status" tabindex="-1" hidden>${confirmation}</div>
 </div></div>`
 }
 
@@ -283,12 +296,92 @@ function formMarkup(form: FormDoc): string {
  * The browser's own `required` attribute is what actually enforces it, which is
  * why both are here and neither is redundant.
  */
+/**
+ * What a field is actually asking for, beyond the plugin's own field type.
+ *
+ * The form builder knows `mobile` is a text field; it does not know it is a
+ * phone number. That difference is worth spelling out:
+ *
+ *   autocomplete   lets the browser fill it from what the reader has saved,
+ *                  which is the single biggest reduction in typing for someone
+ *                  using a switch, an eye tracker or voice input. WCAG 1.3.5.
+ *
+ *   inputmode      brings up the numeric keypad on a phone rather than the full
+ *                  keyboard, so the digits are not a two-step to reach.
+ *
+ *   pattern        is what actually enforces digits only. Paired with `title`,
+ *                  because on a pattern mismatch the browser says "Please match
+ *                  the requested format" and appends the title to it — without
+ *                  one the reader is told the format is wrong and not what the
+ *                  format is.
+ *
+ * Keyed by the plugin's field name, which is stable: it is what a submission
+ * arrives labelled with.
+ */
+const FIELD_SEMANTICS: Record<
+  string,
+  {
+    type?: string
+    autocomplete?: string
+    inputmode?: string
+    pattern?: string
+    maxlength?: number
+    hint?: string
+    patternMessage?: string
+  }
+> = {
+  name: { autocomplete: 'name' },
+  email: { autocomplete: 'email' },
+  mobile: {
+    type: 'tel',
+    autocomplete: 'tel',
+    inputmode: 'numeric',
+    pattern: '[0-9]{10}',
+    maxlength: 10,
+    hint: '10 digits, numbers only',
+    /**
+     * Chromium's own wording for a pattern mismatch is "Please match the
+     * requested format", which tells the reader the format is wrong and not what
+     * the format is. `title` is documented as filling that gap but only reaches
+     * the native bubble, not the validationMessage this form reads — so the
+     * wording is carried here and Enhancements.jsx uses it instead.
+     */
+    patternMessage: 'Enter a 10-digit mobile number, digits only.',
+  },
+  persons: { inputmode: 'numeric' },
+}
+
 function formField(field: FormField): string {
   const name = esc(field.name ?? '')
   const label = esc(field.label ?? '')
   const required = field.required ? ' required' : ''
   const placeholder = field.placeholder ? ` placeholder="${esc(field.placeholder)}"` : ''
   const id = `wpforms-field-${name}`
+
+  const semantics = FIELD_SEMANTICS[field.name ?? ''] ?? {}
+  const hintId = `${id}-hint`
+
+  /**
+   * The rule, written where the reader is before they break it.
+   *
+   * An error after the fact is a correction; a hint before it is an
+   * instruction, and WCAG 3.3.2 asks for the instruction. It is tied on with
+   * aria-describedby so it is read as part of the field rather than as loose
+   * text above it — and Enhancements.jsx keeps it in describedby alongside the
+   * error message rather than replacing it.
+   */
+  const hint = semantics.hint
+    ? `<span class="wpforms-field-hint" id="${hintId}">${esc(semantics.hint)}</span>`
+    : ''
+
+  const extra = [
+    semantics.autocomplete ? ` autocomplete="${semantics.autocomplete}"` : '',
+    semantics.inputmode ? ` inputmode="${semantics.inputmode}"` : '',
+    semantics.pattern ? ` pattern="${semantics.pattern}"` : '',
+    semantics.maxlength ? ` maxlength="${semantics.maxlength}"` : '',
+    semantics.hint ? ` title="${esc(semantics.hint)}" aria-describedby="${hintId}"` : '',
+    semantics.patternMessage ? ` data-pattern-message="${esc(semantics.patternMessage)}"` : '',
+  ].join('')
 
   // A message field is copy the editor placed inside the form, not a question.
   if (field.blockType === 'message') {
@@ -315,14 +408,27 @@ function formField(field: FormField): string {
         return `<input class="${classes}" id="${id}" name="${name}" type="checkbox"${required}/>`
       default: {
         const type =
-          field.blockType === 'email' ? 'email' : field.blockType === 'number' ? 'number' : 'text'
-        return `<input class="${classes}" id="${id}" name="${name}" type="${type}"${placeholder}${required}/>`
+          semantics.type ??
+          (field.blockType === 'email' ? 'email' : field.blockType === 'number' ? 'number' : 'text')
+        return `<input class="${classes}" id="${id}" name="${name}" type="${type}"${placeholder}${required}${extra}/>`
       }
     }
   })()
 
+  /**
+   * An empty slot for this field's own error message.
+   *
+   * Rendered even when there is nothing wrong, so Enhancements.jsx has somewhere
+   * to write to and can point the input's aria-describedby at a node that already
+   * exists. A summary at the top tells the reader what failed; this tells them
+   * again when they arrive at the field, which is where they can act on it.
+   */
+  const errorSlot = `<span class="wpforms-error" id="${id}-error" hidden></span>`
+
   return `<div class="wpforms-field wpforms-field-${esc(field.blockType ?? 'text')}" id="${id}-container">
 <label class="wpforms-field-label" for="${id}">${label}${field.required ? ' <span class="wpforms-required-label">*</span>' : ''}</label>
+${hint}
 ${control}
+${errorSlot}
 </div>`
 }

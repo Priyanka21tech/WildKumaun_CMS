@@ -158,10 +158,29 @@ function thumbnails(hash: string, images: MediaDoc[], columns: number): string {
   const items = images
     .map((image, index) => {
       const id = `gallery-${hash}-${index + 1}`
-      const caption = image.alt || image.filename?.replace(/\.[a-z0-9]+$/i, '') || ''
+      const alt = image.alt ?? ''
+      const caption = alt || image.filename?.replace(/\.[a-z0-9]+$/i, '') || ''
+
+      /**
+       * The image keeps its own alt — WCAG 1.1.1.
+       *
+       * This used to pass `alt: ''` and put the words in the caption instead,
+       * pointing at them with aria-describedby. The intent was to say the name
+       * once rather than twice, but an empty alt does not mean "described
+       * elsewhere" — it means "decorative, ignore this", and a decorative element
+       * is exactly the one browsers drop aria-describedby from. So the
+       * description reached nobody, and axe reported it 104 times across the four
+       * gallery pages as presentation-role-conflict.
+       *
+       * The describedby stays only where the caption adds something the alt does
+       * not. When they are the same words — which is the usual case, since the
+       * caption falls back to the alt — repeating them is the duplication this
+       * was trying to avoid in the first place.
+       */
+      const describedBy = caption && caption !== alt ? ` aria-describedby="${id}"` : ''
 
       return `<figure class="gallery-item">
-<div class="gallery-icon landscape">${img({ ...image, alt: '' }, 'attachment-full size-full').replace('<img', `<img aria-describedby="${id}"`)}</div>
+<div class="gallery-icon landscape">${img(image, 'attachment-full size-full').replace('<img', `<img${describedBy}`)}</div>
 <figcaption class="wp-caption-text gallery-caption" id="${id}">${esc(caption)}</figcaption>
 </figure>`
     })

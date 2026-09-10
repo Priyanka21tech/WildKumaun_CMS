@@ -29,8 +29,11 @@
     "seed:packages": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/seed-packages.ts",
     "seed:birdart": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/seed-bird-art.ts",
     "seed:blocks": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/seed-page-blocks.ts",
+    "fix:media-alt": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/fix-media-alt.ts",
     "check:wfh": "cross-env NODE_OPTIONS=--no-deprecation tsx src/scripts/check-wfh.ts",
-    "check:targets": "cross-env NODE_OPTIONS=--no-deprecation tsx src/scripts/check-targets.ts"
+    "check:targets": "cross-env NODE_OPTIONS=--no-deprecation tsx src/scripts/check-targets.ts",
+    "fix:page-versions": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/backfill-page-versions.ts",
+    "fix:nav": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/fix-nav-links.ts"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.88.0",
