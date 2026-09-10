@@ -78,7 +78,6 @@ export interface Config {
     testimonials: Testimonial;
     forms: Form;
     enquiries: Enquiry;
-    'a11y-reports': A11YReport;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -97,7 +96,6 @@ export interface Config {
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     enquiries: EnquiriesSelect<false> | EnquiriesSelect<true>;
-    'a11y-reports': A11YReportsSelect<false> | A11YReportsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -1156,50 +1154,6 @@ export interface Enquiry {
   createdAt: string;
 }
 /**
- * What each page scored, one row per page per scan.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "a11y-reports".
- */
-export interface A11YReport {
-  id: number;
-  /**
-   * Groups every page from a single scan.
-   */
-  runId: string;
-  route: string;
-  scannedAt: string;
-  passed?: number | null;
-  failed?: number | null;
-  manual?: number | null;
-  skipped?: number | null;
-  /**
-   * One entry per checkpoint.
-   */
-  results?:
-    | {
-        checkId: string;
-        title?: string | null;
-        status: 'pass' | 'fail' | 'manual' | 'skipped' | 'error';
-        /**
-         * Success criteria, comma separated.
-         */
-        wcag?: string | null;
-        detail?: string | null;
-        count?: number | null;
-        sample?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  signOff?: {
-    checkedBy?: (number | null) | User;
-    checkedAt?: string | null;
-    notes?: string | null;
-  };
-  updatedAt: string;
-  createdAt: string;
-}
-/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -1266,10 +1220,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'enquiries';
         value: number | Enquiry;
-      } | null)
-    | ({
-        relationTo: 'a11y-reports';
-        value: number | A11YReport;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1844,40 +1794,6 @@ export interface EnquiriesSelect<T extends boolean = true> {
       };
   approved?: T;
   testimonial?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "a11y-reports_select".
- */
-export interface A11YReportsSelect<T extends boolean = true> {
-  runId?: T;
-  route?: T;
-  scannedAt?: T;
-  passed?: T;
-  failed?: T;
-  manual?: T;
-  skipped?: T;
-  results?:
-    | T
-    | {
-        checkId?: T;
-        title?: T;
-        status?: T;
-        wcag?: T;
-        detail?: T;
-        count?: T;
-        sample?: T;
-        id?: T;
-      };
-  signOff?:
-    | T
-    | {
-        checkedBy?: T;
-        checkedAt?: T;
-        notes?: T;
-      };
   updatedAt?: T;
   createdAt?: T;
 }

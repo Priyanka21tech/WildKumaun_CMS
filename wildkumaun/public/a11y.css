@@ -132,15 +132,107 @@ a.hfe-sub-menu-item {
 }
 
 /**
- * The welcome line that used to be a <marquee>.
+ * The scrolling welcome line — WCAG 2.2.2 Pause, Stop, Hide.
  *
- * src/lib/a11y-markup.ts turns it into a span, because a span is valid wherever
- * the marquee sat across the mirrored pages. This gives it back the block layout
- * the marquee had.
+ * The origin's `<marquee>` moved and could not be stopped. This keeps the
+ * movement and adds the stopping: a button, the operating system's reduced-motion
+ * setting, and a hover — because somebody trying to read a line that is sliding
+ * away will point at it before they look for a control.
+ *
+ * See src/lib/a11y-markup.ts for the markup this styles.
  */
 .wk-tagline {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   width: 100%;
+}
+
+/* Spans by necessity (see a11y-markup.ts), so each is given its box here. */
+.wk-tagline__viewport {
+  display: block;
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+
+/**
+ * Two copies of the line sit side by side and the pair slides left by half its
+ * width, so the moment the first copy leaves the second is exactly where it
+ * started. `translateX` rather than `left`, to stay off the layout path.
+ */
+.wk-tagline__track {
+  display: inline-flex;
+  gap: 3rem;
+  white-space: nowrap;
+  will-change: transform;
+  animation: wk-tagline-scroll 30s linear infinite;
+}
+
+@keyframes wk-tagline-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-50% - 1.5rem));
+  }
+}
+
+/* Paused by the button, and by pointing at it. */
+.wk-tagline[data-paused='true'] .wk-tagline__track,
+.wk-tagline:hover .wk-tagline__track {
+  animation-play-state: paused;
+}
+
+.wk-tagline__pause {
+  flex: 0 0 auto;
+  padding: 0.25rem 0.5rem;
+  font: inherit;
+  line-height: 1;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.wk-tagline__pause:hover,
+.wk-tagline__pause:focus-visible {
+  opacity: 1;
+}
+
+/**
+ * The paused state shows a play triangle, because the button's job has changed
+ * — it now starts the thing it stopped.
+ */
+.wk-tagline[data-paused='true'] .wk-tagline__icon::before {
+  content: '▶';
+}
+
+.wk-tagline[data-paused='true'] .wk-tagline__icon {
+  font-size: 0;
+}
+
+.wk-tagline[data-paused='true'] .wk-tagline__icon::before {
+  font-size: 1rem;
+}
+
+/**
+ * Reduced motion stops it before anyone has to ask.
+ *
+ * The general reduced-motion block below cuts animation duration to almost
+ * nothing, which for an infinite scroll would leave it flickering rather than
+ * still. This stops it outright.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .wk-tagline__track {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  /* Nothing is moving, so there is nothing to pause. */
+  .wk-tagline__pause {
+    display: none;
+  }
 }
 
 /**
@@ -308,9 +400,27 @@ button.eael-accordion-header {
  * specificities and this has to beat the more specific of them.
  */
 .hfe-nav-menu .menu-item-has-children:focus-within > .sub-menu,
-.hfe-nav-menu__layout-horizontal .hfe-nav-menu .menu-item-has-children:focus-within > .sub-menu {
+.hfe-nav-menu__layout-horizontal .hfe-nav-menu .menu-item-has-children:focus-within > .sub-menu,
+/* Held open by the button's own state — see initDisclosureMenus. */
+.hfe-nav-menu .menu-item-has-children.wk-submenu-open > .sub-menu,
+.hfe-nav-menu__layout-horizontal .hfe-nav-menu .menu-item-has-children.wk-submenu-open > .sub-menu {
   visibility: visible;
   opacity: 1;
+}
+
+/**
+ * SERVICES, now a <button> rather than a link — see src/components/SiteHeader.ts.
+ *
+ * The origin styles the menu through `.hfe-menu-item`, which this keeps. All that
+ * comes off is what the browser adds to a button and would not have added to the
+ * anchor it replaced.
+ */
+button.hfe-menu-item {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
 }
 
 /**

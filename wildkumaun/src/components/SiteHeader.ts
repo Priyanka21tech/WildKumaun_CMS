@@ -78,11 +78,35 @@ const mediaUrl = (logo: SettingsData['logo']): string | null =>
 const mediaAlt = (logo: SettingsData['logo']): string =>
   (logo && typeof logo === 'object' ? logo.alt : null) || ''
 
+/**
+ * A destination that is not one.
+ *
+ * WordPress gives a menu entry `#` when it is a heading for the items beneath it
+ * rather than a page of its own, and the origin's menu uses it twice: SERVICES,
+ * which opens a sub-menu, and WELLNESS, which does nothing at all.
+ *
+ * Both ship as links. A keyboard reaches them, a screen reader announces them as
+ * links, and following either takes the reader to the top of the page they were
+ * already on — WCAG 2.4.4 and 3.2.4. What each one should be depends on whether
+ * it has children, which is why this is a test and not a fix.
+ */
+const goesNowhere = (href: string): boolean => !href || href === '#' || href === '/#'
+
 function menuItem(item: NavItem, currentPath: string): string {
   const href = resolveHref(item.link)
   const label = resolveLabel(item.link)
   const children = item.children ?? []
   const hasChildren = children.length > 0
+
+  /**
+   * A leaf pointing at `#` is dropped rather than rendered.
+   *
+   * There is nothing to link it to and nothing for it to disclose, so any markup
+   * we choose is a control that lies about what it does. Leaving it out is the
+   * only honest render, and the moment somebody gives WELLNESS a URL in the
+   * Header global it comes back on its own.
+   */
+  if (!hasChildren && goesNowhere(href)) return ''
 
   const isHome = href === '/'
   const isCurrent = href === currentPath
@@ -107,16 +131,38 @@ function menuItem(item: NavItem, currentPath: string): string {
     ? '<span class="hfe-menu-toggle sub-arrow hfe-menu-child-0"><i class="fa"></i></span>'
     : ''
 
-  const anchor = `<a class="hfe-menu-item" href="${esc(href)}">${esc(label)}${arrow}</a>`
+  /**
+   * A parent with nowhere of its own to go is a button, not a link.
+   *
+   * SERVICES exists to open the six entries beneath it. As an `<a href="#">` it
+   * announces itself as a link, and activating it scrolls to the top of the
+   * current page — the behaviour WCAG 3.2.4 is about. As a button with
+   * aria-expanded it announces what it actually does, and says whether the
+   * sub-menu is open.
+   *
+   * A parent that *does* have a page — one that is both a destination and a
+   * heading — stays a link, because it is still a way to somewhere.
+   */
+  const submenuId = `submenu-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+  const isDisclosure = hasChildren && goesNowhere(href)
+
+  const anchor = isDisclosure
+    ? `<button class="hfe-menu-item hfe-menu-disclosure" type="button" aria-expanded="false" aria-controls="${submenuId}">${esc(label)}${arrow}</button>`
+    : `<a class="hfe-menu-item" href="${esc(href)}">${esc(label)}${arrow}</a>`
 
   const submenu = hasChildren
-    ? `<ul class="sub-menu">${children
-        .map(
-          (child) =>
+    ? `<ul class="sub-menu"${isDisclosure ? ` id="${submenuId}"` : ''}>${children
+        .map((child) => {
+          const childHref = resolveHref(child.link)
+          // Same rule as above: a sub-menu entry with no destination is not one.
+          if (goesNowhere(childHref)) return ''
+          return (
             `<li class="menu-item menu-item-type-post_type menu-item-object-page hfe-creative-menu">` +
-            `<a class="hfe-sub-menu-item" href="${esc(resolveHref(child.link))}">` +
-            `${esc(resolveLabel(child.link))}</a></li>`,
-        )
+            `<a class="hfe-sub-menu-item" href="${esc(childHref)}">` +
+            `${esc(resolveLabel(child.link))}</a></li>`
+          )
+        })
+        .filter(Boolean)
         .join('\n')}</ul>`
     : ''
 

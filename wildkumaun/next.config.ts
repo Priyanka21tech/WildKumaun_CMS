@@ -7,34 +7,6 @@ const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 
 const nextConfig: NextConfig = {
-  /**
-   * The accessibility plugin is a workspace folder, not a published package, so
-   * it ships TypeScript rather than a built dist. Listing it here lets Next
-   * compile it the same way it compiles src/, which is what makes editing the
-   * plugin and seeing the change immediately possible.
-   */
-  transpilePackages: ['@webuters/payload-plugin-a11y'],
-
-  /**
-   * Left as real packages on disk rather than bundled into the server.
-   *
-   * @axe-core/playwright works by reading axe-core's source and injecting it into
-   * the page under test. Bundled, that source arrives wrapped in the bundler's
-   * CommonJS shim, so the moment it runs in the browser it throws
-   * `ReferenceError: module is not defined` — which is exactly what every route
-   * reported until this was added. Playwright is here for the same reason: it
-   * spawns browser binaries by path and cannot survive being packed.
-   *
-   * The plugin itself stays in transpilePackages above; only what it reaches for
-   * at scan time is external.
-   */
-  serverExternalPackages: [
-    '@playwright/test',
-    'playwright',
-    'playwright-core',
-    '@axe-core/playwright',
-    'axe-core',
-  ],
   // The mirrored WordPress markup references /media/* directly with plain <img>
   // tags, so those never go through the optimizer. Payload uploads served from
   // /api/media/file/** still do.
@@ -53,6 +25,29 @@ const nextConfig: NextConfig = {
       // serve them, so send them to the blog listing rather than 404.
       { source: '/category/:slug*', destination: '/blog', permanent: false },
       { source: '/author/:slug*', destination: '/blog', permanent: false },
+
+      /**
+       * Pages nothing on the site links to, sent somewhere that answers the same
+       * question — WCAG 2.4.4, and plain navigability.
+       *
+       * These were made in WordPress and left out of the menu. A reader can only
+       * arrive from a search result, and what they find is a page with no way
+       * onward that the rest of the site does not know exists.
+       *
+       * Redirected rather than deleted. They are in the origin's sitemap and may
+       * be indexed, and a 404 turns a stale search result into a dead end where a
+       * redirect turns it into the right page. Each target answers what the old
+       * page was for: the vision statement and the birding pitch belong with the
+       * story of the place, the enquiry form and the address with contact.
+       *
+       * /facilities and /birds-found-at-wild-kumaon are deliberately absent —
+       * they carry real content (11 and 6 photographs) and are being linked into
+       * the Services menu instead of retired.
+       */
+      { source: '/vision', destination: '/about-us', permanent: true },
+      { source: '/birders-paradise', destination: '/bird-watching-in-sattal', permanent: true },
+      { source: '/enquiry', destination: '/contact-us', permanent: true },
+      { source: '/location', destination: '/contact-us', permanent: true },
     ]
   },
   webpack: (webpackConfig) => {
@@ -65,20 +60,8 @@ const nextConfig: NextConfig = {
     return webpackConfig
   },
   turbopack: {
-    /**
-     * The repo root, not the app directory.
-     *
-     * Turbopack will not resolve a module whose real path lies outside this
-     * root, and packages/payload-plugin-a11y is a sibling of the app rather than
-     * a child of it. Node resolved the symlink fine; Turbopack refused it, so
-     * every page 500'd on an import that plainly existed on disk.
-     *
-     * It was set to the app directory to stop Next inferring a root from the two
-     * lockfiles in the tree. Naming the repo root answers that question just as
-     * definitely, and answers it correctly for a workspace with packages beside
-     * the app.
-     */
-    root: path.resolve(dirname, '..'),
+    // Named explicitly so Next does not infer a root from the two lockfiles.
+    root: path.resolve(dirname),
   },
 }
 

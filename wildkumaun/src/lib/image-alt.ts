@@ -142,6 +142,51 @@ export const DECORATIVE: Record<string, string> = {
   'testimonials.jpg': 'A heading ornament above the guest book reviews.',
 }
 
+/**
+ * Alt text a person would have typed, from alt text a filename produced.
+ *
+ * The words harvested from the origin are right; their punctuation is not.
+ * Elementor's lightbox titles are half prose and half slug — "Long-tailed
+ * Minivet" in one place and "Black-headed-Bulbul" in another — and a screen
+ * reader reads the second as a run of syllables.
+ *
+ * Only the joins between a lower-case word and a capitalised one are opened up.
+ * That is the seam where a filename joined two real words, and it is the one
+ * place a hyphen can be replaced without damage: the hyphen inside
+ * "Yellow-breasted" belongs to the name, and the one inside "Bee-eater" does
+ * too, while the one in "breasted-Greenfinch" never did.
+ *
+ *   Yellow-breasted-Greenfinch  ->  Yellow-breasted Greenfinch
+ *   Blue-tailed-Bee-eater       ->  Blue-tailed Bee-eater
+ *   Long-tailed Minivet         ->  unchanged, already correct
+ *
+ * A trailing size is dropped outright. Nobody needs to hear "1024 by 683".
+ */
+const SIZE_SUFFIX = /[\s-]*\b\d{2,4}\s*[x×]\s*\d{2,4}\b\s*$/i
+const SLUG_SEAM = /([a-z])-([A-Z])/g
+
+/**
+ * Two words a filename ran together, because a space was not allowed.
+ *
+ * "LaughingThrush" is the same seam as "breasted-Greenfinch", just with the
+ * hyphen omitted rather than kept. Split on the same evidence — a lower-case
+ * letter meeting a capital inside one word.
+ */
+const RUN_TOGETHER = /([a-z])([A-Z])/g
+
+/** Hyphens left dangling once a size or a word was taken off the end. */
+const LOOSE_HYPHENS = /^-+|-+$/g
+
+export function tidyAlt(text: string): string {
+  return text
+    .replace(SIZE_SUFFIX, '')
+    .replace(SLUG_SEAM, '$1 $2')
+    .replace(RUN_TOGETHER, '$1 $2')
+    .replace(LOOSE_HYPHENS, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 const esc = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 
@@ -167,7 +212,30 @@ export function altForFile(file: string): string | undefined {
   if (file in DECORATIVE) return undefined
   const bare = unsized(file)
   if (bare in DECORATIVE) return undefined
-  return extracted[file] ?? EXTRA[file] ?? extracted[bare] ?? EXTRA[bare]
+
+  const found = extracted[file] ?? EXTRA[file] ?? extracted[bare] ?? EXTRA[bare]
+  if (!found) return undefined
+
+  // EXTRA is written by hand and needs nothing; the extracted map is where the
+  // filename punctuation comes from, and tidying both costs nothing.
+  const tidied = tidyAlt(found)
+  return tidied || undefined
+}
+
+/**
+ * The site's own name, for the logo.
+ *
+ * The logo appears on all 26 pages, is the link home, and the origin describes
+ * it as "wild-kumaon-logo-finale" — the only alt text on the site that every
+ * single visitor's screen reader meets.
+ *
+ * "Wild Kumaon" rather than "Wild Kumaon logo": the word logo describes the
+ * image, and alt text names what the image is *of*. A reader who has just been
+ * told this is a link home does not need to hear it is a picture.
+ */
+export const LOGO_ALT: Record<string, string> = {
+  'wild-kumaon-logo-finale': 'Wild Kumaon',
+  'wild-kumaon-logo-finale-1': 'Wild Kumaon',
 }
 
 const lookup = (src: string): string | undefined => altForFile(basename(src))

@@ -14,24 +14,50 @@
 /**
  * `<marquee>` — WCAG 2.2.2 Pause, Stop, Hide.
  *
- * One marquee, the same welcome line, on all 26 pages. Content that moves for
- * more than five seconds needs a way to stop it and this has none; it is also
- * deprecated HTML, and the element's motion is built into the element, so the
- * prefers-reduced-motion block in public/a11y.css cannot switch it off the way
- * it switches off the Elementor animations.
+ * One marquee, the same welcome line, on all 26 pages.
  *
- * The text is a welcome message, not a ticker — nothing about it is time-ordered,
- * and scrolling means most readers never see the end of it. So it becomes static
- * text and keeps every word.
+ * This first stopped the motion outright, which met the criterion and cost the
+ * page something the client had chosen. The criterion does not ask for stillness;
+ * it asks that anything moving for more than five seconds can be stopped by the
+ * person watching it. So the movement is back, and there is now a control.
  *
- * A <span> rather than a <div> or <p>: the marquee's parent varies across the
- * mirrored pages, and a span is valid inside all of them. public/a11y.css gives
- * it display:block.
+ * `<marquee>` itself does not come back. It is deprecated, its motion is built
+ * into the element where no stylesheet can reach it, and it ignores
+ * prefers-reduced-motion. A span with a CSS animation looks the same and can be
+ * paused three ways: the button, the OS setting, and a hover.
+ *
+ * The text is duplicated inside the track so the line can scroll continuously
+ * without a gap, and the copy is aria-hidden — a screen reader should hear the
+ * welcome once, not twice.
  */
 const MARQUEE = /<marquee\b[^>]*>([\s\S]*?)<\/marquee>/gi
 
 function unwrapMarquee(html: string): string {
-  return html.replace(MARQUEE, (_whole, inner: string) => `<span class="wk-tagline">${inner}</span>`)
+  return html.replace(
+    MARQUEE,
+    (_whole, inner: string) =>
+      /**
+       * Spans throughout, given their layout by CSS.
+       *
+       * The marquee's parent is not the same element on every mirrored page — on
+       * some it is a `<span>`, and a `<div>` inside one is invalid markup that
+       * browsers repair by splitting the parent in half. A span is valid
+       * everywhere the marquee sat, which is why the first version of this used
+       * one and why the structure keeps to them now that it needs four elements
+       * instead of one.
+       */
+      `<span class="wk-tagline" data-paused="false">` +
+      `<span class="wk-tagline__viewport">` +
+      `<span class="wk-tagline__track">` +
+      `<span class="wk-tagline__text">${inner}</span>` +
+      `<span class="wk-tagline__text" aria-hidden="true">${inner}</span>` +
+      `</span></span>` +
+      `<button class="wk-tagline__pause" type="button" aria-pressed="false">` +
+      `<span class="wk-tagline__icon" aria-hidden="true">❚❚</span>` +
+      `<span class="wk-visually-hidden">Pause the scrolling welcome message</span>` +
+      `</button>` +
+      `</span>`,
+  )
 }
 
 /**

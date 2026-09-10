@@ -276,6 +276,95 @@ function initMenu(teardown) {
   }
 }
 
+/**
+ * The SERVICES dropdown — WCAG 2.1.1, 4.1.2, 1.4.13.
+ *
+ * site.css opens a sub-menu on `:hover`, and public/a11y.css added `:focus-within`
+ * so a keyboard could open it too. Neither is enough once the parent is a button
+ * rather than a link: a button that never changes aria-expanded is a button that
+ * lies about its state, and `:focus-within` closes the menu the moment focus
+ * leaves — including when it leaves to a click somewhere else.
+ *
+ * So the state is held here. Escape closes it and returns focus to the button,
+ * which is the same contract the header's own menu toggle keeps.
+ */
+/**
+ * The pause button on the scrolling welcome line — WCAG 2.2.2.
+ *
+ * The CSS does the stopping; this only records the choice, because the criterion
+ * asks for a control the reader operates rather than a state the page decides.
+ *
+ * `aria-pressed` rather than a label that changes: the button is a toggle, and a
+ * toggle that announces its own state is read correctly whether the reader
+ * arrives before or after it was pressed.
+ */
+function initTaglinePause(teardown) {
+  for (const button of document.querySelectorAll('.wk-tagline__pause')) {
+    const tagline = button.closest('.wk-tagline')
+    if (!tagline) continue
+
+    const onClick = () => {
+      const paused = tagline.dataset.paused === 'true'
+      tagline.dataset.paused = String(!paused)
+      button.setAttribute('aria-pressed', String(!paused))
+
+      const label = button.querySelector('.wk-visually-hidden')
+      if (label) {
+        label.textContent = paused
+          ? 'Pause the scrolling welcome message'
+          : 'Resume the scrolling welcome message'
+      }
+    }
+
+    button.addEventListener('click', onClick)
+    teardown.push(() => button.removeEventListener('click', onClick))
+  }
+}
+
+function initDisclosureMenus(teardown) {
+  for (const button of document.querySelectorAll('button.hfe-menu-disclosure')) {
+    const item = button.closest('.menu-item-has-children')
+    if (!item) continue
+
+    const setOpen = (open) => {
+      button.setAttribute('aria-expanded', String(open))
+      item.classList.toggle('wk-submenu-open', open)
+    }
+
+    const onClick = () => setOpen(button.getAttribute('aria-expanded') !== 'true')
+
+    const onKeyDown = (event) => {
+      if (event.key !== 'Escape') return
+      if (button.getAttribute('aria-expanded') !== 'true') return
+      setOpen(false)
+      button.focus()
+    }
+
+    /**
+     * Closing when focus leaves the item entirely.
+     *
+     * `focusout` fires before focus lands, so the check is deferred by a frame —
+     * otherwise document.activeElement is still <body> and every move inside the
+     * menu would read as leaving it.
+     */
+    const onFocusOut = () => {
+      requestAnimationFrame(() => {
+        if (!item.contains(document.activeElement)) setOpen(false)
+      })
+    }
+
+    button.addEventListener('click', onClick)
+    item.addEventListener('keydown', onKeyDown)
+    item.addEventListener('focusout', onFocusOut)
+
+    teardown.push(() => {
+      button.removeEventListener('click', onClick)
+      item.removeEventListener('keydown', onKeyDown)
+      item.removeEventListener('focusout', onFocusOut)
+    })
+  }
+}
+
 function initAccordions(teardown) {
   for (const root of document.querySelectorAll('.eael-adv-accordion')) {
     const exclusive = root.dataset.accordionType !== 'toggle'
@@ -556,6 +645,8 @@ export default function Enhancements({ route }) {
      * page, so it is the last thing that should depend on a carousel starting.
      */
     run('menu', () => initMenu(teardown))
+    run('disclosure-menus', () => initDisclosureMenus(teardown))
+    run('tagline-pause', () => initTaglinePause(teardown))
 
     for (const root of document.querySelectorAll('.sina-content-slider.owl-carousel')) {
       run('sina-slider', () => initSinaSlider(root, teardown))

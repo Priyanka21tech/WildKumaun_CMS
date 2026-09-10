@@ -5,9 +5,6 @@ import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
-import { a11yPlugin } from '@webuters/payload-plugin-a11y'
-import { readFile } from 'fs/promises'
-
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
@@ -134,40 +131,6 @@ export default buildConfig({
         fields: ({ defaultFields }) => [...defaultFields, ...approvalFields],
         hooks: { beforeChange: [publishApprovedComment] },
       },
-    }),
-
-    /**
-     * The accessibility scan, reported in the admin panel.
-     *
-     * The routes come from the mirror's own index rather than a list typed here,
-     * so a page added to the site is scanned without anybody remembering to add
-     * it — the same reason scripts/a11y-baseline.mjs reads that file.
-     *
-     * Everything else the plugin needs is generic. It knows what a heading is;
-     * it does not know this site.
-     */
-    a11yPlugin({
-      baseUrl: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
-      routes: async () => {
-        const file = path.join(process.cwd(), 'content/mirror/_pages.json')
-        const pages = JSON.parse(await readFile(file, 'utf8'))
-        return pages.map((page: { route?: string; slug: string }) => page.route ?? `/${page.slug}`)
-      },
-
-      /**
-       * The one video on the site never renders.
-       *
-       * /eco-friendly-enterprises-in-sattal carries a YouTube URL in an Elementor
-       * settings attribute, and Elementor builds the iframe on click — but no
-       * origin JavaScript is loaded here, so the player is never created. That is
-       * inherited from the live site and is not being fixed as part of this work.
-       *
-       * Skipped rather than left to report `manual` on every run: a flag that is
-       * always there for a reason nobody intends to act on is a flag people learn
-       * to scroll past, and then miss the day it means something. Remove this the
-       * day a video actually plays.
-       */
-      skip: ['video-captions'],
     }),
   ],
 

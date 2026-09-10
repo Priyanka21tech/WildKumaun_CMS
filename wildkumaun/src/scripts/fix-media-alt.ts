@@ -23,7 +23,7 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
 
-import { altForFile } from '../lib/image-alt'
+import { altForFile, tidyAlt, LOGO_ALT } from '../lib/image-alt'
 
 /**
  * Alt text nobody would have typed on purpose.
@@ -69,7 +69,17 @@ for (const doc of docs) {
     continue
   }
 
-  const better = altForFile(filename)
+  /**
+   * Three sources, in order of how much a person had to do with them.
+   *
+   * The logo is named by hand because it is the one image every visitor's screen
+   * reader meets. Then the harvested map, which carries the origin's own words.
+   * Then, failing both, the alt already stored — tidied, since the words may be
+   * right and only the punctuation wrong.
+   */
+  const stem = filename.replace(/\.[a-z0-9]+$/i, '').replace(/-\d+x\d+$/i, '')
+  const better = LOGO_ALT[stem] ?? altForFile(filename) ?? tidyAlt(current)
+
   if (!better || better === current) {
     noWords++
     continue
