@@ -23,7 +23,29 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
 
-import { altForFile, tidyAlt, LOGO_ALT } from '../lib/image-alt'
+import { altForFile, tidyAlt, isCameraName, LOGO_ALT } from '../lib/image-alt'
+
+/**
+ * Files a camera named, described from where they are used.
+ *
+ * `IMG-20220321-WA0019` has nothing in it to tidy — no word, no subject, just a
+ * date and a counter. Tidying it produces "IMG 20220321 WA0019", which is the
+ * same noise with spaces in.
+ *
+ * So these get a sentence built from what is known for certain: the date is in
+ * the filename, and the page they appear on says what the photographs are of.
+ * It is not a description of any one picture, and it does not pretend to be —
+ * but it tells a listener what they are looking at, which the filename never did.
+ *
+ * Keyed on the prefix, so a batch from one day shares one sentence.
+ */
+const CAMERA_CONTEXT: { prefix: RegExp; alt: string }[] = [
+  {
+    // 21 March 2022, the Sattal–Pangot trip report.
+    prefix: /^IMG-20220321-WA/i,
+    alt: 'Photograph from the Sattal to Pangot birding trip, March 2022',
+  },
+]
 
 /**
  * Alt text nobody would have typed on purpose.
@@ -78,7 +100,21 @@ for (const doc of docs) {
    * right and only the punctuation wrong.
    */
   const stem = filename.replace(/\.[a-z0-9]+$/i, '').replace(/-\d+x\d+$/i, '')
-  const better = LOGO_ALT[stem] ?? altForFile(filename) ?? tidyAlt(current)
+  const camera = CAMERA_CONTEXT.find((c) => c.prefix.test(stem))?.alt
+
+  /**
+   * In order of how much a person had to do with the words.
+   *
+   * The logo is named by hand; then a batch a camera named, described from the
+   * page it appears on; then the map harvested from the origin's own lightbox
+   * titles; and last the alt already stored, tidied — the words may be right and
+   * only the punctuation wrong.
+   */
+  const better =
+    LOGO_ALT[stem] ??
+    camera ??
+    altForFile(filename) ??
+    (isCameraName(current) ? undefined : tidyAlt(current))
 
   if (!better || better === current) {
     noWords++

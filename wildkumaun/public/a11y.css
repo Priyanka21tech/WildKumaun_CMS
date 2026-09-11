@@ -424,6 +424,47 @@ button.hfe-menu-item {
 }
 
 /**
+ * The itinerary toggles, now <h3><button> — see src/lib/toggle-accordion.ts.
+ *
+ * `.elementor-tab-title` still carries the padding, weight and colour, so the
+ * only work here is undoing what the browser adds to a button and to a heading
+ * that the <div> and <a> did not have.
+ *
+ * `font: inherit` on the heading matters more than it looks: without it the six
+ * days render at h3 size and the itinerary suddenly shouts.
+ */
+.wk-toggle-heading {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+}
+
+button.elementor-tab-title {
+  display: block;
+  width: 100%;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+/**
+ * The open panel.
+ *
+ * Elementor's stylesheet closes `.elementor-tab-content` with `display: none`
+ * and never writes the rule that opens it — its script uses jQuery's slideDown,
+ * which sets an inline style instead. The icon swap it *does* do in CSS, keyed
+ * on `.elementor-active`, so this uses the same class rather than inventing one.
+ */
+.elementor-toggle .elementor-tab-content.elementor-active {
+  display: block;
+}
+
+/**
  * The header's menu toggle, now a <button> — see src/components/SiteHeader.ts.
  *
  * The origin had a <div role="button"> with no tabindex, so it could not be

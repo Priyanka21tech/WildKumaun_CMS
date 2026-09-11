@@ -11,6 +11,8 @@
  * are spliced in, so anything those contribute is covered too.
  */
 
+import { withToggleButtons } from './toggle-accordion'
+
 /**
  * `<marquee>` — WCAG 2.2.2 Pause, Stop, Hide.
  *
@@ -165,6 +167,48 @@ function labelVagueLinks(html: string): string {
   })
 }
 
+/**
+ * WordPress furniture with nothing behind it — WCAG 2.4.4.
+ *
+ * The three blog posts carry the archive links WordPress puts under a title:
+ * `General` pointing at /category/general, and the author's name pointing at
+ * /author/adminneer. Neither archive exists here — next.config redirects both to
+ * the blog index — so following either lands the reader on a list of the three
+ * posts they were already reading one of.
+ *
+ * The words stay, the links go. "General / By Neer" is true and worth saying;
+ * it is only the promise of somewhere to go that was false. Unwrapping also
+ * shortens the tab order, which is what made these noticeable: with a focus ring
+ * finally visible, every one of them is a stop that leads nowhere.
+ */
+const ARCHIVE_LINK = /<a\b([^>]*\bhref="\/(?:category|author)\/[^"]*"[^>]*)>([\s\S]*?)<\/a>/gi
+
+function unwrapArchiveLinks(html: string): string {
+  return html.replace(ARCHIVE_LINK, (_whole, _attrs: string, inner: string) => inner)
+}
+
+/**
+ * The sidebar search, which searched somebody else's site.
+ *
+ * Astra's search widget submits to the address it was configured with, and the
+ * mirror captured that as `https://wildkumaon.com/` — so using it takes the
+ * reader off this site entirely and onto the original. That is not a broken
+ * search; it is a search that works and sends people away.
+ *
+ * The header's own search has the same underlying problem in a quieter form: it
+ * posts to `/`, where nothing reads the query. Both are one decision — whether
+ * this site has a search at all — and until that decision is made, the one that
+ * leaves the site is the one that has to go.
+ *
+ * Removed rather than repointed, because repointing it would make a working-
+ * looking control that still returns nothing.
+ */
+const SEARCH_WIDGET = /<aside\b[^>]*\bclass="[^"]*widget_search[^"]*"[^>]*>[\s\S]*?<\/aside>/gi
+
+function removeSearchWidget(html: string): string {
+  return html.replace(SEARCH_WIDGET, '')
+}
+
 const EMPTY_LINK = /<a\b([^>]*)>((?:\s|<br\s*\/?>)*)<\/a>/gi
 
 function unwrapEmptyLinks(html: string): string {
@@ -175,7 +219,13 @@ function unwrapEmptyLinks(html: string): string {
 }
 
 export function withAccessibleMarkup(html: string): string {
-  return labelVagueLinks(unwrapEmptyLinks(realCarouselButtons(unwrapMarquee(html))))
+  return labelVagueLinks(
+    unwrapArchiveLinks(
+      removeSearchWidget(
+        withToggleButtons(unwrapEmptyLinks(realCarouselButtons(unwrapMarquee(html)))),
+      ),
+    ),
+  )
 }
 
 /**

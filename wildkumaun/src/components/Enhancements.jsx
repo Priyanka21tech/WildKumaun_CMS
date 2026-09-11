@@ -321,6 +321,41 @@ function initTaglinePause(teardown) {
   }
 }
 
+/**
+ * Elementor's Toggle widget — the itinerary on the birding tour page.
+ *
+ * Six days of it, and none of them opened. Elementor's own script does that, and
+ * no origin JavaScript is loaded here, so the content sat in the page behind
+ * `display: none` where nobody could reach it — not by mouse, not by keyboard,
+ * not by screen reader.
+ *
+ * The header is a real <button> by the time this runs; see
+ * src/lib/toggle-accordion.ts. All that is left is the state, and the state is
+ * two classes the origin's own stylesheet already knows how to draw: one on the
+ * title, which swaps the caret, and one on the panel, which shows it.
+ *
+ * A toggle rather than an accordion — Elementor's toggle widget lets several be
+ * open at once, and an itinerary is exactly the content somebody wants two days
+ * of side by side.
+ */
+function initToggles(teardown) {
+  for (const button of document.querySelectorAll('.elementor-toggle button.elementor-tab-title')) {
+    const panel = document.getElementById(button.getAttribute('aria-controls') ?? '')
+    if (!panel) continue
+
+    const setOpen = (open) => {
+      button.setAttribute('aria-expanded', String(open))
+      button.classList.toggle('elementor-active', open)
+      panel.classList.toggle('elementor-active', open)
+    }
+
+    const onClick = () => setOpen(button.getAttribute('aria-expanded') !== 'true')
+
+    button.addEventListener('click', onClick)
+    teardown.push(() => button.removeEventListener('click', onClick))
+  }
+}
+
 function initDisclosureMenus(teardown) {
   for (const button of document.querySelectorAll('button.hfe-menu-disclosure')) {
     const item = button.closest('.menu-item-has-children')
@@ -655,6 +690,7 @@ export default function Enhancements({ route }) {
       run('image-carousel', () => initImageCarousel(widget, teardown))
     }
     run('accordions', () => initAccordions(teardown))
+    run('toggles', () => initToggles(teardown))
     run('reveals', () => initReveals(teardown))
     run('forms', () => initForms(teardown))
 

@@ -14,6 +14,7 @@ import { isReachable } from '@/lib/reachable'
 import { replaceContentArea } from '@/lib/content-area'
 import { withAccessibleMarkup, withHeadingStructure } from '@/lib/a11y-markup'
 import { withImageAlt } from '@/lib/image-alt'
+import { withVideoEmbeds } from '@/lib/video-render'
 import { replaceHero } from '@/lib/hero-render'
 import { replaceText } from '@/lib/text-render'
 import { replaceColumns } from '@/lib/columns-render'
@@ -161,7 +162,10 @@ export default async function MirrorPage({ params }: { params: Promise<{ slug?: 
   // withImageAlt goes first, while the src attributes still carry the origin's
   // own filenames — responsiveHtml is about to point them at Payload's generated
   // sizes, and the alt map is keyed on what the origin called them.
-  const body = responsiveHtml(page.route, withImageAlt(page.html), mediaMap)
+  // withVideoEmbeds alongside it, for the same reason: the widget it fills is
+  // the mirror's own, and nothing downstream would recognise it once the CMS
+  // blocks have been spliced in.
+  const body = responsiveHtml(page.route, withVideoEmbeds(withImageAlt(page.html)), mediaMap)
 
   // The questions come from the collection now. Everything else on the page is
   // still the mirror's, so only the accordion's items are swapped out.

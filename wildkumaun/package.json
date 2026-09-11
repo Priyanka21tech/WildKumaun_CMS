@@ -33,7 +33,8 @@
     "check:wfh": "cross-env NODE_OPTIONS=--no-deprecation tsx src/scripts/check-wfh.ts",
     "check:targets": "cross-env NODE_OPTIONS=--no-deprecation tsx src/scripts/check-targets.ts",
     "fix:page-versions": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/backfill-page-versions.ts",
-    "fix:nav": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/fix-nav-links.ts"
+    "fix:nav": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/fix-nav-links.ts",
+    "fix:link-text": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/fix-link-text.ts"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.88.0",

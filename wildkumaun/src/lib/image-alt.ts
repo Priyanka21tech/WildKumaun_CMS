@@ -177,14 +177,67 @@ const RUN_TOGETHER = /([a-z])([A-Z])/g
 /** Hyphens left dangling once a size or a word was taken off the end. */
 const LOOSE_HYPHENS = /^-+|-+$/g
 
+/**
+ * The part of a filename that describes the file rather than the picture.
+ *
+ * `kettle-img`, `room-image`, `swimming-5` — a word saying "this is a picture",
+ * or the number that kept two pictures of the same thing apart in a folder.
+ * Neither means anything to somebody listening.
+ */
+const FILE_WORDS = /[-_](img|image|photo|pic|banner|final|finale|copy|new|edited)\d*$/i
+const TRAILING_NUMBER = /[-_\s]\d+$/
+
+/**
+ * A name with no picture in it.
+ *
+ * Phone and camera filenames — `IMG-20220321-WA0019`, `DSC_0912`, `PXL_2022…`.
+ * Nothing in them describes anything, and no amount of tidying will change that.
+ * Recognised so the caller can say so rather than produce a tidier version of
+ * the same noise.
+ */
+const CAMERA_NAME = /^(img|dsc|dscn|pxl|photo|pic|screenshot|whatsapp)[-_ ]?\d/i
+
+export const isCameraName = (text: string): boolean => CAMERA_NAME.test(text.trim())
+
 export function tidyAlt(text: string): string {
-  return text
-    .replace(SIZE_SUFFIX, '')
-    .replace(SLUG_SEAM, '$1 $2')
-    .replace(RUN_TOGETHER, '$1 $2')
-    .replace(LOOSE_HYPHENS, '')
-    .replace(/\s+/g, ' ')
-    .trim()
+  let out = text.replace(SIZE_SUFFIX, '')
+
+  /**
+   * A slug is turned into a sentence; anything else is only repaired at the seams.
+   *
+   * The test is capitals, not spaces. `open-area-img` is lower-case throughout —
+   * a machine wrote it, every hyphen in it stands in for a space, and all of them
+   * can open up. `Black-backed-Forktail` has capitals, which means somebody typed
+   * at least part of it, and its first hyphen belongs to the bird's name. Opening
+   * that one produced "Black backed Forktail", which is not a species.
+   *
+   * So a capital anywhere is treated as evidence that a person chose the
+   * punctuation, and only the joins between a lower-case letter and a capital are
+   * touched — those are where a filename ran two real words together.
+   */
+  const machineWritten = !/[A-Z]/.test(out.slice(1))
+
+  if (machineWritten && !out.includes(' ')) {
+    out = out.replace(FILE_WORDS, '').replace(TRAILING_NUMBER, '').replace(/[-_]+/g, ' ')
+    // Sentence case, not title case: "Open area" reads as a description,
+    // "Open Area" reads as a heading.
+    out = out.charAt(0).toUpperCase() + out.slice(1)
+  } else {
+    out = out.replace(SLUG_SEAM, '$1 $2').replace(RUN_TOGETHER, '$1 $2')
+
+    /**
+     * A hyphen in front of a joining word was never part of a name.
+     *
+     * `Balcony-of-Room-with-Twin-Beds` keeps its capitals, so the seam rule above
+     * leaves "Balcony-of Room-with Twin Beds" — correct punctuation nowhere. No
+     * species, place or person is written with "of" or "with" hyphenated onto the
+     * word before it, so those joins can open with no risk to the names this is
+     * otherwise so careful about.
+     */
+    out = out.replace(/-(of|with|at|in|on|the|and|for|from|to|a|an)\b/gi, ' $1')
+  }
+
+  return out.replace(LOOSE_HYPHENS, '').replace(/\s+/g, ' ').trim()
 }
 
 const esc = (s: string) =>

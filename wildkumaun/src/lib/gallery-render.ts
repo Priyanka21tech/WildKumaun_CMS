@@ -179,9 +179,30 @@ function thumbnails(hash: string, images: MediaDoc[], columns: number): string {
        */
       const describedBy = caption && caption !== alt ? ` aria-describedby="${id}"` : ''
 
+      /**
+       * The caption is hidden from assistive technology when it repeats the alt.
+       *
+       * Removing aria-describedby stopped the image pointing at the caption, but
+       * the caption is still text on the page, so a screen reader reading through
+       * announced the species twice — once as the image, once as the words under
+       * it. Heard aloud that is not a tidy repetition; it is the same four
+       * syllables back to back, on every photograph of a forty-six photograph
+       * page.
+       *
+       * Hidden rather than emptied, and the alt kept rather than blanked, because
+       * of how the two are reached. Pressing G in a screen reader walks the
+       * images, and an image with an empty alt is not in that list — on a gallery
+       * that is the one thing a reader is most likely to do. So the image keeps
+       * the name and the duplicate is the one that goes quiet.
+       *
+       * Only when they are identical. A caption that says something the alt does
+       * not is still read, and still pointed at by aria-describedby above.
+       */
+      const captionHidden = caption === alt ? ' aria-hidden="true"' : ''
+
       return `<figure class="gallery-item">
 <div class="gallery-icon landscape">${img(image, 'attachment-full size-full').replace('<img', `<img${describedBy}`)}</div>
-<figcaption class="wp-caption-text gallery-caption" id="${id}">${esc(caption)}</figcaption>
+<figcaption class="wp-caption-text gallery-caption" id="${id}"${captionHidden}>${esc(caption)}</figcaption>
 </figure>`
     })
     .join('')
