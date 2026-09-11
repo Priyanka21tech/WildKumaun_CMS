@@ -35,16 +35,33 @@ const YOUTUBE_URL = /"youtube_url"\s*:\s*"([^"]+)"/
 const REPLACEMENTS: Record<string, { id: string; title: string }> = {
   // /eco-friendly-enterprises-in-sattal — the original upload was replaced.
   Jfs6ylx7jlQ: {
-    id: 'Wtt1ku97WkI',
     /**
-     * The name a screen reader reads for the frame, taken from the video itself.
+     * A stand-in, chosen because it is captioned — WCAG 1.2.2.
+     *
+     * The site's own film (`Wtt1ku97WkI`) carries only YouTube's automatic
+     * captions. Those are speech recognition: they miss proper nouns, never mark
+     * who is speaking, and never write down a sound that is not speech — which on
+     * a film called "Wake Up to Birdsong" is most of what matters. WCAG does not
+     * accept them, and the guide this project follows says the same in as many
+     * words.
+     *
+     * This one is Bernie Krause's TED talk on recording natural soundscapes. It
+     * carries twenty-eight caption tracks written by people, English among them,
+     * and its subject — birdsong, insects, what a habitat sounds like — sits
+     * close enough to the page to stand in honestly.
+     *
+     * It is a placeholder. When the site's own film has reviewed captions, put
+     * `Wtt1ku97WkI` back here and delete this note.
+     */
+    id: 'uTbA-mxo858',
+    /**
+     * The name a screen reader reads for the frame.
      *
      * An iframe with no title is announced as "frame", which tells the listener
-     * something is here and nothing about what. This is the upload's own title,
-     * shortened — the full one runs to twelve words and a screen reader reads
-     * every one of them before the reader can decide whether to enter the frame.
+     * something is here and nothing about what. Kept short: the reader hears this
+     * before deciding whether to enter the frame at all.
      */
-    title: 'Video: Wild Kumaon Sattal — a birdwatcher’s stay at the eco nature resort',
+    title: 'Video: Bernie Krause on the voice of the natural world (TED)',
   },
 }
 
